@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "109707824816",
+    "project_id": "pratishtha-web-app",
+    "storage_bucket": "pratishtha-web-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109707824816:android:fa9777162083b6318f3575",
+        "android_client_info": {
+          "package_name": "com.pratishtha.sakec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109707824816-duhhtan57pt53bg9fajrg7o0m0on7gib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFYgPGfT1nwgYI4MpeBcN3jbvgGCSmsRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109707824816-duhhtan57pt53bg9fajrg7o0m0on7gib.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "109707824816-g6kqh1ss7mjkn2crq982n2eamhens6jd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sakec.pratishtha"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109707824816:android:b50965aac2a521088f3575",
+        "android_client_info": {
+          "package_name": "com.sakec.pratishtha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109707824816-duhhtan57pt53bg9fajrg7o0m0on7gib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFYgPGfT1nwgYI4MpeBcN3jbvgGCSmsRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109707824816-duhhtan57pt53bg9fajrg7o0m0on7gib.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "109707824816-g6kqh1ss7mjkn2crq982n2eamhens6jd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sakec.pratishtha"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
