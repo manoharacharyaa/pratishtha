@@ -96,34 +96,312 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (widget.selectedUser!.uid! == currentUser!.uid!) {
                     widget.selectedUser = currentUser;
                   }
-                  return SingleChildScrollView(
-                    child: Center(
-                      child: Container(
-                          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: MediaQuery.of(context).size.height / 5,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
+                  return Center(
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height / 5,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(avatarMap[
+                                  currentUser?.uid ==
+                                          this.widget.selectedUser!.uid
+                                      ? currentUser!.avatar
+                                      : this.widget.selectedUser!.avatar]!),
+                              //child: Image.asset('assets/images/Asset 1.png'),
+                              // child: Text("P"),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            currentUser!.uid == this.widget.selectedUser!.uid
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                WidgetStateProperty.all(
+                                                    primaryColor),
+                                            shape: WidgetStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AvatarPicker(
+                                                          currentUser:
+                                                              currentUser)),
+                                            );
+                                          },
+                                          child: FittedBox(
+                                            fit: BoxFit.contain,
+                                            child: Text(
+                                              'Customize',
+                                              style: TextStyle(
+                                                color: Colors
+                                                    .white, // Set your desired color here
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      currentUser!.isVerified
+                                          ? SizedBox()
+                                          : SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  12,
+                                            ),
+                                      currentUser!.isVerified
+                                          ? SizedBox()
+                                          : Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  4,
+                                              height: 50,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      WidgetStateProperty.all(
+                                                          primaryColor),
+                                                  shape:
+                                                      WidgetStateProperty.all(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  final firebaseUser =
+                                                      context.watch<User>();
+                                                  if (firebaseUser
+                                                      .emailVerified) {
+                                                    currentUser!.isVerified =
+                                                        true;
+                                                    await databaseServices
+                                                        .updateUserVerifiedStatus(
+                                                            user: currentUser!);
+                                                    setState(() {});
+                                                  }
+                                                  firebaseUser
+                                                      .sendEmailVerification();
+                                                },
+                                                child: FittedBox(
+                                                  fit: BoxFit.contain,
+                                                  child: Text(
+                                                    'Verify',
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.user,
+                                      size: 30,
+                                      color: cardBackgroundColor,
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      '${this.widget.selectedUser!.firstName! + ' ' + this.widget.selectedUser!.lastName!}',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    SizedBox(width: 5),
+                                    this.widget.selectedUser!.isVerified
+                                        ? [3, 5, 6].contains(
+                                                this.widget.selectedUser!.role!)
+                                            ? Icon(Icons.verified,
+                                                color: primaryColor)
+                                            : Container()
+                                        : Icon(Icons.warning,
+                                            color: secondaryColor)
+                                  ],
                                 ),
-                                child: SvgPicture.asset(avatarMap[
-                                    currentUser?.uid ==
-                                            this.widget.selectedUser!.uid
-                                        ? currentUser!.avatar
-                                        : this.widget.selectedUser!.avatar]!),
-                                //child: Image.asset('assets/images/Asset 1.png'),
-                                // child: Text("P"),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              currentUser!.uid == this.widget.selectedUser!.uid
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                currentUser!.uid !=
+                                        this.widget.selectedUser!.uid
+                                    ? Container()
+                                    : Row(
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.mailBulk,
+                                            size: 30,
+                                            color: cardBackgroundColor,
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                this
+                                                            .widget
+                                                            .selectedUser
+                                                            ?.email !=
+                                                        null
+                                                    ? this
+                                                        .widget
+                                                        .selectedUser!
+                                                        .email!
+                                                    : this
+                                                        .widget
+                                                        .selectedUser!
+                                                        .sakecId,
+                                                style: TextStyle(fontSize: 20),
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                currentUser!.uid !=
+                                        this.widget.selectedUser!.uid
+                                    ? Container()
+                                    : SizedBox(
+                                        height: 15.0,
+                                      ),
+                                currentUser!.uid !=
+                                        this.widget.selectedUser!.uid
+                                    ? Container()
+                                    : Row(
+                                        children: [
+                                          Icon(
+                                            FontAwesomeIcons.phoneAlt,
+                                            size: 30,
+                                            color: cardBackgroundColor,
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
+                                            this.widget.selectedUser!.phone!,
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ],
+                                      ),
+                                currentUser!.uid !=
+                                        this.widget.selectedUser!.uid
+                                    ? Container()
+                                    : SizedBox(
+                                        height: 15.0,
+                                      ),
+                                this.widget.selectedUser!.institute ==
+                                            "SAKEC" &&
+                                        this
+                                            .widget
+                                            .selectedUser!
+                                            .branch
+                                            .isNotEmpty &&
+                                        this
+                                            .widget
+                                            .selectedUser!
+                                            .year
+                                            .isNotEmpty
+                                    ? Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                FontAwesomeIcons.codeBranch,
+                                                size: 30,
+                                                color: cardBackgroundColor,
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                this
+                                                    .widget
+                                                    .selectedUser!
+                                                    .branch,
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 15.0,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                FontAwesomeIcons.calendarCheck,
+                                                size: 30,
+                                                color: cardBackgroundColor,
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                this.widget.selectedUser!.year,
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 15.0,
+                                          ),
+                                        ],
+                                      )
+                                    : Container(),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.university,
+                                      size: 30,
+                                      color: cardBackgroundColor,
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        this.widget.selectedUser!.institute!,
+                                        style: TextStyle(fontSize: 20),
+                                        overflow: TextOverflow.clip,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                widget.selectedUser!.uid == currentUser!.uid
+                                    ? Center(
+                                        child: Container(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width /
@@ -145,553 +423,284 @@ class _ProfilePageState extends State<ProfilePage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AvatarPicker(
-                                                            currentUser:
-                                                                currentUser)),
+                                                  builder: (context) =>
+                                                      EditProfile(),
+                                                ),
                                               );
                                             },
                                             child: FittedBox(
                                               fit: BoxFit.contain,
                                               child: Text(
-                                                'Customize',
+                                                'Edit details',
                                                 style: TextStyle(
-                                                  color: Colors
-                                                      .white, // Set your desired color here
+                                                  color: Colors.white,
+                                                  fontSize: 20,
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        currentUser!.isVerified
-                                            ? SizedBox()
-                                            : SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    12,
-                                              ),
-                                        currentUser!.isVerified
-                                            ? SizedBox()
-                                            : Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    4,
-                                                height: 50,
-                                                child: ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        WidgetStateProperty.all(
-                                                            primaryColor),
-                                                    shape:
-                                                        WidgetStateProperty.all(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onPressed: () async {
-                                                    final firebaseUser =
-                                                        context.watch<User>();
-                                                    if (firebaseUser
-                                                        .emailVerified) {
-                                                      currentUser!.isVerified =
-                                                          true;
-                                                      await databaseServices
-                                                          .updateUserVerifiedStatus(
-                                                              user:
-                                                                  currentUser!);
-                                                      setState(() {});
-                                                    }
-                                                    firebaseUser
-                                                        .sendEmailVerification();
-                                                  },
-                                                  child: FittedBox(
-                                                    fit: BoxFit.contain,
-                                                    child: Text(
-                                                      'Verify',
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                      ],
-                                    )
-                                  : Container(),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        FontAwesomeIcons.user,
-                                        size: 30,
-                                        color: cardBackgroundColor,
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(
-                                        '${this.widget.selectedUser!.firstName! + ' ' + this.widget.selectedUser!.lastName!}',
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      SizedBox(width: 5),
-                                      this.widget.selectedUser!.isVerified
-                                          ? [3, 5, 6].contains(this
-                                                  .widget
-                                                  .selectedUser!
-                                                  .role!)
-                                              ? Icon(Icons.verified,
-                                                  color: primaryColor)
-                                              : Container()
-                                          : Icon(Icons.warning,
-                                              color: secondaryColor)
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 15.0,
-                                  ),
-                                  currentUser!.uid !=
-                                          this.widget.selectedUser!.uid
-                                      ? Container()
-                                      : Row(
-                                          children: [
-                                            Icon(
-                                              FontAwesomeIcons.mailBulk,
-                                              size: 30,
-                                              color: cardBackgroundColor,
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Expanded(
-                                              child: SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                child: Text(
-                                                  this
-                                                              .widget
-                                                              .selectedUser
-                                                              ?.email !=
-                                                          null
-                                                      ? this
-                                                          .widget
-                                                          .selectedUser!
-                                                          .email!
-                                                      : this
-                                                          .widget
-                                                          .selectedUser!
-                                                          .sakecId,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                  maxLines: 1,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                  currentUser!.uid !=
-                                          this.widget.selectedUser!.uid
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 15.0,
-                                        ),
-                                  currentUser!.uid !=
-                                          this.widget.selectedUser!.uid
-                                      ? Container()
-                                      : Row(
-                                          children: [
-                                            Icon(
-                                              FontAwesomeIcons.phoneAlt,
-                                              size: 30,
-                                              color: cardBackgroundColor,
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Text(
-                                              this.widget.selectedUser!.phone!,
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                          ],
-                                        ),
-                                  currentUser!.uid !=
-                                          this.widget.selectedUser!.uid
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 15.0,
-                                        ),
-                                  this.widget.selectedUser!.institute ==
-                                              "SAKEC" &&
-                                          this
-                                              .widget
-                                              .selectedUser!
-                                              .branch
-                                              .isNotEmpty &&
-                                          this
-                                              .widget
-                                              .selectedUser!
-                                              .year
-                                              .isNotEmpty
-                                      ? Column(
-                                          children: [
-                                            Row(
+                                      )
+                                    : SizedBox.shrink(),
+                                this.widget.selectedUser!.achievements!.isEmpty
+                                    ? Container()
+                                    : FutureBuilder(
+                                        future: databaseServices
+                                            .getSpecificEvents(this
+                                                .widget
+                                                .selectedUser!
+                                                .achievements!
+                                                .keys
+                                                .toList()),
+                                        builder: (context,
+                                            AsyncSnapshot<List<Event>>
+                                                snapshot) {
+                                          if (snapshot.hasData) {
+                                            //print("printing snapshot data: ${this.widget.selectedUser.achievements.keys.toList()}");
+                                            return Column(
                                               children: [
-                                                Icon(
-                                                  FontAwesomeIcons.codeBranch,
-                                                  size: 30,
-                                                  color: cardBackgroundColor,
-                                                ),
                                                 SizedBox(
-                                                  width: 20,
+                                                  height: 30.0,
                                                 ),
                                                 Text(
-                                                  this
-                                                      .widget
-                                                      .selectedUser!
-                                                      .branch,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 15.0,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  FontAwesomeIcons
-                                                      .calendarCheck,
-                                                  size: 30,
-                                                  color: cardBackgroundColor,
-                                                ),
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Text(
-                                                  this
-                                                      .widget
-                                                      .selectedUser!
-                                                      .year,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 15.0,
-                                            ),
-                                          ],
-                                        )
-                                      : Container(),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        FontAwesomeIcons.university,
-                                        size: 30,
-                                        color: cardBackgroundColor,
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          this.widget.selectedUser!.institute!,
-                                          style: TextStyle(fontSize: 20),
-                                          overflow: TextOverflow.clip,
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  widget.selectedUser!.uid == currentUser!.uid
-                                      ? Center(
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                4,
-                                            height: 50,
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty.all(
-                                                        primaryColor),
-                                                shape: WidgetStateProperty.all(
-                                                  RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
-                                                  ),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditProfile(),
-                                                  ),
-                                                );
-                                              },
-                                              child: FittedBox(
-                                                fit: BoxFit.contain,
-                                                child: Text(
-                                                  'Edit details',
+                                                  'Achievements',
                                                   style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20.0,
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : SizedBox.shrink(),
-                                  this
-                                          .widget
-                                          .selectedUser!
-                                          .achievements!
-                                          .isEmpty
-                                      ? Container()
-                                      : FutureBuilder(
-                                          future: databaseServices
-                                              .getSpecificEvents(this
-                                                  .widget
-                                                  .selectedUser!
-                                                  .achievements!
-                                                  .keys
-                                                  .toList()),
-                                          builder: (context,
-                                              AsyncSnapshot<List<Event>>
-                                                  snapshot) {
-                                            if (snapshot.hasData) {
-                                              //print("printing snapshot data: ${this.widget.selectedUser.achievements.keys.toList()}");
-                                              return Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: 30.0,
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      6,
+                                                  padding: EdgeInsets.fromLTRB(
+                                                    10.0,
+                                                    0.0,
+                                                    10.0,
+                                                    0.0,
                                                   ),
-                                                  Text(
-                                                    'Achievements',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20.0,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            6,
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                      10.0,
-                                                      0.0,
-                                                      10.0,
-                                                      0.0,
-                                                    ),
-                                                    margin:
-                                                        MediaQuery.of(context)
-                                                            .padding,
-                                                    child: ListView.builder(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        itemCount: snapshot
-                                                            .data!.length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          return AchievementsWidget(
-                                                              context: context,
-                                                              event: snapshot
-                                                                  .data![index],
-                                                              position: this
-                                                                      .widget
-                                                                      .selectedUser!
-                                                                      .achievements![
-                                                                  snapshot
-                                                                      .data![
-                                                                          index]
-                                                                      .id]);
-                                                        }),
-                                                  ),
-                                                ],
-                                              );
-                                            } else if (snapshot.hasError) {
-                                              //print("achievements error: ${snapshot.error}");
-                                              return CustomErrorWidget();
-                                            } else {
-                                              return loadingWidget();
-                                            }
-                                          }),
-                                  this.widget.selectedUser!.eventRoles!.isEmpty
-                                      ? Container()
-                                      : buildEventsList(this
-                                          .widget
-                                          .selectedUser!
-                                          .eventRoles!),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 15.0,
-                              ),
-                              this.widget.selectedUser!.role == 3
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5,
-                                        vertical: 10,
-                                      ),
-                                      child: ClipSmoothRect(
-                                        radius: SmoothBorderRadius(
-                                          cornerRadius: 15,
-                                          cornerSmoothing: 1,
-                                        ),
-                                        child: Container(
-                                          color: secondaryColor,
-                                          height: 300,
-                                          width: double.infinity,
-                                          child: Expanded(
-                                            child: FutureBuilder(
-                                              future: getEvents(),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
-                                                }
-                                                if (snapshot.hasData) {
-                                                  List<Event> event =
-                                                      snapshot.data!;
-                                                  return Expanded(
-                                                    child: ListView.builder(
-                                                      // shrinkWrap: true,
-                                                      itemCount: 10,
+                                                  margin: MediaQuery.of(context)
+                                                      .padding,
+                                                  child: ListView.builder(
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      itemCount:
+                                                          snapshot.data!.length,
                                                       itemBuilder:
                                                           (context, index) {
-                                                        return Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: ListTile(
-                                                            tileColor:
-                                                                Colors.black,
-                                                            title: Text(
-                                                                // event[index].name!,
-                                                                'Text'),
+                                                        return AchievementsWidget(
+                                                            context: context,
+                                                            event: snapshot
+                                                                .data![index],
+                                                            position: this
+                                                                    .widget
+                                                                    .selectedUser!
+                                                                    .achievements![
+                                                                snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .id]);
+                                                      }),
+                                                ),
+                                              ],
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            //print("achievements error: ${snapshot.error}");
+                                            return CustomErrorWidget();
+                                          } else {
+                                            return loadingWidget();
+                                          }
+                                        }),
+                                this.widget.selectedUser!.eventRoles!.isEmpty
+                                    ? Container()
+                                    : buildEventsList(
+                                        this.widget.selectedUser!.eventRoles!),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            this.widget.selectedUser!.role == 3
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                      vertical: 10,
+                                    ),
+                                    child: ClipSmoothRect(
+                                      radius: SmoothBorderRadius(
+                                        cornerRadius: 15,
+                                        cornerSmoothing: 1,
+                                      ),
+                                      child: Container(
+                                        color: primaryColor,
+                                        height: 300,
+                                        width: double.infinity,
+                                        child: Expanded(
+                                          child: FutureBuilder(
+                                            future: getEvents(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return CircularProgressIndicator();
+                                              }
+                                              if (snapshot.hasData) {
+                                                List<Event> event =
+                                                    snapshot.data!;
+                                                return ListView.builder(
+                                                  // shrinkWrap: true,
+                                                  itemCount: 10,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              6),
+                                                      child: SizedBox(
+                                                        height: 80,
+                                                        child: Card(
+                                                          color: secondaryColor,
+                                                          shape:
+                                                              SmoothRectangleBorder(
+                                                            borderRadius:
+                                                                SmoothBorderRadius(
+                                                              cornerRadius: 10,
+                                                              cornerSmoothing:
+                                                                  1,
+                                                            ),
                                                           ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  );
-                                                }
-                                                return SizedBox();
-                                              },
-                                              // child: Container(
-                                              //   color: Colors.black,
-                                              //   height:
-                                              //       MediaQuery.sizeOf(context).height *
-                                              //           0.4,
-                                              //   width: double.infinity,
-                                              // ),
-                                            ),
+                                                          child: Row(
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child:
+                                                                    ClipSmoothRect(
+                                                                  radius:
+                                                                      SmoothBorderRadius(
+                                                                    cornerRadius:
+                                                                        8,
+                                                                    cornerSmoothing:
+                                                                        1,
+                                                                  ),
+                                                                  child: Image
+                                                                      .asset(
+                                                                    'assets/images/pageNotFound1.png',
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                'Boxing',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 20,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              }
+                                              return SizedBox();
+                                            },
+                                            // child: Container(
+                                            //   color: Colors.black,
+                                            //   height:
+                                            //       MediaQuery.sizeOf(context).height *
+                                            //           0.4,
+                                            //   width: double.infinity,
+                                            // ),
                                           ),
                                         ),
                                       ),
-                                    )
-                                  : SizedBox(),
-                              GestureDetector(
-                                onTap: () {
-                                  if ((currentUser!.uid ==
-                                          this.widget.selectedUser!.uid) ||
-                                      ([5, 3].contains(currentUser!.role) ||
-                                          featureMap!['9']['roles']
-                                              .contains(currentUser!.role))) {
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        child: PointsPage(
-                                          userId: this.widget.selectedUser!.uid,
-                                        ),
-                                        childCurrent: this.widget,
-                                        type: PageTransitionType.leftToRightPop,
+                                    ),
+                                  )
+                                : SizedBox(),
+                            GestureDetector(
+                              onTap: () {
+                                if ((currentUser!.uid ==
+                                        this.widget.selectedUser!.uid) ||
+                                    ([5, 3].contains(currentUser!.role) ||
+                                        featureMap!['9']['roles']
+                                            .contains(currentUser!.role))) {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      child: PointsPage(
+                                        userId: this.widget.selectedUser!.uid,
                                       ),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  child: PointsCard(
-                                    pointsValue:
-                                        this.widget.selectedUser!.points,
-                                  ),
+                                      childCurrent: this.widget,
+                                      type: PageTransitionType.leftToRightPop,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                child: PointsCard(
+                                  pointsValue: this.widget.selectedUser!.points,
                                 ),
                               ),
-                              SizedBox(
-                                height: 18.0,
-                              ),
-                              (currentUser!.uid !=
-                                          this.widget.selectedUser!.uid) &&
-                                      ([5, 3].contains(currentUser!.role) ||
-                                          featureMap!['3']['roles']
-                                              .contains(currentUser!.role))
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        if ((currentUser!.uid ==
-                                                this
+                            ),
+                            SizedBox(
+                              height: 18.0,
+                            ),
+                            (currentUser!.uid !=
+                                        this.widget.selectedUser!.uid) &&
+                                    ([5, 3].contains(currentUser!.role) ||
+                                        featureMap!['3']['roles']
+                                            .contains(currentUser!.role))
+                                ? GestureDetector(
+                                    onTap: () {
+                                      if ((currentUser!.uid ==
+                                              this.widget.selectedUser!.uid) ||
+                                          [5, 4, 3]
+                                              .contains(currentUser!.role)) {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              child: WalletPage(
+                                                userId: this
                                                     .widget
                                                     .selectedUser!
-                                                    .uid) ||
-                                            [5, 4, 3]
-                                                .contains(currentUser!.role)) {
-                                          Navigator.push(
-                                            context,
-                                            PageTransition(
-                                                child: WalletPage(
-                                                  userId: this
-                                                      .widget
-                                                      .selectedUser!
-                                                      .uid!,
-                                                ),
-                                                type: PageTransitionType
-                                                    .leftToRightPop),
-                                          );
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(
-                                            10.0, 15.0, 10.0, 0.0),
-                                        margin: MediaQuery.of(context).padding,
-                                        child: BalanceCard(
-                                          balValue:
-                                              this.widget.selectedUser!.wallet,
-                                        ),
+                                                    .uid!,
+                                              ),
+                                              type: PageTransitionType
+                                                  .leftToRightPop),
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          10.0, 15.0, 10.0, 0.0),
+                                      margin: MediaQuery.of(context).padding,
+                                      child: BalanceCard(
+                                        balValue:
+                                            this.widget.selectedUser!.wallet,
                                       ),
-                                    )
-                                  : Container(),
-                              (currentUser!.uid !=
-                                          this.widget.selectedUser!.uid) &&
-                                      ([5, 3].contains(currentUser!.role) ||
-                                          featureMap!['3']['roles']
-                                              .contains(currentUser!.role))
-                                  ? SizedBox(
-                                      height: 18.0,
-                                    )
-                                  : Container(),
-                            ],
-                          )),
-                    ),
+                                    ),
+                                  )
+                                : Container(),
+                            (currentUser!.uid !=
+                                        this.widget.selectedUser!.uid) &&
+                                    ([5, 3].contains(currentUser!.role) ||
+                                        featureMap!['3']['roles']
+                                            .contains(currentUser!.role))
+                                ? SizedBox(
+                                    height: 18.0,
+                                  )
+                                : Container(),
+                          ],
+                        )),
                   );
                 } else if (snapshot.hasError) {
                   debugPrint("profilePage snapshot error: ${snapshot.error}");
