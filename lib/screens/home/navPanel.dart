@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/screens/admin/admin_page.dart';
 import 'package:pratishtha/screens/home/calendarPage.dart';
 import 'package:pratishtha/screens/home/homePage.dart';
 import 'package:pratishtha/screens/home/profilePage.dart';
@@ -38,8 +39,6 @@ class _HomeState extends State<Home> {
         return [rulesIconButton(context: context, popUpPage: HomeRulesPage())];
         break;
 
-
-
       case 1:
         return [
           rulesIconButton(context: context, popUpPage: SearchRulesPage())
@@ -56,8 +55,6 @@ class _HomeState extends State<Home> {
           )
         ];
         break;
-
-
 
       default:
         return [];
@@ -108,7 +105,7 @@ class _HomeState extends State<Home> {
                   },
                   children: <Widget>[
                     HomePage(),
-                    // CalendarPage(),
+                    CalendarPage(),
                     SearchPage(),
                     ProfilePage(selectedUser: snapshot.data!),
                     // WalletPage(userId: snapshot.data!.uid)
@@ -137,49 +134,50 @@ class _HomeState extends State<Home> {
           },
           items: [
             BottomNavyBarItem(
-                activeColor: bubbleColor,
-                title: Text(
-                  'Home',
-                  style: TextStyle(color: unselectedColor),
-                ),
-                icon: Icon(
-                  Icons.home,
-                  color: unselectedColor,
-                )
-            ),
-            // BottomNavyBarItem(
-            //     activeColor: bubbleColor,
-            //     title: Text(
-            //       'Calendar',
-            //       style: TextStyle(color: unselectedColor),
-            //     ),
-            //     icon: Icon(
-            //       Icons.calendar_today_outlined,
-            //       color: unselectedColor,
-            //     )
-            // ),
-            BottomNavyBarItem(
-                activeColor: bubbleColor,
-                title: Text(
-                  'Search',
-                  style: TextStyle(color: unselectedColor),
-                ),
-                icon: Icon(
-                  Icons.search,
-                  color: unselectedColor,
-                )
+              activeColor: bubbleColor,
+              title: Text(
+                'Home',
+                style: TextStyle(color: unselectedColor),
+              ),
+              icon: Icon(
+                Icons.home,
+                color: unselectedColor,
+              ),
             ),
             BottomNavyBarItem(
-                activeColor: bubbleColor,
-                title: Text(
-                  'Profile',
-                  style: TextStyle(color: unselectedColor),
-                ),
-                icon: Icon(
-                  Icons.person,
-                  color: unselectedColor,
-                )
+              activeColor: bubbleColor,
+              title: Text(
+                'Calendar',
+                style: TextStyle(color: unselectedColor),
+              ),
+              icon: Icon(
+                Icons.calendar_today_outlined,
+                color: unselectedColor,
+              ),
             ),
+            BottomNavyBarItem(
+              activeColor: bubbleColor,
+              title: Text(
+                'Search',
+                style: TextStyle(color: unselectedColor),
+              ),
+              icon: Icon(
+                Icons.search,
+                color: unselectedColor,
+              ),
+            ),
+            BottomNavyBarItem(
+              activeColor: bubbleColor,
+              title: Text(
+                'Profile',
+                style: TextStyle(color: unselectedColor),
+              ),
+              icon: Icon(
+                Icons.person,
+                color: unselectedColor,
+              ),
+            ),
+
             // BottomNavyBarItem(
             //     activeColor: bubbleColor,
             //     title: Text(
@@ -191,8 +189,7 @@ class _HomeState extends State<Home> {
             //       color: unselectedColor,
             //     )
             // ),
-          ]
-      ),
+          ]),
       // bottomNavigationBar: BottomNavigationBar(
       //   type: BottomNavigationBarType.fixed,
       //   backgroundColor: cardBackgroundColor,

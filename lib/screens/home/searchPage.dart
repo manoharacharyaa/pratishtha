@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
@@ -118,9 +119,12 @@ class _SearchPageState extends State<SearchPage> {
                             });
                           },
                           context: context),
-                      VerticalDivider(
-                        color: dullGreyColor,
-                        width: 1,
+                      SizedBox(
+                        height: 40,
+                        child: VerticalDivider(
+                          color: dullGreyColor,
+                          width: 0.5,
+                        ),
                       ),
                       filterButton(
                           buttonText: "Fests",
@@ -136,9 +140,12 @@ class _SearchPageState extends State<SearchPage> {
                             });
                           },
                           context: context),
-                      VerticalDivider(
-                        color: dullGreyColor,
-                        width: 1,
+                      SizedBox(
+                        height: 40,
+                        child: VerticalDivider(
+                          color: dullGreyColor,
+                          width: 0.5,
+                        ),
                       ),
                       filterButton(
                           buttonText: "Users",
@@ -184,23 +191,22 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  Widget filterButton(
-      {String? buttonText,
-      Icon? filterIcon,
-      VoidCallback? filterFunction,
-      BuildContext? context}) {
+  Widget filterButton({
+    String? buttonText,
+    Icon? filterIcon,
+    VoidCallback? filterFunction,
+    BuildContext? context,
+  }) {
     return GestureDetector(
       onTap: filterFunction,
-      child: Container(
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          child: TextButton.icon(
-              onPressed: filterFunction,
-              icon: filterIcon!,
-              label: Text(
-                buttonText!,
-                style: TextStyle(color: primaryColor),
-              ))),
+      child: TextButton.icon(
+        onPressed: filterFunction,
+        icon: filterIcon!,
+        label: Text(
+          buttonText!,
+          style: TextStyle(color: primaryColor),
+        ),
+      ),
     );
   }
 
@@ -304,35 +310,50 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget buildTitleSearchField(
       {BuildContext? context, List<Event>? allEvents, List<User>? allUsers}) {
-    return TextFormField(
-      controller: titleSearchController,
-      decoration: InputDecoration(
-        hintText: "Search for a fest, event or profile",
-        filled: true,
-        prefixIcon: IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            handleTitleSearch(
-                query: titleSearchController.text,
-                allEventsList: allEvents,
-                allUsersList: allUsers);
-          },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: ClipSmoothRect(
+        radius: SmoothBorderRadius(
+          cornerRadius: 15,
+          cornerSmoothing: 1,
         ),
-        suffixIcon: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            onClear();
+        child: TextFormField(
+          controller: titleSearchController,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+            hintText: "Search for a fest, event or profile",
+            border: InputBorder.none,
+            filled: true,
+            fillColor: Colors.grey[300],
+            prefixIcon: IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                handleTitleSearch(
+                  query: titleSearchController.text,
+                  allEventsList: allEvents,
+                  allUsersList: allUsers,
+                );
+              },
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                onClear();
+              },
+            ),
+          ),
+          onChanged: (value) {
+            if (value != "") {
+              handleTitleSearch(
+                  query: value,
+                  allEventsList: allEvents,
+                  allUsersList: allUsers);
+            } else {
+              onClear();
+            }
           },
         ),
       ),
-      onChanged: (value) {
-        if (value != "") {
-          handleTitleSearch(
-              query: value, allEventsList: allEvents, allUsersList: allUsers);
-        } else {
-          onClear();
-        }
-      },
     );
   }
 

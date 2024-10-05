@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -56,6 +58,18 @@ class _ProfilePageState extends State<ProfilePage> {
     //print('-' * 80);
     //print(eventIds);
     return await databaseServices.getSpecificEvents(eventIds);
+  }
+
+  Future<List<Event>> getEvents() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('events')
+        .where('created_by', isEqualTo: currentUser!.uid)
+        .get();
+    List<Event> currentUserEvents = snapshot.docs.map((doc) {
+      return Event.fromMap(doc as Map<String, dynamic>, '');
+    }).toList();
+
+    return currentUserEvents;
   }
 
   @override
@@ -118,9 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                           child: ElevatedButton(
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all(
+                                                  WidgetStateProperty.all(
                                                       primaryColor),
-                                              shape: MaterialStateProperty.all(
+                                              shape: WidgetStateProperty.all(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(30),
@@ -142,7 +156,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               child: Text(
                                                 'Customize',
                                                 style: TextStyle(
-                                                  color: Colors.white, // Set your desired color here
+                                                  color: Colors
+                                                      .white, // Set your desired color here
                                                 ),
                                               ),
                                             ),
@@ -167,10 +182,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 child: ElevatedButton(
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(primaryColor),
-                                                    shape: MaterialStateProperty
-                                                        .all(
+                                                        WidgetStateProperty.all(
+                                                            primaryColor),
+                                                    shape:
+                                                        WidgetStateProperty.all(
                                                       RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius
@@ -227,8 +242,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       SizedBox(width: 5),
                                       this.widget.selectedUser!.isVerified
-                                          ? [3, 5, 6].contains(
-                                                  this.widget.selectedUser!.role!)
+                                          ? [3, 5, 6].contains(this
+                                                  .widget
+                                                  .selectedUser!
+                                                  .role!)
                                               ? Icon(Icons.verified,
                                                   color: primaryColor)
                                               : Container()
@@ -253,19 +270,29 @@ class _ProfilePageState extends State<ProfilePage> {
                                               width: 20,
                                             ),
                                             Expanded(
-                                              child: Text(
-                                              this.widget.selectedUser?.email !=
-                                                  null
-                                                  ? this
-                                                  .widget
-                                                  .selectedUser
-                                              !.email!
-                                                  : this
-                                                  .widget
-                                                  .selectedUser!
-                                                  .sakecId,
-                                              style: TextStyle(fontSize: 20),
-                                            ),),
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Text(
+                                                  this
+                                                              .widget
+                                                              .selectedUser
+                                                              ?.email !=
+                                                          null
+                                                      ? this
+                                                          .widget
+                                                          .selectedUser!
+                                                          .email!
+                                                      : this
+                                                          .widget
+                                                          .selectedUser!
+                                                          .sakecId,
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                   currentUser!.uid !=
@@ -303,13 +330,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                               "SAKEC" &&
                                           this
                                               .widget
-                                              .selectedUser
-                                              !.branch
+                                              .selectedUser!
+                                              .branch
                                               .isNotEmpty &&
                                           this
                                               .widget
-                                              .selectedUser
-                                              !.year
+                                              .selectedUser!
+                                              .year
                                               .isNotEmpty
                                       ? Column(
                                           children: [
@@ -326,8 +353,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 Text(
                                                   this
                                                       .widget
-                                                      .selectedUser
-                                                      !.branch,
+                                                      .selectedUser!
+                                                      .branch,
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -348,7 +375,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   width: 20,
                                                 ),
                                                 Text(
-                                                  this.widget.selectedUser!.year,
+                                                  this
+                                                      .widget
+                                                      .selectedUser!
+                                                      .year,
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -394,10 +424,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                             child: ElevatedButton(
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all(
+                                                    WidgetStateProperty.all(
                                                         primaryColor),
-                                                shape:
-                                                    MaterialStateProperty.all(
+                                                shape: WidgetStateProperty.all(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -409,8 +438,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditProfile()),
+                                                    builder: (context) =>
+                                                        EditProfile(),
+                                                  ),
                                                 );
                                               },
                                               child: FittedBox(
@@ -418,24 +448,28 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 child: Text(
                                                   'Edit details',
                                                   style: TextStyle(
-                                                    color: Colors.white, // Set your desired color here
+                                                    color: Colors.white,
+                                                    fontSize: 20,
                                                   ),
                                                 ),
-
                                               ),
                                             ),
                                           ),
                                         )
                                       : SizedBox.shrink(),
-                                  this.widget.selectedUser!.achievements!.isEmpty
+                                  this
+                                          .widget
+                                          .selectedUser!
+                                          .achievements!
+                                          .isEmpty
                                       ? Container()
                                       : FutureBuilder(
                                           future: databaseServices
                                               .getSpecificEvents(this
                                                   .widget
-                                                  .selectedUser
-                                                  !.achievements
-                                                  !.keys
+                                                  .selectedUser!
+                                                  .achievements!
+                                                  .keys
                                                   .toList()),
                                           builder: (context,
                                               AsyncSnapshot<List<Event>>
@@ -487,8 +521,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                   .data![index],
                                                               position: this
                                                                       .widget
-                                                                      .selectedUser
-                                                                      !.achievements![
+                                                                      .selectedUser!
+                                                                      .achievements![
                                                                   snapshot
                                                                       .data![
                                                                           index]
@@ -506,13 +540,78 @@ class _ProfilePageState extends State<ProfilePage> {
                                           }),
                                   this.widget.selectedUser!.eventRoles!.isEmpty
                                       ? Container()
-                                      : buildEventsList(
-                                          this.widget.selectedUser!.eventRoles!),
+                                      : buildEventsList(this
+                                          .widget
+                                          .selectedUser!
+                                          .eventRoles!),
                                 ],
                               ),
                               SizedBox(
                                 height: 15.0,
                               ),
+                              this.widget.selectedUser!.role == 3
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                        vertical: 10,
+                                      ),
+                                      child: ClipSmoothRect(
+                                        radius: SmoothBorderRadius(
+                                          cornerRadius: 15,
+                                          cornerSmoothing: 1,
+                                        ),
+                                        child: Container(
+                                          color: secondaryColor,
+                                          height: 300,
+                                          width: double.infinity,
+                                          child: Expanded(
+                                            child: FutureBuilder(
+                                              future: getEvents(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                }
+                                                if (snapshot.hasData) {
+                                                  List<Event> event =
+                                                      snapshot.data!;
+                                                  return Expanded(
+                                                    child: ListView.builder(
+                                                      // shrinkWrap: true,
+                                                      itemCount: 10,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: ListTile(
+                                                            tileColor:
+                                                                Colors.black,
+                                                            title: Text(
+                                                                // event[index].name!,
+                                                                'Text'),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                }
+                                                return SizedBox();
+                                              },
+                                              // child: Container(
+                                              //   color: Colors.black,
+                                              //   height:
+                                              //       MediaQuery.sizeOf(context).height *
+                                              //           0.4,
+                                              //   width: double.infinity,
+                                              // ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(),
                               GestureDetector(
                                 onTap: () {
                                   if ((currentUser!.uid ==
@@ -533,16 +632,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   }
                                 },
                                 child: Container(
-                                  padding:
-                                      EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
-                                  margin: MediaQuery.of(context).padding,
                                   child: PointsCard(
                                     pointsValue:
                                         this.widget.selectedUser!.points,
                                   ),
-                                  // child: BalanceCard(
-                                  //   balValue: this.widget.selectedUser.wallet,
-                                  // ),
                                 ),
                               ),
                               SizedBox(
@@ -556,7 +649,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ? GestureDetector(
                                       onTap: () {
                                         if ((currentUser!.uid ==
-                                                this.widget.selectedUser!.uid) ||
+                                                this
+                                                    .widget
+                                                    .selectedUser!
+                                                    .uid) ||
                                             [5, 4, 3]
                                                 .contains(currentUser!.role)) {
                                           Navigator.push(
@@ -565,8 +661,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 child: WalletPage(
                                                   userId: this
                                                       .widget
-                                                      .selectedUser
-                                                      !.uid!,
+                                                      .selectedUser!
+                                                      .uid!,
                                                 ),
                                                 type: PageTransitionType
                                                     .leftToRightPop),
@@ -630,7 +726,8 @@ class _ProfilePageState extends State<ProfilePage> {
               } else {
                 //print(event.id + " : " + event.name);
                 if (event.goLive) {
-                  if (event.eventHeads!.contains(this.widget.selectedUser!.uid)) {
+                  if (event.eventHeads!
+                      .contains(this.widget.selectedUser!.uid)) {
                     eventHeadList.add(event);
                   } else {
                     volunteerList.add(event);

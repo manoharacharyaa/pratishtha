@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/constants/keys.dart';
+import 'package:pratishtha/screens/home/eventPage.dart';
 import 'package:pratishtha/services/authenticationServices.dart';
 import 'package:pratishtha/screens/authentication/loginPage.dart';
 import 'package:pratishtha/screens/authenticationWrapper.dart';
@@ -58,7 +59,6 @@ class _SignUpState extends State<SignUp> {
     return colleges;
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -68,199 +68,204 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        controller: scrollController,
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.width / 15),
-            Container(
-              padding: EdgeInsets.all(5),
-              margin: EdgeInsets.all(5),
-              child: Image.asset('assets/images/SakecLogoFull.png'),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 5, 10, 5),
-              child: FlutterSlimyCard(
-                color: primaryColor,
-                cardWidth: MediaQuery.of(context).size.width,
-                topCardHeight: MediaQuery.of(context).size.height * 0.6,
-                bottomCardHeight: 150, //MediaQuery.of(context).size.height*0.2,
-                borderRadius: 15,
-                topCardWidget: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(3),
-                      margin: EdgeInsets.all(3),
-                      height: MediaQuery.of(context).size.height / 9,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset('assets/images/PratishthaLogo.png'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        10.0,
-                        0.0,
-                        10.0,
-                        0.0,
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.all(5),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.width / 15),
+              Container(
+                padding: EdgeInsets.all(5),
+                margin: EdgeInsets.all(5),
+                child: Image.asset('assets/images/SakecLogoFull.png'),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 5, 10, 5),
+                child: FlutterSlimyCard(
+                  color: primaryColor,
+                  cardWidth: MediaQuery.of(context).size.width,
+                  topCardHeight: MediaQuery.of(context).size.height * 0.6,
+                  bottomCardHeight:
+                      150, //MediaQuery.of(context).size.height * 0.2,
+                  borderRadius: 15,
+                  topCardWidget: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(3),
+                        margin: EdgeInsets.all(3),
+                        height: MediaQuery.of(context).size.height / 9,
                         decoration: BoxDecoration(
-                            color: whiteColor,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: dullGreyColor,
-                                blurRadius: 20,
-                              )
-                            ]),
-                        height: MediaQuery.of(context).size.height * 0.45,
-                        child: Form(
-                          key: _formKey,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: buildTextFields(),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset('assets/images/PratishthaLogo.png'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          10.0,
+                          0.0,
+                          10.0,
+                          0.0,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: dullGreyColor,
+                                  blurRadius: 20,
+                                )
+                              ]),
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          child: Form(
+                            key: _formKey,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: buildTextFields(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                bottomCardWidget: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        launch(
-                            'https://www.shahandanchor.com/privacy/privacyPolicy.html');
-                      },
-                      child: RichText(
-                          text: TextSpan(
-                              text:
-                                  "By clicking on Sign Up you agree to all the terms and conditions mentioned in our ",
-                              children: [
-                                TextSpan(
-                                    text: "Privacy Policy",
-                                    style: TextStyle(
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.bold))
-                              ],
-                              style: TextStyle(color: whiteColor))),
-                    ),
-                    ButtonBar(
-                        alignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              try {
-                                if (_formKey.currentState!.validate()) {
-                                  if (isFromSAKEC) {
-                                    if (year == null) {
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              "Please Check if you have Entered correct Branch and Year",
-                                          backgroundColor: Colors.grey[700],
-                                          textColor: Colors.red,
-                                          toastLength: Toast.LENGTH_LONG);
-                                      return;
+                    ],
+                  ),
+                  bottomCardWidget: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          launch(
+                              'https://www.shahandanchor.com/privacy/privacyPolicy.html');
+                        },
+                        child: RichText(
+                            text: TextSpan(
+                                text:
+                                    "By clicking on Sign Up you agree to all the terms and conditions mentioned in our ",
+                                children: [
+                                  TextSpan(
+                                      text: "Privacy Policy",
+                                      style: TextStyle(
+                                          color: secondaryColor,
+                                          fontWeight: FontWeight.bold))
+                                ],
+                                style: TextStyle(color: whiteColor))),
+                      ),
+                      ButtonBar(
+                          alignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                try {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (isFromSAKEC) {
+                                      if (year == null) {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Please Check if you have Entered correct Branch and Year",
+                                            backgroundColor: Colors.grey[700],
+                                            textColor: Colors.red,
+                                            toastLength: Toast.LENGTH_LONG);
+                                        return;
+                                      }
                                     }
+                                    await context
+                                        .read<AuthenticationService>()
+                                        .signup(
+                                          email: emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                          firstName:
+                                              firstNameController.text.trim(),
+                                          lastName:
+                                              lastNameController.text.trim(),
+                                          phone: phoneController.text.trim(),
+                                          institute: isFromSAKEC
+                                              ? "SAKEC"
+                                              : instituteController.text.trim(),
+                                          regNo: int.parse(
+                                              regNoController.text.trim() == ""
+                                                  ? "0"
+                                                  : regNoController.text
+                                                      .trim()),
+                                          smartCardNo:
+                                              smartCardController.text.trim() ??
+                                                  "",
+                                          sakecId:
+                                              sakecIdController.text.trim() ??
+                                                  "",
+                                          rollNo: int.parse(
+                                              rollNoController.text.trim() == ""
+                                                  ? "0"
+                                                  : rollNoController.text
+                                                      .trim()),
+                                          branch: branch ?? Branch[0],
+                                          year: year ?? Year[0],
+                                          div: int.parse(
+                                              divController.text.trim() == ""
+                                                  ? "0"
+                                                  : divController.text.trim()),
+                                        );
+
+                                    await showVerificationPopup(context);
+
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AuthenticationWrapper(),
+                                      ),
+                                    );
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "There seems to be something wrong with the data you have entered, please enter the correct data and try again.",
+                                        toastLength: Toast.LENGTH_LONG);
                                   }
-                                  await context
-                                      .read<AuthenticationService>()
-                                      .signup(
-                                        email: emailController.text.trim(),
-                                        password:
-                                            passwordController.text.trim(),
-                                        firstName:
-                                            firstNameController.text.trim(),
-                                        lastName:
-                                            lastNameController.text.trim(),
-                                        phone: phoneController.text.trim(),
-                                        institute: isFromSAKEC
-                                            ? "SAKEC"
-                                            : instituteController.text.trim(),
-                                        regNo: int.parse(
-                                            regNoController.text.trim() == ""
-                                                ? "0"
-                                                : regNoController.text.trim()),
-                                        smartCardNo:
-                                            smartCardController.text.trim() ??
-                                                "",
-                                        sakecId:
-                                            sakecIdController.text.trim() ?? "",
-                                        rollNo: int.parse(
-                                            rollNoController.text.trim() == ""
-                                                ? "0"
-                                                : rollNoController.text.trim()),
-                                        branch: branch ?? Branch[0],
-                                        year: year ?? Year[0],
-                                        div: int.parse(
-                                            divController.text.trim() == ""
-                                                ? "0"
-                                                : divController.text.trim()),
-                                      );
-
-                                  await showVerificationPopup(context);
-
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AuthenticationWrapper(),
-                                    ),
-                                  );
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg:
-                                          "There seems to be something wrong with the data you have entered, please enter the correct data and try again.",
-                                      toastLength: Toast.LENGTH_LONG);
+                                } catch (e) {
+                                  //print(e);
                                 }
-                              } catch (e) {
-                                //print(e);
-                              }
-                            },
-                            child: Text(
-                              "Sign Up",
-                              style: mainTheme.textTheme.displayLarge,
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(20.0),
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: mainTheme.textTheme.displayLarge,
                               ),
-                              backgroundColor: cardBackgroundColor,
-                              padding: EdgeInsets.all(15),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignIn()),
-                              );
-                            },
-                            child: Text(
-                              "Sign In",
-                              style: mainTheme.textTheme.displayLarge,
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(20.0),
+                              style: ElevatedButton.styleFrom(
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                                backgroundColor: cardBackgroundColor,
+                                padding: EdgeInsets.all(15),
                               ),
-                              backgroundColor: cardBackgroundColor,
-                              padding: EdgeInsets.all(15),
                             ),
-                          )
-                        ]),
-                  ],
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignIn()),
+                                );
+                              },
+                              child: Text(
+                                "Sign In",
+                                style: mainTheme.textTheme.displayLarge,
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                                backgroundColor: cardBackgroundColor,
+                                padding: EdgeInsets.all(15),
+                              ),
+                            )
+                          ]),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -414,6 +419,7 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             Switch(
+                inactiveTrackColor: greyColor,
                 value: isFromSAKEC,
                 onChanged: (val) {
                   setState(() {
@@ -482,33 +488,49 @@ class _SignUpState extends State<SignUp> {
                   } else {
                     List<String>? colleges = snapshot.data;
 
-                    return DropdownButtonFormField(
-                      items: colleges?.map((String college) {
-                        return DropdownMenuItem(
-                          value: college,
-                          child: Text(college),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        // Handle the selected college
-                        print('Selected College: $value');
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Select your College',
-                        prefixIcon: Icon(
-                          FontAwesomeIcons.university,
-                          color: headline2Color,
+                    return Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.buildingColumns,
+                            color: headline2Color,
+                          ),
                         ),
-                        labelStyle: TextStyle(
-                          color: Colors.black87,
+                        Expanded(
+                          child: DropdownButtonFormField(
+                            items: colleges?.map((String college) {
+                              return DropdownMenuItem(
+                                value: college,
+                                child: Text(college),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              // Handle the selected college
+                              print('Selected College: $value');
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Select your College',
+                              // prefixIcon: Icon(
+                              //   FontAwesomeIcons.university,
+                              //   color: headline2Color,
+                              // ),
+                              labelStyle: TextStyle(
+                                color: Colors.black87,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "College cannot be empty";
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "College cannot be empty";
-                        }
-                        return null;
-                      },
+                      ],
                     );
                   }
                 },

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/sponsorshipsModel.dart';
+import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/widgets/errorWidget.dart';

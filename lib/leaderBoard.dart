@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 
@@ -12,25 +13,32 @@ class LeaderBoard extends StatefulWidget {
 class _LeaderBoardState extends State<LeaderBoard> {
   int counter = 0;
   @override
-
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('LeaderBoards'),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5),
+          ClipSmoothRect(
+            radius: SmoothBorderRadius(
+              cornerRadius: 15,
+              cornerSmoothing: 1,
+            ),
             child: Container(
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              height: MediaQuery.of(context).size.height / 6,
-              width: MediaQuery.of(context).size.width - 50,
+              color: primaryColor,
+              height: mediaQuery.height * 0.2,
+              width: mediaQuery.width * 0.9,
               child: Center(
-                child: Text('InterCollege LeaderBoard', style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),),
+                child: Text(
+                  'InterCollege LeaderBoard',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -39,7 +47,10 @@ class _LeaderBoardState extends State<LeaderBoard> {
           ),
           Expanded(
             child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('colleges').orderBy('score', descending: true).snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('colleges')
+                  .orderBy('score', descending: true)
+                  .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -52,7 +63,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                   );
                 }
                 final documents = snapshot.data!.docs;
-                return  ListView.builder(
+                return ListView.builder(
                   itemCount: documents.length,
                   itemBuilder: (context, index) {
                     int serial = index + 1;
@@ -71,59 +82,88 @@ class _LeaderBoardState extends State<LeaderBoard> {
                     }
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height / 17,
-                        decoration: BoxDecoration(
-                            color: purpleAccentColor, borderRadius: BorderRadius.circular(25)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                  child: CircleAvatar(
-                                    backgroundColor: avatarColor,
-                                    child: Text(
-                                      serial.toString(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: avatarColor != Colors.white
-                                            ? Colors.white
-                                            : Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0,
+                        vertical: 8,
+                      ),
+                      child: ClipSmoothRect(
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 18,
+                          cornerSmoothing: 1,
+                        ),
+                        child: Container(
+                          height: 60,
+                          color: purpleAccentColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: CircleAvatar(
+                                      backgroundColor: avatarColor,
+                                      child: Text(
+                                        serial.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: avatarColor != Colors.white
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: mediaQuery.width * 0.55,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        collegeName,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 10,
+                                ),
+                                child: ClipSmoothRect(
+                                  radius: SmoothBorderRadius(
+                                    cornerRadius: 12,
+                                    cornerSmoothing: 1,
+                                  ),
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 6,
+                                    color: Colors.tealAccent,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          score,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  collegeName,
-                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width / 6,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                    color: Colors.tealAccent),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      score,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     );

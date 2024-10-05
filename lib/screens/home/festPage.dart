@@ -49,6 +49,7 @@ class _FestPageState extends State<FestPage> {
     super.initState();
     goLive = widget.event.goLive;
   }
+
   @override
   Widget build(BuildContext context) {
     return checkConection(
@@ -68,57 +69,61 @@ class _FestPageState extends State<FestPage> {
               if (snapshot.hasData) {
                 featureMap = snapshot.data![0] as Map<dynamic, dynamic>;
                 currentUser = snapshot.data![1] as User;
-                childEvents = (snapshot.data![2] as List<dynamic>).cast<Event>();
+                childEvents =
+                    (snapshot.data![2] as List<dynamic>).cast<Event>();
 
                 childEvents.removeWhere((event) => event.softDelete);
 
                 return Scaffold(
                   floatingActionButton: enableMatchManage()
                       ? Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      (this.widget.event.id == Olympus2024ID ||
-                          this.widget.event.id == Aurum2024ID ||
-                          this.widget.event.id == Verve2024ID) ?
-                      Row(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton(
-                              child: Text('Add Teams', textAlign: TextAlign.center),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) => AddTeamToFest(),
-                                  ),
-                                );
-                              },
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            (this.widget.event.id == Olympus2024ID ||
+                                    this.widget.event.id == Aurum2024ID ||
+                                    this.widget.event.id == Verve2024ID)
+                                ? Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: FloatingActionButton(
+                                          child: Text('Add Teams',
+                                              textAlign: TextAlign.center),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AddTeamToFest(),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              width: 10,
                             ),
-                          ),
-                        ],
-                      ) : Container(),
-
-                  SizedBox(
-                        width: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: FloatingActionButton(
-                          child: Icon(Icons.app_registration),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    EditEvent(event: widget.event),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: FloatingActionButton(
+                                child: Icon(Icons.app_registration),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          EditEvent(event: widget.event),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  )
+                            ),
+                          ],
+                        )
                       : Container(),
                   body: CustomScrollView(
                     slivers: <Widget>[
@@ -292,7 +297,6 @@ class _FestPageState extends State<FestPage> {
                                                                                   Navigator.of(context).pop(false);
                                                                                 },
                                                                               ),
-
                                                                             ],
                                                                           );
                                                                         },
@@ -318,7 +322,8 @@ class _FestPageState extends State<FestPage> {
                                                   });
                                             },
                                             icon: Icon(Icons.menu,
-                                                color: primaryColor))
+                                                color: primaryColor),
+                                          )
                                         : Container(),
                                     this.widget.event.id == Olympus2024ID
                                         // 'RrmhEXrMQR5HyI4mdddc'
@@ -339,7 +344,11 @@ class _FestPageState extends State<FestPage> {
                                                 ),
                                               );
                                             },
-                                            child: Text('Leaderboard', style: TextStyle(color: Colors.white),),
+                                            child: Text(
+                                              'Leaderboard',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
                                           )
                                         : Container(),
                                   ],
@@ -697,8 +706,7 @@ class _FestPageState extends State<FestPage> {
                           .dateFrom!
                           .isAtSameMomentAs(DateTime(1975, 12, 11)))) {
                     return "Coming Soon";
-                  } else if (daysBetween(
-                          this.widget.event.dateFrom as DateTime,
+                  } else if (daysBetween(this.widget.event.dateFrom as DateTime,
                           this.widget.event.dateTo as DateTime) ==
                       0) {
                     return getFullFormattedDate(

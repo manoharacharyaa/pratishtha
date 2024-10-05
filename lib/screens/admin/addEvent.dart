@@ -199,7 +199,8 @@ class _AddEventState extends State<AddEvent> {
                                     onChanged: (String? value) {
                                       setState(() {
                                         _dropdown = value;
-                                        parentId = events![e.indexOf(value!)].id!;
+                                        parentId =
+                                            events![e.indexOf(value!)].id!;
                                         eventData = events[e.indexOf(value)];
                                       });
                                       //print(parentId);
@@ -1003,7 +1004,7 @@ class _AddEventState extends State<AddEvent> {
     String id = uid.v4().split("-").join("");
     if (eventData != null) {
       if (!isFest
-            ? DateTime.parse(dateFrom.text).isAfter(eventData!.dateFrom!) &&
+          ? DateTime.parse(dateFrom.text).isAfter(eventData!.dateFrom!) &&
               DateTime.parse(dateTo.text).isBefore(eventData!.dateTo!)
           : true) {
         _controller.forEach((i) {

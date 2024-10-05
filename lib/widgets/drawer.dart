@@ -205,8 +205,7 @@ class _MyDrawerState extends State<MyDrawer> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  LeaderBoard(),
+                              builder: (BuildContext context) => LeaderBoard(),
                             ),
                           );
                         },
