@@ -5,6 +5,7 @@ import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
+import 'package:pratishtha/screens/admin/attendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
@@ -194,6 +195,20 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
+                      user?.role == 8
+                          ? ListTile(
+                        title: Text('Attendance'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  AttendancePage(), // Replace with your AttendancePage class
+                            ),
+                          );
+                        },
+                      )
+                          : Container(),
                       ListTile(
                         title: Text('LeaderBoard'),
                         onTap: () {
