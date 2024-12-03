@@ -21,11 +21,7 @@ class BottomNavyBar extends StatelessWidget {
     required this.items,
     required this.onItemSelected,
     this.curve = Curves.linear,
-  })  : assert(items != null),
-        assert(items.length >= 2 && items.length <= 5),
-        assert(onItemSelected != null),
-        assert(animationDuration != null),
-        assert(curve != null),
+  })  : assert(items.length >= 2 && items.length <= 5),
         super(key: key);
 
   /// The selected item is index. Changing this property will change and animate
@@ -135,7 +131,6 @@ class _ItemWidget extends StatelessWidget {
         assert(animationDuration != null),
         assert(itemCornerRadius != null),
         assert(iconSize != null),
-        assert(curve != null),
         super(key: key);
 
   @override

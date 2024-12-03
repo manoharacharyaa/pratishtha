@@ -152,7 +152,7 @@ class _SignUpState extends State<SignUp> {
                                 ],
                                 style: TextStyle(color: whiteColor))),
                       ),
-                      ButtonBar(
+                      OverflowBar(
                           alignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ElevatedButton(

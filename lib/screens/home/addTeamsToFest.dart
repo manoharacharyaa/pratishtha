@@ -26,8 +26,8 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
   final _formKey = GlobalKey<FormState>();
   late String id;
   final TextEditingController firstNameController = TextEditingController();
-  Future<void> addfestteam(String name) async{
-    var subCollRef=FirebaseFirestore.instance
+  Future<void> addfestteam(String name) async {
+    var subCollRef = FirebaseFirestore.instance
         .collection('fests')
         .doc(prevOlympusID)
         .collection('teams');
@@ -35,11 +35,11 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
     var uid = Uuid();
     String id = uid.v4().split("-").join("");
 
-    Map<String, dynamic> teamFest={
+    Map<String, dynamic> teamFest = {
       "name": name,
       "score": 0,
       "soft_delete": false,
-      "events":[],
+      "events": [],
       "id": id
     };
 
@@ -54,6 +54,7 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
         textColor: Colors.white,
         fontSize: 16.0);
   }
+
   @override
   Widget build(BuildContext context) {
     return checkConection(
@@ -81,7 +82,6 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
                           style: const TextStyle(
                             color: Colors.black,
                           ),
-
                           decoration: InputDecoration(
                             // errorText: validateIsEmptyFest(firstNameController.text),
                             labelText: "Team Name",
@@ -112,60 +112,60 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
                               borderSide: BorderSide.none,
                             ),
                             contentPadding:
-                            const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                const EdgeInsets.fromLTRB(20, 15, 20, 15),
                             fillColor: Colors.white,
                             filled: true,
                           ),
-
                           onSaved: (value) {
                             firstNameController.text = value!;
                           },
                           textInputAction: TextInputAction.done,
-
                         ),
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () {
-
-                        (firstNameController.text=='')?
-                        Fluttertoast.showToast(
-                            msg: "Team name cannot be empty",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0): {addfestteam(firstNameController.text),_onRefresh()};
+                        (firstNameController.text == '')
+                            ? Fluttertoast.showToast(
+                                msg: "Team name cannot be empty",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0)
+                            : {
+                                addfestteam(firstNameController.text),
+                                _onRefresh()
+                              };
                         // debugPrint(firstNameController.text);
                       },
                       child: Text("Add Team"),
                     ),
                     buildList()
-
                   ],
-
                 ),
               ),
-
             ),
           ),
-
         ),
-
       ),
     );
   }
+
   String? validateIsEmptyFest(value) {
     if (value.isEmpty) {
       return "Field Cannot be Empty";
       return null;
     }
+    return null;
   }
+
   Future<void> _onRefresh() async {
     setState(() {});
     return Future.delayed(Duration(seconds: 1));
   }
+
   buildList() {
     return Container(
       child: RefreshIndicator(
@@ -220,283 +220,287 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
 
                 return (documents.length == 0)
                     ? Center(
-                  child: Text(
-                    'No Teams Found',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )
+                        child: Text(
+                          'No Teams Found',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
-                  itemCount: documents.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  addAutomaticKeepAlives: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Divider(),
-                          Card(
-                            margin:
-                            EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                            color: whiteColor,
-                            elevation: 0,
-                            // shape: RoundedRectangleBorder(
-                            //   side: new BorderSide(
-                            //     color: blackColor,
-                            //     width: 1.0,
-                            //   ),
-                            //   borderRadius: BorderRadius.circular(
-                            //     8.0,
-                            //   ),
-                            // ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        itemCount: documents.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        addAutomaticKeepAlives: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
                               children: [
+                                Divider(),
+                                Card(
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, bottom: 5),
+                                  color: whiteColor,
+                                  elevation: 0,
+                                  // shape: RoundedRectangleBorder(
+                                  //   side: new BorderSide(
+                                  //     color: blackColor,
+                                  //     width: 1.0,
+                                  //   ),
+                                  //   borderRadius: BorderRadius.circular(
+                                  //     8.0,
+                                  //   ),
+                                  // ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${documents[index]['name']}",
+                                        style: TextStyle(
+                                          color: blackColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
 
-                                Text(
-                                  "${documents[index]['name']}",
-                                  style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: redColor,
+                                              alignment: Alignment.center,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              "Remove",
+                                              style: TextStyle(
+                                                color: whiteColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                // alignment: Alignment.center,
+                                                // backgroundColor: greyColor,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              // Fluttertoast.showToast(
+                                              //   msg: "Team Already Added",
+                                              //   toastLength: Toast.LENGTH_SHORT,
+                                              //   gravity: ToastGravity.BOTTOM,
+                                              //   timeInSecForIosWeb: 1,
+                                              //   backgroundColor: Colors.grey,
+                                              //   textColor: Colors.white,
+                                              //   fontSize: 16.0,
+                                              // );
+                                              (documents[index]['score'] == 0 &&
+                                                      documents[index]['events']
+                                                              .length ==
+                                                          0)
+                                                  ? {
+                                                      // FirebaseFirestore.instance
+                                                      //     .collection("fests")
+                                                      //     .doc(prevOlympusID)
+                                                      //     .collection("teams")
+                                                      //     .doc(documents[index]["id"])
+                                                      //     .update({
+                                                      //       "events": FieldValue.arrayRemove([this.widget.eventID])
+                                                      //     }),
+
+                                                      FirebaseFirestore.instance
+                                                          .collection('fests')
+                                                          .doc(prevOlympusID)
+                                                          .collection("teams")
+                                                          .doc(documents[index]
+                                                              ['id'])
+                                                          .update({
+                                                        'soft_delete': true,
+                                                      })
+                                                    }
+                                                  : Fluttertoast.showToast(
+                                                      msg: "Cannot delete team",
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                          Colors.grey,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0,
+                                                    );
+                                              _onRefresh();
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: Icon(FontAwesomeIcons.edit),
+                                            onPressed: () {
+                                              String idname =
+                                                  documents[index]['id'];
+                                              debugPrint("inside on press");
+                                              debugPrint('${idname}');
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        // updateFestTeam(idname)
+                                                        updateFestTeam(
+                                                            documents[index]
+                                                                ['id'],
+                                                            documents[index]
+                                                                ['events'])),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+
+                                      // ListTile(
+
+                                      //   title:
+
+                                      //   Text(
+                                      //     "${documents[index]['name']}",
+                                      //     style: TextStyle(
+                                      //       color: blackColor,
+                                      //       fontSize: 16,
+                                      //       fontWeight: FontWeight.w600,
+                                      //     ),
+                                      //   ),
+
+                                      //   trailing:
+                                      //   //  documents[index]['fests']
+                                      //   // //         .contains(prevOlympusID) &&
+                                      //   //         documents[index]['soft_delete']==false
+
+                                      //        Column(
+                                      //         mainAxisAlignment: MainAxisAlignment.center,
+                                      //         crossAxisAlignment: CrossAxisAlignment.center,
+                                      //         children: [
+                                      //           ElevatedButton(
+
+                                      //               style: ElevatedButton.styleFrom(
+                                      //                 backgroundColor: redColor,
+                                      //                 alignment: Alignment.center,
+
+                                      //                 shape: RoundedRectangleBorder(
+                                      //                   borderRadius:
+                                      //                       BorderRadius.circular(8.0),
+
+                                      //                 ),
+                                      //               ),
+                                      //               child: Text(
+                                      //                 "Remove",
+
+                                      //                 style: TextStyle(
+                                      //                   color: whiteColor,
+                                      //                   fontSize: 14,
+                                      //                   fontWeight: FontWeight.w600,
+                                      //                   // alignment: Alignment.center,
+                                      //                   // backgroundColor: greyColor,
+                                      //                 ),
+                                      //               ),
+                                      //               onPressed: () {
+                                      //                 // Fluttertoast.showToast(
+                                      //                 //   msg: "Team Already Added",
+                                      //                 //   toastLength: Toast.LENGTH_SHORT,
+                                      //                 //   gravity: ToastGravity.BOTTOM,
+                                      //                 //   timeInSecForIosWeb: 1,
+                                      //                 //   backgroundColor: Colors.grey,
+                                      //                 //   textColor: Colors.white,
+                                      //                 //   fontSize: 16.0,
+                                      //                 // );
+                                      //                 (documents[index]['score']==0 && documents[index]['events'].length==0)?
+                                      //                 {
+                                      //                 // FirebaseFirestore.instance
+                                      //                 //     .collection("fests")
+                                      //                 //     .doc(prevOlympusID)
+                                      //                 //     .collection("teams")
+                                      //                 //     .doc(documents[index]["id"])
+                                      //                 //     .update({
+                                      //                 //       "events": FieldValue.arrayRemove([this.widget.eventID])
+                                      //                 //     }),
+
+                                      //                 FirebaseFirestore.instance
+                                      //                     .collection('fests')
+                                      //                     .doc(prevOlympusID)
+                                      //                     .collection("teams")
+                                      //                     .doc(documents[index]['id'])
+
+                                      //                     .update({
+                                      //                       'soft_delete': true,
+                                      //                     })
+                                      //                     }: Fluttertoast.showToast(
+                                      //                       msg: "Cannot delete team",
+                                      //                       toastLength: Toast.LENGTH_SHORT,
+                                      //                       gravity: ToastGravity.BOTTOM,
+                                      //                       timeInSecForIosWeb: 1,
+                                      //                       backgroundColor: Colors.grey,
+                                      //                       textColor: Colors.white,
+                                      //                       fontSize: 16.0,
+                                      //                     );
+                                      //                     _onRefresh();
+                                      //               },
+                                      //             ),
+                                      //           // (documents[index]['soft_delete'])
+                                      //           // ElevatedButton(
+                                      //           //     style: ElevatedButton.styleFrom(
+                                      //           //       backgroundColor: redColor,
+                                      //           //       shape: RoundedRectangleBorder(
+                                      //           //         borderRadius:
+                                      //           //             BorderRadius.circular(8.0),
+                                      //           //       ),
+                                      //           //     ),
+                                      //           //     child: Text(
+                                      //           //       "Remove",
+                                      //           //       style: TextStyle(
+                                      //           //         color: whiteColor,
+                                      //           //         fontSize: 14,
+                                      //           //         fontWeight: FontWeight.w600,
+                                      //           //       ),
+                                      //           //     ),
+                                      //           //     onPressed: () {
+                                      //           //       // Fluttertoast.showToast(
+                                      //           //       //   msg: "Team Already Added",
+                                      //           //       //   toastLength: Toast.LENGTH_SHORT,
+                                      //           //       //   gravity: ToastGravity.BOTTOM,
+                                      //           //       //   timeInSecForIosWeb: 1,
+                                      //           //       //   backgroundColor: Colors.red,
+                                      //           //       //   textColor: Colors.white,
+                                      //           //       //   fontSize: 16.0,
+                                      //           //       // );
+                                      //           //       Map<String, dynamic> team = {
+                                      //           //     'name': documents[index]['name'],
+                                      //           //     'id': documents[index]['id'],
+                                      //           //     'score': 0,
+                                      //           //         // documents[index]['score'],
+                                      //           //     'events': documents[index]
+                                      //           //         ['events'],
+                                      //           //   };
+                                      //           //   // documents[index]['soft_delete']=true;
+                                      //           //       // removeTeamForEvent(this.widget.eventID, team);
+                                      //           //       // removeEventId(this.widget.eventID, team);
+                                      //           //     },
+                                      //           //   ),
+                                      //         ],
+                                      //       ),
+                                      // ),
+
+                                      // :null,
+                                      //SizedBox(height: 5),
+                                    ],
                                   ),
                                 ),
-
-                                Row(
-                                  children: [
-                                    ElevatedButton(
-
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: redColor,
-                                        alignment: Alignment.center,
-
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(8.0),
-
-                                        ),
-                                      ),
-                                      child: Text(
-                                        "Remove",
-
-                                        style: TextStyle(
-                                          color: whiteColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          // alignment: Alignment.center,
-                                          // backgroundColor: greyColor,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        // Fluttertoast.showToast(
-                                        //   msg: "Team Already Added",
-                                        //   toastLength: Toast.LENGTH_SHORT,
-                                        //   gravity: ToastGravity.BOTTOM,
-                                        //   timeInSecForIosWeb: 1,
-                                        //   backgroundColor: Colors.grey,
-                                        //   textColor: Colors.white,
-                                        //   fontSize: 16.0,
-                                        // );
-                                        (documents[index]['score']==0 && documents[index]['events'].length==0)?
-                                        {
-                                          // FirebaseFirestore.instance
-                                          //     .collection("fests")
-                                          //     .doc(prevOlympusID)
-                                          //     .collection("teams")
-                                          //     .doc(documents[index]["id"])
-                                          //     .update({
-                                          //       "events": FieldValue.arrayRemove([this.widget.eventID])
-                                          //     }),
-
-
-                                          FirebaseFirestore.instance
-                                              .collection('fests')
-                                              .doc(prevOlympusID)
-                                              .collection("teams")
-                                              .doc(documents[index]['id'])
-
-                                              .update({
-                                            'soft_delete': true,
-                                          })
-                                        }: Fluttertoast.showToast(
-                                          msg: "Cannot delete team",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.grey,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0,
-                                        );
-                                        _onRefresh();
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(FontAwesomeIcons.edit),
-                                      onPressed: () {
-                                        String idname=documents[index]['id'];
-                                        debugPrint("inside on press");
-                                        debugPrint('${idname}');
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                              // updateFestTeam(idname)
-                                              updateFestTeam(documents[index]['id'],documents[index]['events'])
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-
-                                // ListTile(
-
-                                //   title:
-
-                                //   Text(
-                                //     "${documents[index]['name']}",
-                                //     style: TextStyle(
-                                //       color: blackColor,
-                                //       fontSize: 16,
-                                //       fontWeight: FontWeight.w600,
-                                //     ),
-                                //   ),
-
-
-                                //   trailing:
-                                //   //  documents[index]['fests']
-                                //   // //         .contains(prevOlympusID) &&
-                                //   //         documents[index]['soft_delete']==false
-
-                                //        Column(
-                                //         mainAxisAlignment: MainAxisAlignment.center,
-                                //         crossAxisAlignment: CrossAxisAlignment.center,
-                                //         children: [
-                                //           ElevatedButton(
-
-                                //               style: ElevatedButton.styleFrom(
-                                //                 backgroundColor: redColor,
-                                //                 alignment: Alignment.center,
-
-                                //                 shape: RoundedRectangleBorder(
-                                //                   borderRadius:
-                                //                       BorderRadius.circular(8.0),
-
-                                //                 ),
-                                //               ),
-                                //               child: Text(
-                                //                 "Remove",
-
-                                //                 style: TextStyle(
-                                //                   color: whiteColor,
-                                //                   fontSize: 14,
-                                //                   fontWeight: FontWeight.w600,
-                                //                   // alignment: Alignment.center,
-                                //                   // backgroundColor: greyColor,
-                                //                 ),
-                                //               ),
-                                //               onPressed: () {
-                                //                 // Fluttertoast.showToast(
-                                //                 //   msg: "Team Already Added",
-                                //                 //   toastLength: Toast.LENGTH_SHORT,
-                                //                 //   gravity: ToastGravity.BOTTOM,
-                                //                 //   timeInSecForIosWeb: 1,
-                                //                 //   backgroundColor: Colors.grey,
-                                //                 //   textColor: Colors.white,
-                                //                 //   fontSize: 16.0,
-                                //                 // );
-                                //                 (documents[index]['score']==0 && documents[index]['events'].length==0)?
-                                //                 {
-                                //                 // FirebaseFirestore.instance
-                                //                 //     .collection("fests")
-                                //                 //     .doc(prevOlympusID)
-                                //                 //     .collection("teams")
-                                //                 //     .doc(documents[index]["id"])
-                                //                 //     .update({
-                                //                 //       "events": FieldValue.arrayRemove([this.widget.eventID])
-                                //                 //     }),
-
-
-                                //                 FirebaseFirestore.instance
-                                //                     .collection('fests')
-                                //                     .doc(prevOlympusID)
-                                //                     .collection("teams")
-                                //                     .doc(documents[index]['id'])
-
-                                //                     .update({
-                                //                       'soft_delete': true,
-                                //                     })
-                                //                     }: Fluttertoast.showToast(
-                                //                       msg: "Cannot delete team",
-                                //                       toastLength: Toast.LENGTH_SHORT,
-                                //                       gravity: ToastGravity.BOTTOM,
-                                //                       timeInSecForIosWeb: 1,
-                                //                       backgroundColor: Colors.grey,
-                                //                       textColor: Colors.white,
-                                //                       fontSize: 16.0,
-                                //                     );
-                                //                     _onRefresh();
-                                //               },
-                                //             ),
-                                //           // (documents[index]['soft_delete'])
-                                //           // ElevatedButton(
-                                //           //     style: ElevatedButton.styleFrom(
-                                //           //       backgroundColor: redColor,
-                                //           //       shape: RoundedRectangleBorder(
-                                //           //         borderRadius:
-                                //           //             BorderRadius.circular(8.0),
-                                //           //       ),
-                                //           //     ),
-                                //           //     child: Text(
-                                //           //       "Remove",
-                                //           //       style: TextStyle(
-                                //           //         color: whiteColor,
-                                //           //         fontSize: 14,
-                                //           //         fontWeight: FontWeight.w600,
-                                //           //       ),
-                                //           //     ),
-                                //           //     onPressed: () {
-                                //           //       // Fluttertoast.showToast(
-                                //           //       //   msg: "Team Already Added",
-                                //           //       //   toastLength: Toast.LENGTH_SHORT,
-                                //           //       //   gravity: ToastGravity.BOTTOM,
-                                //           //       //   timeInSecForIosWeb: 1,
-                                //           //       //   backgroundColor: Colors.red,
-                                //           //       //   textColor: Colors.white,
-                                //           //       //   fontSize: 16.0,
-                                //           //       // );
-                                //           //       Map<String, dynamic> team = {
-                                //           //     'name': documents[index]['name'],
-                                //           //     'id': documents[index]['id'],
-                                //           //     'score': 0,
-                                //           //         // documents[index]['score'],
-                                //           //     'events': documents[index]
-                                //           //         ['events'],
-                                //           //   };
-                                //           //   // documents[index]['soft_delete']=true;
-                                //           //       // removeTeamForEvent(this.widget.eventID, team);
-                                //           //       // removeEventId(this.widget.eventID, team);
-                                //           //     },
-                                //           //   ),
-                                //         ],
-                                //       ),
-                                // ),
-
-                                // :null,
-                                //SizedBox(height: 5),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                          );
+                        },
+                      );
               } else {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -525,9 +529,8 @@ class _AddTeamToFestState extends State<AddTeamToFest> {
   buildListItem(documents) {
     return;
   }
-  updateFestTeamName(document, documents){
-    return Container(
-        child:Text('hello')
-    );
+
+  updateFestTeamName(document, documents) {
+    return Container(child: Text('hello'));
   }
 }

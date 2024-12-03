@@ -1,9 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/sponsorshipsModel.dart';
-import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/widgets/errorWidget.dart';
@@ -22,7 +20,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentSponsorCardIndex = 0;
-  final CarouselController _sponsorCardController = CarouselController();
+  final CarouselSliderController _sponsorCardController =
+      CarouselSliderController();
   DatabaseServices databaseServices = DatabaseServices();
 
   User? currentUser;

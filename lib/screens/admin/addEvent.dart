@@ -87,8 +87,8 @@ class _AddEventState extends State<AddEvent> {
   @override
   void initState() {
     super.initState();
-    dateFrom.text = DateTime.now().toString();
-    dateTo.text = DateTime.now().toString();
+    // dateFrom.text = DateTime.now().toString();
+    // dateTo.text = DateTime.now().toString();
     _controller.add(TextEditingController());
     _children.add(Container(
         child: CustomTextField1(
@@ -129,14 +129,19 @@ class _AddEventState extends State<AddEvent> {
                             ),
                           ),
                           Switch(
-                              value: isFest,
-                              onChanged: (val) {
-                                setState(() {
-                                  isFest = val;
-                                  if (!val) isIndivisual = false;
-                                  if (!val) parentId = "";
-                                });
-                              }),
+                            focusColor: Colors.amber,
+                            thumbColor: WidgetStatePropertyAll(Colors.white),
+                            trackColor: WidgetStatePropertyAll(primaryColor),
+                            value: isFest,
+                            onChanged: (val) {
+                              setState(() {
+                                isFest = val;
+                                print(isFest);
+                                if (!val) isIndivisual = false;
+                                if (!val) parentId = "";
+                              });
+                            },
+                          ),
                         ],
                       ),
                       isFest
@@ -185,7 +190,8 @@ class _AddEventState extends State<AddEvent> {
                                         child: Text(
                                           value,
                                           style: const TextStyle(
-                                              color: Colors.black),
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -314,7 +320,7 @@ class _AddEventState extends State<AddEvent> {
                                     ),
                                   ),
                                   onChanged: (String? value) {
-                                    ss(() {
+                                    setState(() {
                                       type = value;
                                     });
                                     //print(parentId);
@@ -954,8 +960,9 @@ class _AddEventState extends State<AddEvent> {
                     margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: primaryColor),
+                      borderRadius: BorderRadius.circular(10),
+                      color: primaryColor,
+                    ),
                     alignment: Alignment.center,
                     child: Text(
                       "Add Event",
@@ -990,7 +997,7 @@ class _AddEventState extends State<AddEvent> {
                     }
                     LoadingFunc.end();
                   },
-                )
+                ),
               ],
             ),
           ),
@@ -1002,120 +1009,168 @@ class _AddEventState extends State<AddEvent> {
   addChildEvent() async {
     var uid = Uuid();
     String id = uid.v4().split("-").join("");
-    if (eventData != null) {
-      if (!isFest
-          ? DateTime.parse(dateFrom.text).isAfter(eventData!.dateFrom!) &&
-              DateTime.parse(dateTo.text).isBefore(eventData!.dateTo!)
-          : true) {
-        _controller.forEach((i) {
-          rules.add(i.text.trim());
-        });
-        List<String> headIds = [];
-        eventhead.forEach((h) {
-          headIds.add(h.uid!);
-        });
-        int? typei,
-            _price,
-            participationPoints,
-            runnerUpPoints,
-            winnerPoints,
-            participantsLimit,
-            volunteersLimit,
-            volunteersPoints,
-            eventHeadsPoints;
 
-        try {
-          eventTypes!.values.forEach((value) {
-            if (value["name"] == type) {
-              typei = value['id'];
-            }
-          });
-          _price = int.parse(price.text.trim());
-          participationPoints = int.parse(participationPoint.text.trim());
-          runnerUpPoints = int.parse(runnerUpPoint.text.trim());
-          winnerPoints = int.parse(winnerPoint.text.trim());
-          participantsLimit = int.parse(participationLimit.text.trim());
-          volunteersLimit = int.parse(volunteerLimit.text.trim());
-          volunteersPoints = int.parse(volunteerPoints.text.trim());
-          eventHeadsPoints = int.parse(eventHeadPoints.text.trim());
-        } catch (e) {
-          //print(e);
-          typei = 0;
-          _price = 0;
-          participationPoints = 0;
-          runnerUpPoints = 0;
-          winnerPoints = 0;
-          participantsLimit = 1000;
-          volunteersLimit = 20;
-          volunteersPoints = 0;
-          eventHeadsPoints = 0;
-        }
-        if (hasImage) {
-          bannerUrl = await cs.uploadEventImage(
-              '${name.text.trim().replaceAll(" ", "_")}-${DateTime.now().year}',
-              img!);
-        }
-        var pref = await SharedPreferences.getInstance();
-        var userId = pref.getString(UID_KEY);
+    if (eventData == null) {
+      Fluttertoast.showToast(
+          msg: "Please select a parent event",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.red,
+          fontSize: 16.0);
+      return;
+    }
 
-        var eventdata = Event(
-            id: id,
-            name: name.text.trim(),
-            bannerUrl: bannerUrl,
-            price: _price,
-            description: description.text.trim(),
-            dateFrom: DateTime.parse(dateFrom.text),
-            dateTo: DateTime.parse(dateTo.text),
-            type: typei!,
-            rules: rules,
-            location: location.text.trim(),
-            locationType: locationType!,
-            participationPoints: participationPoints,
-            runnerUpPoints: runnerUpPoints,
-            winnerPoints: winnerPoints,
-            participantsLimit: participantsLimit,
-            volunteersLimit: volunteersLimit,
-            volunteerPoints: volunteersPoints,
-            eventHeadPoints: eventHeadsPoints,
-            meetLink: eventMeetingURL.text.trim(),
-            eventLogisticsUrl: eventLogisticURL.text.trim(),
-            registrationUrl: registrationURL.text.trim(),
-            feedbackUrl: feedbackURL.text.trim(),
-            eventHeads: headIds,
-            parentId: parentId,
-            softDelete: false,
-            goLive: false,
-            forSakec: forSakec,
-            createdBy: userId);
+    DateTime newEventStart = DateTime.parse(dateFrom.text);
+    DateTime newEventEnd = DateTime.parse(dateTo.text);
 
-        var doc = await db.addEvent(eventdata, id);
-        db.updateChildEvent(parentId, id);
-        headIds.forEach((h) {
-          db.updateRoles(h, Event(id: doc.uid), headIds, 2);
-        });
+    bool isValidDate = isFest ||
+        (newEventStart.isAfter(eventData!.dateFrom!) &&
+            newEventEnd.isBefore(eventData!.dateTo!) &&
+            newEventStart.isBefore(newEventEnd));
 
-        Navigator.pop(context);
+    if (!isValidDate) {
+      Fluttertoast.showToast(
+          msg:
+              "Event dates must be within the parent event's date range (${eventData!.dateFrom!.toString()} to ${eventData!.dateTo!.toString()}) and start date must be before end date",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.red,
+          fontSize: 16.0);
+      return;
+    }
+
+    // Collect rules
+    _controller.forEach((i) {
+      rules.add(i.text.trim());
+    });
+
+    // Collect event head IDs
+    List<String> headIds = [];
+    eventhead.forEach((h) {
+      headIds.add(h.uid!);
+    });
+
+    // Parse and validate numeric inputs
+    int? typei,
+        _price,
+        participationPoints,
+        runnerUpPoints,
+        winnerPoints,
+        participantsLimit,
+        volunteersLimit,
+        volunteersPoints,
+        eventHeadsPoints;
+
+    try {
+      typei =
+          eventTypes?.values.firstWhere((value) => value["name"] == type)['id'];
+      _price = int.parse(price.text.trim());
+      participationPoints = int.parse(participationPoint.text.trim());
+      runnerUpPoints = int.parse(runnerUpPoint.text.trim());
+      winnerPoints = int.parse(winnerPoint.text.trim());
+      participantsLimit = int.parse(participationLimit.text.trim());
+      volunteersLimit = int.parse(volunteerLimit.text.trim());
+      volunteersPoints = int.parse(volunteerPoints.text.trim());
+      eventHeadsPoints = int.parse(eventHeadPoints.text.trim());
+    } catch (e) {
+      print("Error parsing numeric inputs: $e");
+      Fluttertoast.showToast(
+          msg: "Invalid numeric input. Please check all number fields.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[700],
+          textColor: Colors.red,
+          fontSize: 16.0);
+      return;
+    }
+
+    // Upload image if present
+    if (hasImage && img != null) {
+      try {
+        bannerUrl = await cs.uploadEventImage(
+            '${name.text.trim().replaceAll(" ", "_")}-${DateTime.now().year}',
+            img!);
+      } catch (e) {
+        print("Error uploading image: $e");
         Fluttertoast.showToast(
-            msg: "Event Added Successfully",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.white,
-            textColor: Colors.black,
-            fontSize: 16.0);
-      } else {
-        Fluttertoast.showToast(
-            msg: "Invalid data",
+            msg: "Failed to upload event image. Continuing without image.",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.grey[700],
             textColor: Colors.red,
             fontSize: 16.0);
+        bannerUrl = ""; // Set bannerUrl to an empty string if upload fails
       }
-    } else {
+    }
+
+    // Get current user ID
+    var pref = await SharedPreferences.getInstance();
+    var userId = pref.getString(UID_KEY);
+
+    // Create event data object
+    var eventdata = Event(
+      id: id,
+      name: name.text.trim(),
+      bannerUrl: bannerUrl,
+      price: _price,
+      description: description.text.trim(),
+      dateFrom: newEventStart,
+      dateTo: newEventEnd,
+      type: typei!,
+      rules: rules,
+      location: location.text.trim(),
+      locationType: locationType!,
+      participationPoints: participationPoints,
+      runnerUpPoints: runnerUpPoints,
+      winnerPoints: winnerPoints,
+      participantsLimit: participantsLimit,
+      volunteersLimit: volunteersLimit,
+      volunteerPoints: volunteersPoints,
+      eventHeadPoints: eventHeadsPoints,
+      meetLink: eventMeetingURL.text.trim(),
+      eventLogisticsUrl: eventLogisticURL.text.trim(),
+      registrationUrl: registrationURL.text.trim(),
+      feedbackUrl: feedbackURL.text.trim(),
+      eventHeads: headIds,
+      parentId: parentId,
+      softDelete: false,
+      goLive: false,
+      forSakec: forSakec,
+      createdBy: userId,
+    );
+
+    try {
+      // Add event to database
+      var doc = await db.addEvent(eventdata, id);
+
+      // Update parent event
+      await db.updateChildEvent(parentId, id);
+
+      // Update roles for event heads
+      // for (var headId in headIds) {
+      //   await db.updateRoles(headId, Event(id: doc.uid), headIds, 2);
+      // }
+
+      // Success
+      Navigator.pop(context);
       Fluttertoast.showToast(
-          msg: "Please Select Parent Event",
+          msg: "Event Added Successfully",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16.0);
+    } catch (e) {
+      print("Error adding event: $e");
+      Fluttertoast.showToast(
+          msg: "Failed to add event. Please try again.",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -1155,24 +1210,25 @@ class _AddEventState extends State<AddEvent> {
     var userId = pref.getString(UID_KEY);
 
     var eventdata = Event(
-        id: id,
-        name: name.text.trim(),
-        bannerUrl: bannerUrl,
-        description: description.text.trim(),
-        dateFrom: DateTime.parse(dateFrom.text),
-        dateTo: DateTime.parse(dateTo.text),
-        rules: rules,
-        icon: index,
-        isEvent: isIndivisual,
-        locationType: locationType!,
-        volunteerPoints: volunteersPoints,
-        eventHeadPoints: eventHeadsPoints,
-        eventHeads: headIds,
-        parentId: "",
-        softDelete: false,
-        goLive: false,
-        forSakec: forSakec,
-        createdBy: userId);
+      id: id,
+      name: name.text.trim(),
+      bannerUrl: bannerUrl,
+      description: description.text.trim(),
+      dateFrom: DateTime.parse(dateFrom.text),
+      dateTo: DateTime.parse(dateTo.text),
+      rules: rules,
+      icon: index,
+      isEvent: isIndivisual,
+      locationType: locationType!,
+      volunteerPoints: volunteersPoints,
+      eventHeadPoints: eventHeadsPoints,
+      eventHeads: headIds,
+      parentId: "",
+      softDelete: false,
+      goLive: false,
+      forSakec: forSakec,
+      createdBy: userId,
+    );
 
     var doc = await db.addFest(eventdata, id);
     headIds.forEach((h) {
@@ -1247,55 +1303,57 @@ class _AddEventState extends State<AddEvent> {
     var userId = pref.getString(UID_KEY);
 
     var festdata = Event(
-        id: fid,
-        name: name.text.trim(),
-        bannerUrl: bannerUrl,
-        description: description.text.trim(),
-        dateFrom: DateTime.parse(dateFrom.text),
-        dateTo: DateTime.parse(dateTo.text),
-        rules: rules,
-        icon: index,
-        locationType: locationType!,
-        isEvent: isIndivisual,
-        volunteerPoints: 0,
-        eventHeadPoints: 0,
-        eventHeads: [],
-        parentId: "",
-        childId: [eid],
-        softDelete: false,
-        goLive: false,
-        forSakec: forSakec,
-        createdBy: userId);
+      id: fid,
+      name: name.text.trim(),
+      bannerUrl: bannerUrl,
+      description: description.text.trim(),
+      dateFrom: DateTime.parse(dateFrom.text),
+      dateTo: DateTime.parse(dateTo.text),
+      rules: rules,
+      icon: index,
+      locationType: locationType!,
+      isEvent: isIndivisual,
+      volunteerPoints: 0,
+      eventHeadPoints: 0,
+      eventHeads: [],
+      parentId: "",
+      childId: [eid],
+      softDelete: false,
+      goLive: false,
+      forSakec: forSakec,
+      createdBy: userId,
+    );
 
     var eventdata = Event(
-        id: eid,
-        name: name.text.trim(),
-        bannerUrl: bannerUrl,
-        price: _price,
-        description: description.text.trim(),
-        dateFrom: DateTime.parse(dateFrom.text),
-        dateTo: DateTime.parse(dateTo.text),
-        type: typei!,
-        rules: rules,
-        location: location.text.trim(),
-        locationType: locationType!,
-        participationPoints: participationPoints,
-        runnerUpPoints: runnerUpPoints,
-        winnerPoints: winnerPoints,
-        participantsLimit: participantsLimit,
-        volunteersLimit: volunteersLimit,
-        volunteerPoints: volunteersPoints,
-        eventHeadPoints: eventHeadsPoints,
-        meetLink: eventMeetingURL.text.trim(),
-        eventLogisticsUrl: eventLogisticURL.text.trim(),
-        registrationUrl: registrationURL.text.trim(),
-        feedbackUrl: feedbackURL.text.trim(),
-        eventHeads: headIds,
-        parentId: fid,
-        softDelete: false,
-        goLive: false,
-        forSakec: forSakec,
-        createdBy: userId);
+      id: eid,
+      name: name.text.trim(),
+      bannerUrl: bannerUrl,
+      price: _price,
+      description: description.text.trim(),
+      dateFrom: DateTime.parse(dateFrom.text),
+      dateTo: DateTime.parse(dateTo.text),
+      type: typei!,
+      rules: rules,
+      location: location.text.trim(),
+      locationType: locationType!,
+      participationPoints: participationPoints,
+      runnerUpPoints: runnerUpPoints,
+      winnerPoints: winnerPoints,
+      participantsLimit: participantsLimit,
+      volunteersLimit: volunteersLimit,
+      volunteerPoints: volunteersPoints,
+      eventHeadPoints: eventHeadsPoints,
+      meetLink: eventMeetingURL.text.trim(),
+      eventLogisticsUrl: eventLogisticURL.text.trim(),
+      registrationUrl: registrationURL.text.trim(),
+      feedbackUrl: feedbackURL.text.trim(),
+      eventHeads: headIds,
+      parentId: fid,
+      softDelete: false,
+      goLive: false,
+      forSakec: forSakec,
+      createdBy: userId,
+    );
 
     var doc = await db.addFest(festdata, fid);
     var doc1 = await db.addEvent(eventdata, eid);
@@ -1319,6 +1377,7 @@ String? validateIsEmpty(value) {
   if (value.isEmpty) {
     return "Field Cannot be Empty";
   }
+  return null;
 }
 
 

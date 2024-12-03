@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/screens/admin/admin_page.dart';
 import 'package:pratishtha/screens/home/calendarPage.dart';
 import 'package:pratishtha/screens/home/homePage.dart';
 import 'package:pratishtha/screens/home/profilePage.dart';
 import 'package:pratishtha/screens/home/searchPage.dart';
-import 'package:pratishtha/screens/home/walletPage.dart';
-import 'package:pratishtha/screens/rules/calendarRulesPage.dart';
 import 'package:pratishtha/screens/rules/homeRulesPage.dart';
 import 'package:pratishtha/screens/rules/searchRulesPage.dart';
-import 'package:pratishtha/screens/rules/walletRulesPage.dart';
 import 'package:pratishtha/services/authenticationServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/widgets/bottomNavyBar.dart';

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/constants/colors.dart';
@@ -38,7 +37,7 @@ class _AddSponsorshipState extends State<AddSponsorship> {
   @override
   void initState() {
     name.text = widget.sponsor!.name!;
-    description.text = widget.sponsor!.description!;
+    description.text = widget.sponsor!.description;
     value.text = widget.sponsor!.value.toString();
     if (widget.sponsor!.imgUrl != "") {
       ibanner = widget.sponsor!.imgUrl;
@@ -52,7 +51,7 @@ class _AddSponsorshipState extends State<AddSponsorship> {
         isLogo = true;
       });
     }
-  
+
     super.initState();
   }
 

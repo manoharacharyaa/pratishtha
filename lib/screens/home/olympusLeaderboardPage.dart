@@ -1,10 +1,7 @@
 // import 'dart:js';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pratishtha/constants/SizeConfig.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:pratishtha/widgets/errorWidget.dart';
 

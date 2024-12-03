@@ -113,33 +113,36 @@ class _EditWalletState extends State<EditWallet> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           10)),
-                                                      focusedBorder: OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          borderSide: BorderSide(
-                                                              color:
-                                                                  primaryColor)),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                      color:
+                                                                          primaryColor)),
                                                       hintText:
                                                           'Search for Users',
                                                       hintStyle: TextStyle(
                                                         color: blackColor,
                                                       ),
                                                     ),
-                                                    onChanged: (value){
+                                                    onChanged: (value) {
                                                       ss(() {
                                                         searchResultsUsersList =
                                                             userSearch(
                                                                 query:
-                                                                searchTextEditingController
-                                                                    .text,
+                                                                    searchTextEditingController
+                                                                        .text,
                                                                 allUsersList:
-                                                                snapshot
-                                                                    .data[0]);
-    
+                                                                    snapshot
+                                                                        .data[0]);
+
                                                         selectedUser =
-                                                        searchResultsUsersList[
-                                                        0];
+                                                            searchResultsUsersList[
+                                                                0];
                                                       });
                                                     },
                                                   ),
@@ -155,12 +158,12 @@ class _EditWalletState extends State<EditWallet> {
                                                                 allUsersList:
                                                                     snapshot
                                                                         .data[0]);
-    
+
                                                         selectedUser =
                                                             searchResultsUsersList[
                                                                 0];
                                                       });
-    
+
                                                       // print(
                                                       //     "statebuild: ${tempSearchResults}");
                                                       // // ss(() {
@@ -192,15 +195,17 @@ class _EditWalletState extends State<EditWallet> {
                                             ),
                                             searchResultsUsersList.length == 0
                                                 ? Container(
-                                                    height: MediaQuery.of(context)
-                                                            .size
-                                                            .height /
-                                                        3,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            3,
                                                     padding: EdgeInsets.only(
                                                         bottom: 20),
                                                     child: Text(
                                                       "You havent searched for anything yet",
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                   )
                                                 : Expanded(
@@ -277,19 +282,20 @@ class _EditWalletState extends State<EditWallet> {
                               IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      priceTextEditingController.text =
-                                          (double.parse(priceTextEditingController
+                                      priceTextEditingController
+                                          .text = (double.parse(
+                                                      priceTextEditingController
                                                           .text)
-                                                      .round() -
-                                                  1)
-                                              .toString();
+                                                  .round() -
+                                              1)
+                                          .toString();
                                     });
                                   },
                                   icon: Icon(FontAwesomeIcons.minus)),
                               Container(
                                 margin: EdgeInsets.all(15),
-                                width:
-                                    MediaQuery.of(context).size.width * 0.6 - 30,
+                                width: MediaQuery.of(context).size.width * 0.6 -
+                                    30,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: dullGreyColor.withOpacity(0.2)),
@@ -310,7 +316,8 @@ class _EditWalletState extends State<EditWallet> {
                                   },
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10)),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide:
@@ -325,12 +332,13 @@ class _EditWalletState extends State<EditWallet> {
                               IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      priceTextEditingController.text =
-                                          (double.parse(priceTextEditingController
+                                      priceTextEditingController
+                                          .text = (double.parse(
+                                                      priceTextEditingController
                                                           .text)
-                                                      .round() +
-                                                  1)
-                                              .toString();
+                                                  .round() +
+                                              1)
+                                          .toString();
                                     });
                                   },
                                   icon: Icon(FontAwesomeIcons.plus)),
@@ -346,7 +354,7 @@ class _EditWalletState extends State<EditWallet> {
                                           .trim()) !=
                                       0 &&
                                   priceTextEditingController.text != "") {
-                                if (selectedUser!.isVerified!) {
+                                if (selectedUser!.isVerified) {
                                   await walletServices.addMoney(
                                       toUid: selectedUser!.uid!,
                                       value: priceTextEditingController.text);
@@ -358,7 +366,7 @@ class _EditWalletState extends State<EditWallet> {
                                     searchResultsUsersList = [];
                                     priceTextEditingController.text = "0";
                                   });
-                                } else if (!selectedUser!.isVerified!) {
+                                } else if (!selectedUser!.isVerified) {
                                   Fluttertoast.showToast(
                                       msg:
                                           "Ask the selected user to verify themselves first",

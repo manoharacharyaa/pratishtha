@@ -9,6 +9,7 @@ import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/models/userModel.dart' as user;
 import 'package:pratishtha/screens/home/editProfile.dart';
+import 'package:pratishtha/screens/home/host_leaderboard_page.dart';
 import 'package:pratishtha/screens/home/pointsPage.dart';
 import 'package:pratishtha/screens/home/walletPage.dart';
 import 'package:pratishtha/services/databaseServices.dart';
@@ -239,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     SizedBox(width: 5),
                                     this.widget.selectedUser!.isVerified
                                         ? [3, 5, 6].contains(
-                                                this.widget.selectedUser!.role!)
+                                                this.widget.selectedUser!.role)
                                             ? Icon(Icons.verified,
                                                 color: primaryColor)
                                             : Container()
@@ -442,6 +443,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ),
                                       )
                                     : SizedBox.shrink(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                  child: Text(
+                                    "My Events",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                                 this.widget.selectedUser!.achievements!.isEmpty
                                     ? Container()
                                     : FutureBuilder(
@@ -527,9 +540,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             this.widget.selectedUser!.role == 3
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 5,
-                                      vertical: 10,
-                                    ),
+                                        horizontal: 5),
                                     child: ClipSmoothRect(
                                       radius: SmoothBorderRadius(
                                         cornerRadius: 15,
@@ -539,88 +550,65 @@ class _ProfilePageState extends State<ProfilePage> {
                                         color: primaryColor,
                                         height: 300,
                                         width: double.infinity,
-                                        child: Expanded(
-                                          child: FutureBuilder(
-                                            future: getEvents(),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return CircularProgressIndicator();
-                                              }
-                                              if (snapshot.hasData) {
-                                                List<Event> event =
-                                                    snapshot.data!;
-                                                return ListView.builder(
-                                                  // shrinkWrap: true,
-                                                  itemCount: 10,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              6),
-                                                      child: SizedBox(
-                                                        height: 80,
-                                                        child: Card(
-                                                          color: secondaryColor,
-                                                          shape:
-                                                              SmoothRectangleBorder(
-                                                            borderRadius:
-                                                                SmoothBorderRadius(
-                                                              cornerRadius: 10,
-                                                              cornerSmoothing:
-                                                                  1,
-                                                            ),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child:
-                                                                    ClipSmoothRect(
-                                                                  radius:
-                                                                      SmoothBorderRadius(
-                                                                    cornerRadius:
-                                                                        8,
-                                                                    cornerSmoothing:
-                                                                        1,
-                                                                  ),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    'assets/images/pageNotFound1.png',
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'Boxing',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 20,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                        child: ListView.builder(
+                                          itemCount: 10,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(6),
+                                              child: SizedBox(
+                                                height: 80,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            HostLeaderBoardPage(),
                                                       ),
                                                     );
                                                   },
-                                                );
-                                              }
-                                              return SizedBox();
-                                            },
-                                            // child: Container(
-                                            //   color: Colors.black,
-                                            //   height:
-                                            //       MediaQuery.sizeOf(context).height *
-                                            //           0.4,
-                                            //   width: double.infinity,
-                                            // ),
-                                          ),
+                                                  child: Card(
+                                                    color: secondaryColor,
+                                                    shape:
+                                                        SmoothRectangleBorder(
+                                                      borderRadius:
+                                                          SmoothBorderRadius(
+                                                        cornerRadius: 10,
+                                                        cornerSmoothing: 1,
+                                                      ),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: ClipSmoothRect(
+                                                            radius:
+                                                                SmoothBorderRadius(
+                                                              cornerRadius: 8,
+                                                              cornerSmoothing:
+                                                                  1,
+                                                            ),
+                                                            child: Image.asset(
+                                                              'assets/images/pageNotFound1.png',
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          'Boxing',
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ),

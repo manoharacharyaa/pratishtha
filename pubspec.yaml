@@ -61,7 +61,7 @@ dependencies:
   url_launcher: ^6.2.3
   flutter_inappwebview: ^5.7.2+3
   google_fonts: ^6.1.0
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
   async: ^2.11.0
   excel: ^4.0.2
   path_provider: ^2.1.2

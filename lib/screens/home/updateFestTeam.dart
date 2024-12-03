@@ -2,9 +2,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/constants/keys.dart';
@@ -12,10 +9,9 @@ import 'package:pratishtha/constants/keys.dart';
 import '../../widgets/connectivityChecker.dart';
 
 class updateFestTeam extends StatefulWidget {
-
   List<dynamic> eventIdList;
   String idString;
-  updateFestTeam(this.idString, this.eventIdList,  {Key? key}) : super(key: key);
+  updateFestTeam(this.idString, this.eventIdList, {Key? key}) : super(key: key);
 
   @override
   State<updateFestTeam> createState() => _updateFestTeamState();
@@ -26,6 +22,7 @@ class _updateFestTeamState extends State<updateFestTeam> {
     setState(() {});
     return Future.delayed(Duration(seconds: 1));
   }
+
   final _formKeys = GlobalKey<FormState>();
 
   final TextEditingController firstNameController = TextEditingController();
@@ -83,7 +80,7 @@ class _updateFestTeamState extends State<updateFestTeam> {
           // List<DocumentSnapshot> documents = snapshots.data.docs;
           // debugPrint('------------------------' + documents.toString());
 
-          child:Scaffold(
+          child: Scaffold(
             appBar: AppBar(
               title: Text("Edit Match Name"),
               centerTitle: true,
@@ -107,7 +104,6 @@ class _updateFestTeamState extends State<updateFestTeam> {
                               style: const TextStyle(
                                 color: Colors.black,
                               ),
-
                               decoration: InputDecoration(
                                 // errorText: validateIsEmptyFest(firstNameController.text),
                                 labelText: "Team Name",
@@ -138,24 +134,20 @@ class _updateFestTeamState extends State<updateFestTeam> {
                                   borderSide: BorderSide.none,
                                 ),
                                 contentPadding:
-                                const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    const EdgeInsets.fromLTRB(20, 15, 20, 15),
                                 fillColor: Colors.white,
                                 filled: true,
                               ),
-
                               onSaved: (value) {
                                 firstNameController.text = value!;
                               },
                               textInputAction: TextInputAction.done,
-
                             ),
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () {
-
-                            if(firstNameController.text=='')
-                            {
+                            if (firstNameController.text == '') {
                               Fluttertoast.showToast(
                                   msg: "Team name cannot be empty",
                                   toastLength: Toast.LENGTH_SHORT,
@@ -164,9 +156,7 @@ class _updateFestTeamState extends State<updateFestTeam> {
                                   backgroundColor: Colors.green,
                                   textColor: Colors.white,
                                   fontSize: 16.0);
-                            }
-                            else
-                            {
+                            } else {
                               // List<String> eventIdList= this.widget.teamDocument['events'];
                               //update name of team in fest
                               debugPrint(widget.idString);
@@ -176,60 +166,60 @@ class _updateFestTeamState extends State<updateFestTeam> {
                                   .collection("teams")
                                   .doc(widget.idString)
                                   .update({
-                                'name': firstNameController.text.trim().toUpperCase(),
-
+                                'name': firstNameController.text
+                                    .trim()
+                                    .toUpperCase(),
                               });
                               //get id of event array
                               debugPrint('${widget.eventIdList}');
-                              widget.eventIdList.forEach((element) {
-                                FirebaseFirestore.instance
-                                    .collection('events')
-                                    .doc(element)
-                                    .collection("teams")
-                                    .doc(widget.idString)
-                                    .update({
-                                  'name': firstNameController.text.trim().toUpperCase()
-                                });
-                              },);
+                              widget.eventIdList.forEach(
+                                (element) {
+                                  FirebaseFirestore.instance
+                                      .collection('events')
+                                      .doc(element)
+                                      .collection("teams")
+                                      .doc(widget.idString)
+                                      .update({
+                                    'name': firstNameController.text
+                                        .trim()
+                                        .toUpperCase()
+                                  });
+                                },
+                              );
                               _onRefresh();
-                            };
+                            }
+                            ;
                             // debugPrint(firstNameController.text);
                           },
                           child: Text("Add Team"),
                         ),
-
-
                       ],
-
                     ),
                   ),
-
                 ),
               ),
-
             ),
-
           )
 
-        // }
-        // }
-        //   catch (e) {
-        //   return Scaffold(
-        //     body: Center(
-        //       child: Text(
-        //         'No Teams Found ${e.toString()}',
-        //         style: TextStyle(
-        //           color: Theme.of(context).primaryColorDark,
-        //           fontSize: 15,
-        //           fontWeight: FontWeight.w700,
-        //         ),
-        //       ),
-        //     ),
-        //   );
-        // }
+          // }
+          // }
+          //   catch (e) {
+          //   return Scaffold(
+          //     body: Center(
+          //       child: Text(
+          //         'No Teams Found ${e.toString()}',
+          //         style: TextStyle(
+          //           color: Theme.of(context).primaryColorDark,
+          //           fontSize: 15,
+          //           fontWeight: FontWeight.w700,
+          //         ),
+          //       ),
+          //     ),
+          //   );
+          // }
 
-        // ),
-      ),
+          // ),
+          ),
     );
   }
 }

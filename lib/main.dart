@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:pratishtha/leaderBoard.dart';
-import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/styles/mainTheme.dart';
 import 'package:pratishtha/widgets/splashScreen.dart';
 import 'services/authenticationServices.dart';
@@ -9,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pratishtha/screens/home/homePage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

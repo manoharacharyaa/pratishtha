@@ -11,12 +11,10 @@ class CouncilCard extends StatelessWidget {
   final String year;
   CouncilCard({required this.council, required this.year});
 
-
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         launch(
           ('tel: +91${council.phone}'),
         );
@@ -48,7 +46,7 @@ class CouncilCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    imageUrl: council!.photo,
+                    imageUrl: council.photo,
                     placeholder: (context, url) => loadingWidget(),
                     errorWidget: (context, url, error) => Icon(
                       Icons.error,
@@ -68,7 +66,7 @@ class CouncilCard extends StatelessWidget {
                     FittedBox(
                       fit: BoxFit.fill,
                       child: Text(
-                        council!.name,
+                        council.name,
                         style: TextStyle(
                           color: blackColor,
                           // fontFamily: kFont,
@@ -80,7 +78,7 @@ class CouncilCard extends StatelessWidget {
                     FittedBox(
                       fit: BoxFit.fill,
                       child: Text(
-                        council!.post,
+                        council.post,
                         style: TextStyle(
                           color: goldColor,
                           fontWeight: FontWeight.w600,
@@ -91,7 +89,7 @@ class CouncilCard extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 5),
                       child: AutoSizeText(
-                        '"${council!.description.replaceAll("\\n", "\n")}"',
+                        '"${council.description.replaceAll("\\n", "\n")}"',
                         maxLines: 7,
                         minFontSize: 7,
                         maxFontSize: 12,

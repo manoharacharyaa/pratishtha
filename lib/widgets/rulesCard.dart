@@ -5,7 +5,7 @@ import 'package:pratishtha/constants/colors.dart';
 
 Widget rulesIconButton({BuildContext? context, Widget? popUpPage}) {
   return IconButton(
-    icon: Icon(FontAwesomeIcons.questionCircle),
+    icon: Icon(FontAwesomeIcons.circleQuestion),
     onPressed: () {
       showDialog(
           context: context!,
@@ -34,7 +34,7 @@ class RulesCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.all(10),
-      height: MediaQuery.of(context).size.height * (4/2.5),
+      height: MediaQuery.of(context).size.height * (4 / 2.5),
       decoration: BoxDecoration(
           color: whiteColor,
           //boxShadow: [containerShadow],
@@ -61,9 +61,10 @@ class RulesCard extends StatelessWidget {
           SizedBox(height: 15),
           rule?['image'] != null
               ? Container(
-            height: MediaQuery.of(context).size.height/4,
-                  child: Image(image: NetworkImage(rule!['image']), fit: BoxFit.fitHeight)
-                )
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: Image(
+                      image: NetworkImage(rule!['image']),
+                      fit: BoxFit.fitHeight))
               : Container(),
           Spacer()
         ],
@@ -82,7 +83,7 @@ class RulesWidget extends StatefulWidget {
 
 class _RulesWidgetState extends State<RulesWidget> {
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
 
   List<Widget> getRuleCards() {
     List<Widget> ruleCards = [];

@@ -266,8 +266,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                     slivers: <Widget>[
                       SliverAppBar(
                         expandedHeight: MediaQuery.of(context).size.height / 4,
-                        flexibleSpace: this.widget.event.bannerUrl == null ||
-                                this.widget.event.bannerUrl == ""
+                        flexibleSpace: this.widget.event.bannerUrl == ""
                             ? ComingSoonWidget(
                                 waveColor: secondaryColor,
                                 boxBackgroundColor: primaryColor,

@@ -5,12 +5,7 @@ import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
-import 'package:pratishtha/screens/admin/editPoints.dart';
-import 'package:pratishtha/screens/admin/editWallet.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
-import 'package:pratishtha/screens/gallery_screen.dart';
-import 'package:pratishtha/screens/home/completedEvents.dart';
-import 'package:pratishtha/screens/home/registeredEvents.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 

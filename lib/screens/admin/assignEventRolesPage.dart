@@ -169,7 +169,7 @@ class _AssignEventRolesState extends State<AssignEventRoles> {
 
       Map<String, dynamic> userData = {};
       userData['event_roles'] = currentUser.eventRoles;
-      if(currentUser.role == 0 || currentUser.role == 1) {
+      if (currentUser.role == 0 || currentUser.role == 1) {
         userData['role'] = widget.role;
       }
 
@@ -208,6 +208,7 @@ class _AssignEventRolesState extends State<AssignEventRoles> {
   int? getEventIndex(String key) {
     int length = events!.length;
     for (int i = 0; i < length; i++) if (events![i].id == key) return i;
+    return null;
   }
 
   void initFunction() {
@@ -225,7 +226,7 @@ class _AssignEventRolesState extends State<AssignEventRoles> {
           int? index = getEventIndex(splitRole[0]);
           //print('-' * 80);
           //print(events[index].name);
-          eventsMap[events![index!].id!] = events![index!].name!;
+          eventsMap[events![index!].id!] = events![index].name!;
         }
       }
     }
@@ -254,7 +255,7 @@ class _AssignEventRolesState extends State<AssignEventRoles> {
               height: 30,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color:  Colors.grey,
+                  color: Colors.grey,
                   width: 1,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(6.0)),

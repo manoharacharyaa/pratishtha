@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pratishtha/screens/admin/manageSponsorship.dart';
-import 'package:pratishtha/screens/home/eventPage.dart';
 import 'package:pratishtha/screens/home/olympusLeaderboardPage.dart';
 
 class AdminPage extends StatefulWidget {

@@ -94,8 +94,9 @@ class DatabaseServices {
 
   //Get Current User
   Future<user.User> getCurrentUser() async {
-    var userdata  = await userCollection.doc(auth.currentUser!.uid).get();
-    user.User usr = user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
+    var userdata = await userCollection.doc(auth.currentUser!.uid).get();
+    user.User usr =
+        user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
     sh.setUserFromPrefs(usr);
     sh.setValuesInPrefs(
         uid: usr.uid!,
@@ -110,14 +111,16 @@ class DatabaseServices {
   //Get User
   Future<user.User> getUser(String id) async {
     var userdata = await userCollection.doc(id).get();
-    user.User currentUser = user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
+    user.User currentUser =
+        user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
     return currentUser;
   }
 
   //Get single user
   Future<user.User> getSingleUser(String id) async {
     var userdata = await userCollection.doc(id).get();
-    user.User currentUser = user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
+    user.User currentUser =
+        user.userFromMap(userdata.data() as Map<String, dynamic>, userdata.id);
     return currentUser;
   }
 
@@ -471,7 +474,7 @@ class DatabaseServices {
 
   Future<void> cancelParticipantRegistration(
       {user.User? participant, Event? event}) async {
-    await pointsServices!.addPoints(
+    await pointsServices.addPoints(
         toUid: participant!.uid,
         value: '-${event!.participationPoints}',
         reason: 'Failed to participate in ${event.name} despite registering.');

@@ -23,7 +23,7 @@ Widget EventCard(
     onTap: () async {
       isVerified!
           ? await showDialog<void>(
-              context: context!,
+              context: context,
               barrierDismissible: true,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -46,7 +46,7 @@ Widget EventCard(
 
       if (isFest) {
         Navigator.push(
-            context!,
+            context,
             PageTransition(
                 child: FestPage(
                   event: event,
@@ -63,7 +63,7 @@ Widget EventCard(
           }
         }
         Navigator.push(
-          context!,
+          context,
           PageTransition(
               child: EventPage(
                 event: myChildEvent!,
@@ -73,7 +73,7 @@ Widget EventCard(
       } else {
         // Navigator.push(context, MaterialPageRoute(builder: (context)=>EventPage(event: event)));
         Navigator.push(
-            context!,
+            context,
             PageTransition(
                 child: EventPage(
                   event: event,
@@ -218,7 +218,7 @@ Widget ChildEventCard(
     onTap: () async {
       !isVerified!
           ? await showDialog<void>(
-              context: context!,
+              context: context,
               barrierDismissible: true,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -241,7 +241,7 @@ Widget ChildEventCard(
 
       if (isFest) {
         Navigator.push(
-            context!,
+            context,
             PageTransition(
                 child: FestPage(
                   event: event,
@@ -258,7 +258,7 @@ Widget ChildEventCard(
           }
         }
         Navigator.push(
-            context!,
+            context,
             PageTransition(
                 child: EventPage(
                   event: myChildEvent!,
@@ -267,7 +267,7 @@ Widget ChildEventCard(
       } else {
         // Navigator.push(context!!, MaterialPageRoute(builder: (context!!)=>EventPage(event: event)));
         Navigator.push(
-            context!,
+            context,
             PageTransition(
                 child: EventPage(
                   event: event,

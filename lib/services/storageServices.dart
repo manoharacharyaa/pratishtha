@@ -40,7 +40,7 @@ class StorageServices {
     return reference.getDownloadURL();
   }
 
-  Future<void> deleteImage(String url){
+  Future<void> deleteImage(String url) {
     return FirebaseStorage.instance.refFromURL(url).delete();
   }
 }

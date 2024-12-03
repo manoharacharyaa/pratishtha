@@ -2,7 +2,6 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/styles/mainTheme.dart';
 
 class PointsCard extends StatelessWidget {
   int? pointsValue;

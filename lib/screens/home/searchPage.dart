@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
 
             List<Event> tempAllEventsList = [];
 
-            if ([5, 3].contains(currentUser!.role!)) {
+            if ([5, 3].contains(currentUser!.role)) {
               tempAllEventsList = eventsSnapshot + festsSnapshot;
             } else {
               eventsSnapshot.forEach((Event event) {
@@ -275,7 +275,7 @@ class _SearchPageState extends State<SearchPage> {
     List<User> userSearchResults =
         userSearch(query: query!, allUsersList: allUsersList!);
     List<Event> eventSearchResults =
-        eventSearch(query: query!, allEventsList: allEventsList!);
+        eventSearch(query: query, allEventsList: allEventsList!);
     List<Widget> combinedSearchResults = [];
 
     for (int i = 0; i < eventSearchResults.length; i++) {

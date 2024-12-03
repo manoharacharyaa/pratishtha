@@ -10,8 +10,11 @@ import '../../widgets/connectivityChecker.dart';
 import '../../widgets/customTextField.dart';
 
 class editMatchPage extends StatefulWidget {
-  const editMatchPage({required this.event, this.matchList, required this.index, })
-      : super();
+  const editMatchPage({
+    required this.event,
+    this.matchList,
+    required this.index,
+  }) : super();
   final Event event;
   final dynamic matchList;
   final int index;
@@ -34,7 +37,7 @@ class _editMatchPageState extends State<editMatchPage> {
   Future<void> updateArrayElement(
       int index, Map<String, dynamic> newValue) async {
     var docRef =
-    FirebaseFirestore.instance.collection('events').doc(widget.event.id);
+        FirebaseFirestore.instance.collection('events').doc(widget.event.id);
 
     var snapshot = await docRef.get();
     var array = snapshot.data()!['matches'] as List;
@@ -71,91 +74,91 @@ class _editMatchPageState extends State<editMatchPage> {
         ),
         body: widget.matchList['resultsdeclare'] == true
             ? Center(
-          child: Text(
-            'Results Already Declared',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        )
-            :
-        SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Form(
-            key: addkey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                CustomTextField1(
-                  controller: score01,
-                  hintText:
-                  'Enter Team ${widget.matchList['team01']} Score',
-                  labelText: 'Team ${widget.matchList['team01']} Score',
-                  validator: validateIsEmpty,
-                  labelStyle: TextStyle(
-                    color: Colors.black87,
+                child: Text(
+                  'Results Already Declared',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                CustomTextField1(
-                  controller: score02,
-                  hintText:
-                  'Enter Team ${widget.matchList['team02']} Score',
-                  labelText: 'Team ${widget.matchList['team02']} Score',
-                  validator: validateIsEmpty,
-                  labelStyle: TextStyle(
-                    color: Colors.black87,
-                  ),
-                ),
-                Divider(),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => declareResultPage(
-                          matchList: widget.matchList,
-                          eventID: widget.event.id.toString(),
-                          index: widget.index,
-                          event: widget.event,
+              )
+            : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Form(
+                  key: addkey,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      CustomTextField1(
+                        controller: score01,
+                        hintText:
+                            'Enter Team ${widget.matchList['team01']} Score',
+                        labelText: 'Team ${widget.matchList['team01']} Score',
+                        validator: validateIsEmpty,
+                        labelStyle: TextStyle(
+                          color: Colors.black87,
                         ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    'Declare Resuls', style: TextStyle(color: Colors.white),
+                      CustomTextField1(
+                        controller: score02,
+                        hintText:
+                            'Enter Team ${widget.matchList['team02']} Score',
+                        labelText: 'Team ${widget.matchList['team02']} Score',
+                        validator: validateIsEmpty,
+                        labelStyle: TextStyle(
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Divider(),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                            Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => declareResultPage(
+                                matchList: widget.matchList,
+                                eventID: widget.event.id.toString(),
+                                index: widget.index,
+                                event: widget.event,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Declare Resuls',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
         floatingActionButton: widget.matchList['resultsdeclare'] == true
             ? Container()
             : FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: Theme.of(context).primaryColor,
-          child: IconButton(
-            onPressed: isLoading
-                ? null
-                : () {
-              updateData();
-            },
-            icon: isLoading
-                ? LoadingIndicator(
-                indicatorType: Indicator.ballClipRotateMultiple)
-                : const Icon(
-              Icons.upload,
-            ),
-          ),
-        ),
+                onPressed: () {},
+                backgroundColor: Theme.of(context).primaryColor,
+                child: IconButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          updateData();
+                        },
+                  icon: isLoading
+                      ? LoadingIndicator(
+                          indicatorType: Indicator.ballClipRotateMultiple)
+                      : const Icon(
+                          Icons.upload,
+                        ),
+                ),
+              ),
       ),
     );
   }
@@ -163,8 +166,7 @@ class _editMatchPageState extends State<editMatchPage> {
   String validateIsEmpty(value) {
     if (value.isEmpty) {
       return "Field Cannot be Empty";
-    }
-    else{
+    } else {
       return "";
     }
   }

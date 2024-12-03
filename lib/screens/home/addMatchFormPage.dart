@@ -6,8 +6,6 @@ import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 
-import '../../constants/colors.dart';
-
 class addMatchFormPage extends StatefulWidget {
   const addMatchFormPage({
     required this.eventID,
@@ -30,8 +28,10 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
 
   late Map<String, dynamic>? _selectedDocumentTeam1;
   late Map<String, dynamic>? _selectedDocumentTeam2;
-  late List<DropdownMenuItem<Map<String, dynamic>>> _dropdownMenuItemsTeam1 = [];
-  late List<DropdownMenuItem<Map<String, dynamic>>> _dropdownMenuItemsTeam2 = [];
+  late List<DropdownMenuItem<Map<String, dynamic>>> _dropdownMenuItemsTeam1 =
+      [];
+  late List<DropdownMenuItem<Map<String, dynamic>>> _dropdownMenuItemsTeam2 =
+      [];
   late List _documentsTeam1 = [];
   late List _documentsTeam2 = [];
 
@@ -44,8 +44,12 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
         _documentsTeam2 = results;
         _dropdownMenuItemsTeam1 = buildDropdownMenuItems(_documentsTeam1);
         _dropdownMenuItemsTeam2 = buildDropdownMenuItems(_documentsTeam2);
-        _selectedDocumentTeam1 = _dropdownMenuItemsTeam1.isNotEmpty ? _dropdownMenuItemsTeam1.first.value : null;
-        _selectedDocumentTeam2 = _dropdownMenuItemsTeam2.isNotEmpty ? _dropdownMenuItemsTeam2.first.value : null;
+        _selectedDocumentTeam1 = _dropdownMenuItemsTeam1.isNotEmpty
+            ? _dropdownMenuItemsTeam1.first.value
+            : null;
+        _selectedDocumentTeam2 = _dropdownMenuItemsTeam2.isNotEmpty
+            ? _dropdownMenuItemsTeam2.first.value
+            : null;
       });
     });
   }
@@ -165,7 +169,6 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
                     changedDropDownItemTeam1(selectedDocument);
                   },
                 ),
-
                 SizedBox(
                   height: 20,
                 ),
@@ -183,7 +186,6 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
                     changedDropDownItemTeam2(selectedDocument);
                   },
                 ),
-
                 SizedBox(
                   height: 20,
                 ),
@@ -199,15 +201,15 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
           onPressed: isLoading
               ? null
               : () {
-            uploadMatch();
-          },
+                  uploadMatch();
+                },
           backgroundColor: Theme.of(context).primaryColor,
           child: isLoading
               ? LoadingIndicator(
-              indicatorType: Indicator.ballClipRotateMultiple)
+                  indicatorType: Indicator.ballClipRotateMultiple)
               : const Icon(
-            Icons.upload,
-          ),
+                  Icons.upload,
+                ),
         ),
       ),
     );
@@ -216,9 +218,7 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
   String validateIsEmpty(value) {
     if (value.isEmpty) {
       return "Field Cannot be Empty";
-    }
-    else
-    {
+    } else {
       return "";
     }
   }

@@ -40,7 +40,7 @@ Widget ReceiptCard(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context!).size.width * 0.60,
+                  width: MediaQuery.of(context).size.width * 0.60,
                   child: AutoSizeText(
                     isWallet ? wallet!.reason! : point!.reason!,
                     style: TextStyle(
@@ -56,7 +56,9 @@ Widget ReceiptCard(
                   height: 5.0,
                 ),
                 AutoSizeText(
-                  isWallet ? getFormattedDateAndTime(wallet!.date!) : getFormattedDateAndTime(point!.date!),
+                  isWallet
+                      ? getFormattedDateAndTime(wallet!.date!)
+                      : getFormattedDateAndTime(point!.date!),
                   style: TextStyle(
                     fontSize: 14.0,
                     color: dullGreyColor,
@@ -73,15 +75,27 @@ Widget ReceiptCard(
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                isWallet ? int.parse(wallet!.value!)>0 ? '+ ₹${wallet.value!}' : '- ₹${(-1)*int.parse(wallet.value!)}' : int.parse(point!.value!)>0 ? '+ ₹${point.value!}' : point.value!,
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: isWallet ? int.parse(wallet!.value!)>0 ? positiveColor : negativeColor : int.parse(point!.value!)>0 ? positiveColor : negativeColor,
-                  fontSize: 20.0,
-                  //fontWeight: FontWeight.bold
-                )
-                //overflow: TextOverflow.clip,
-              ),
+                  isWallet
+                      ? int.parse(wallet!.value!) > 0
+                          ? '+ ₹${wallet.value!}'
+                          : '- ₹${(-1) * int.parse(wallet.value!)}'
+                      : int.parse(point!.value!) > 0
+                          ? '+ ₹${point.value!}'
+                          : point.value!,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: isWallet
+                        ? int.parse(wallet!.value!) > 0
+                            ? positiveColor
+                            : negativeColor
+                        : int.parse(point!.value!) > 0
+                            ? positiveColor
+                            : negativeColor,
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.bold
+                  )
+                  //overflow: TextOverflow.clip,
+                  ),
             ),
           )
         ],

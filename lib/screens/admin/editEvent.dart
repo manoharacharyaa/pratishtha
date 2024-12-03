@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -112,8 +111,9 @@ class _EditEventState extends State<EditEvent> {
     volunteerLimit.text = widget.event!.volunteersLimit.toString();
     eventHeadPoints.text = widget.event!.eventHeadPoints.toString();
     volunteerPoints.text = widget.event!.volunteerPoints.toString();
-    locationType =
-        widget.event!.locationType != "" ? widget.event!.locationType : "Offline";
+    locationType = widget.event!.locationType != ""
+        ? widget.event!.locationType
+        : "Offline";
     forSakec = widget.event!.forSakec;
     parentId = widget.event!.parentId;
     eventMeetingURL.text = widget.event!.meetLink;
@@ -773,8 +773,8 @@ class _EditEventState extends State<EditEvent> {
                                                     setState(() {
                                                       festIcon = value;
                                                       parentId = "";
-                                                      index = festIcons
-                                                          !.indexOf(value!);
+                                                      index = festIcons!
+                                                          .indexOf(value!);
                                                     });
                                                   },
                                                 )
@@ -1041,8 +1041,8 @@ class _EditEventState extends State<EditEvent> {
                                                     IconButton(
                                                         onPressed: () {
                                                           if (eventvol.length <
-                                                              widget.event
-                                                                  !.volunteersLimit)
+                                                              widget.event!
+                                                                  .volunteersLimit)
                                                             showModalBottomSheet(
                                                                 context:
                                                                     context,
@@ -1385,8 +1385,7 @@ class _EditEventState extends State<EditEvent> {
       });
       if (eventvol.isNotEmpty) {
         eventvol.forEach((h) {
-          volIds.add(h.uid!
-          );
+          volIds.add(h.uid!);
         });
       }
       ev.forEach((h) {
@@ -1469,7 +1468,8 @@ class _EditEventState extends State<EditEvent> {
         db.updateChildEvent(parentId, widget.event!.id!);
         var parentData = await db.getFest(widget.event!.parentId);
         parentData.childId?.remove(widget.event!.id);
-        db.updateFest(Map<String, Object?>.from(festToJson(parentData)), widget.event!.parentId);
+        db.updateFest(Map<String, Object?>.from(festToJson(parentData)),
+            widget.event!.parentId);
       }
       Navigator.pop(context);
       Fluttertoast.showToast(
@@ -1565,6 +1565,7 @@ String? validateIsEmpty(value) {
   if (value.isEmpty) {
     return "Field Cannot be Empty";
   }
+  return null;
 }
 
 /*
