@@ -4,7 +4,9 @@ import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
+import 'package:pratishtha/services/sharedPreferencesServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -17,9 +19,20 @@ class _AttendancePageState extends State<AttendancePage> {
   User? user;
 
   @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    user = await getUserFromPrefs();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body : user!.role == 8 ? AttendanceMasterModule() : Container(),
+      body : user!.role == 8 ? AttendanceMasterModule(user) : Container(),
     );
   }
 }
@@ -28,14 +41,14 @@ class _AttendancePageState extends State<AttendancePage> {
 
 
 class AttendanceMasterModule extends StatefulWidget {
-  const AttendanceMasterModule({super.key});
+  final User? user;
+  const AttendanceMasterModule(this.user,{super.key});
 
   @override
   State<AttendanceMasterModule> createState() => _AttendanceMasterModule();
 }
 
 class _AttendanceMasterModule extends State<AttendanceMasterModule> {
-  User? user;
   String currentAcademicYear = "";
   bool showTextBoxes = false;
   List<User> userList = [];
