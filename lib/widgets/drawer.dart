@@ -5,7 +5,7 @@ import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
-import 'package:pratishtha/screens/admin/attendance.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
