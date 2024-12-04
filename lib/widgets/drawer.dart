@@ -195,19 +195,19 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8
+                      user?.role == 8 || user?.role == 9
                           ? ListTile(
-                        title: Text('Attendance'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AttendancePage(), // Replace with your AttendancePage class
-                            ),
-                          );
-                        },
-                      )
+                              title: Text('Attendance'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        AttendancePage(), // Replace with your AttendancePage class
+                                  ),
+                                );
+                              },
+                            )
                           : Container(),
                       ListTile(
                         title: Text('LeaderBoard'),

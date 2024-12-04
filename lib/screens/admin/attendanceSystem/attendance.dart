@@ -47,6 +47,10 @@ class _AttendancePageState extends State<AttendancePage> {
         currentAcademicYear = results[0] as String;
         user = fetchedUser;
         teamId = fetchedTeamId!;
+        print('Attendance page debugging');
+        print(currentAcademicYear);
+        print(user);
+        print(teamId);
         isLoading = false; // Stop showing loading screen
       });
     } catch (e) {
@@ -96,13 +100,12 @@ class _AttendancePageState extends State<AttendancePage> {
     }
 
     return Scaffold(
-      body: user!.role == 8
-          ? AttendanceMasterModule(
-              user!, currentAcademicYear) // Pass all loaded data
-          : teamId != null
-              ? AttendanceChildrenModule(user!, currentAcademicYear, teamId)
+      body: teamId.isNotEmpty
+          ? AttendanceChildrenModule(
+              user!, currentAcademicYear, teamId) // Pass all loaded data
+          : user!.role == 8 || user!.role == 9
+              ? AttendanceMasterModule(user!, currentAcademicYear)
               : Container(),
     );
   }
 }
-

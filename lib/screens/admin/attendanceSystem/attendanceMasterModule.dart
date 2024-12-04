@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
@@ -21,7 +22,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   List<User> userList = [];
   TextEditingController departmentNameController = TextEditingController();
   TextEditingController deptHeadorCoheadNameController =
-  TextEditingController();
+      TextEditingController();
   final addkey = GlobalKey<FormState>();
 
   var db = DatabaseServices();
@@ -44,6 +45,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   }
 
   void openUserSelectionModal(BuildContext context) {
+    TextEditingController searchController = TextEditingController();
+    List<User> filteredData = [];
+
     showModalBottomSheet(
       context: context,
       elevation: 10,
@@ -55,82 +59,107 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
         ),
       ),
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height / 1.5,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(10),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(10),
-            ),
-            child: FutureBuilder<List<User>>(
-              future: db.getSakecUsers(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  List<User> data = snapshot.data!;
-                  return Column(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        padding:
-                        EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                        child: Row(
-                          children: [
-                            Text("Select Event Head",
-                                style: TextStyle(fontSize: 16)),
-                            Spacer(),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                color: Colors.lightBlue,
-                                padding: EdgeInsets.fromLTRB(4, 2, 4, 3),
-                                child: Text(
-                                  "Save",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height / 1.5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+                child: FutureBuilder<List<User>>(
+                  future: db.getSakecUsers(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      List<User> data = snapshot.data!;
+                      // Initialize filteredData to show all data initially
+                      filteredData = filteredData.isEmpty ? data : filteredData;
+
+                      return Column(
+                        children: [
+                          // Search Bar
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: searchController,
+                                    decoration: InputDecoration(
+                                      labelText: "Search Students",
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    onChanged: (query) {
+                                      setState(() {
+                                        if (query.isEmpty) {
+                                          filteredData =
+                                              data; // Show all data when input is cleared
+                                        } else {
+                                          filteredData = data
+                                              .where((user) =>
+                                                  user.firstName!
+                                                      .toLowerCase()
+                                                      .contains(query
+                                                          .toLowerCase()) ||
+                                                  user.lastName!
+                                                      .toLowerCase()
+                                                      .contains(
+                                                          query.toLowerCase()))
+                                              .toList();
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(
-                                  "${data[index].firstName} ${data[index].lastName}"),
-                              onTap: () {
-                                setState(() {
-                                  deptHeadorCoheadNameController.text =
-                                  "${data[index].firstName} ${data[index].lastName}";
-                                });
-                                Navigator.pop(context);
+                          ),
+                          // List of Students
+                          Flexible(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: filteredData.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                      "${filteredData[index].firstName} ${filteredData[index].lastName}"),
+                                  onTap: () {
+                                    setState(() {
+                                      deptHeadorCoheadNameController.text =
+                                          "${filteredData[index].firstName} ${filteredData[index].lastName}";
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                );
                               },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Center(child: Text('No users available'));
-                }
-              },
-            ),
-          ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Center(child: Text('No users available'));
+                    }
+                  },
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -165,10 +194,10 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
             ),
             onTap: widget.user!.role == 8
                 ? () {
-              setState(() {
-                showTextBoxes = !showTextBoxes;
-              });
-            }
+                    setState(() {
+                      showTextBoxes = !showTextBoxes;
+                    });
+                  }
                 : null, // No action for roles other than 8
           ),
           if (showTextBoxes) ...[
@@ -179,7 +208,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                   Expanded(
                     child: Padding(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: TextField(
                         controller: departmentNameController,
                         decoration: InputDecoration(
@@ -253,8 +282,8 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border:
-                  Border.all(style: BorderStyle.solid, color: primaryColor),
+                  border: Border.all(
+                      style: BorderStyle.solid, color: primaryColor, width: 2),
                   color: Colors.transparent,
                 ),
                 alignment: Alignment.center,
@@ -263,7 +292,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Colors.black),
                 ),
               ),
               onTap: () async {
@@ -282,7 +311,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.grey[500],
                         textColor: Colors.black,
                         fontSize: 16.0,
                       );
@@ -292,7 +321,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.grey[700],
+                        backgroundColor: Colors.grey[300],
                         textColor: Colors.red,
                         fontSize: 16.0,
                       );
@@ -314,6 +343,35 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
               },
             ),
           ],
+          InkWell(
+            child: Container(
+              margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: widget.user!.role == 9
+                    ? primaryColor
+                    : primaryColor.withOpacity(0.4),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                "View Attendance as Teacher",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+            ),
+            onTap: widget.user!.role == 9
+                ? () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ViewAttendanceAsTeacher(
+                                widget.currentAcademicYear)));
+                  }
+                : null, // No action for roles other than 8
+          ),
         ],
       ),
     );
