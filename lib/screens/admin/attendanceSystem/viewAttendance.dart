@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class ViewAttendanceAsTeacher extends StatefulWidget {
   final String currentAcademicYear;
@@ -35,11 +36,25 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
     'B.Voc AIDS',
     'B.Voc CYSE',
   ];
+  List<String> volunteerClass = ['FE', 'SE', 'TE', 'BE', 'OTHERS'];
 
   @override
   void initState() {
     super.initState();
     fetchVolunteersData();
+    refreshPage();
+  }
+
+  String? selectedClass ;
+  String? selectedBranch;
+  int selectedIndex = 0;
+
+  bool isAscending = true;
+
+  void refreshPage() {
+    setState(() {
+      fetchVolunteersData();
+    });
   }
 
   void fetchVolunteersData() async {
@@ -84,7 +99,11 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () => print, icon: Icon(Icons.refresh))
+        ],
         backgroundColor: Colors.pink,
         title: Text(
           'ATTENDANCE',
@@ -101,110 +120,228 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
         children: [
           // Container with the same color as the app bar
           Container(
-            height: MediaQuery.of(context).size.height / 15,
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            height: MediaQuery.of(context).size.height / 14,
             color: Colors.pink,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  flex: 4,
-                  child: DropdownButtonFormField<String>(
-                    items: volunteerBranch.map((value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Center(child: Text(value)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      // Handle selection
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
-                        borderSide: BorderSide.none,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 21,
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        alignment: Alignment.center,
+                        hint: Center(
+                          child: Text(
+                        (selectedClass?.isNotEmpty ?? false) ? selectedClass! : 'CLASS',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        items: volunteerClass.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Center(
+                                child: Text(
+                              value,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                            )),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedClass = value!;
+                          });
+
+                          // Handle selection
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(25), // Rounded corners
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: selectedClass != null
+                              ? Colors.white
+                              : Colors.white.withOpacity(
+                                  0.3), // Dropdown background color
+                        ),
+                        style: GoogleFonts.poppins(color: Colors.white),
+                        isDense: true, // Removes the down arrow
+                        icon: SizedBox
+                            .shrink(), // Empty icon widget to disable the down arrow
                       ),
-                      filled: true,
-                      fillColor: Colors.white, // Dropdown background color
                     ),
-                    isDense: true, // Removes the down arrow
-                    icon: SizedBox
-                        .shrink(), // Empty icon widget to disable the down arrow
                   ),
-                ),
-                Flexible(
-                  flex: 4,
-                  child: DropdownButtonFormField<String>(
-                    items: volunteerBranch.map((value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Center(child: Text(value)),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      // Handle selection
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
-                        borderSide: BorderSide.none,
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 21,
+                      child: DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        alignment: Alignment.center,
+                        hint: Center(
+                          child: Text(
+                           (selectedBranch?.isNotEmpty ?? false) ? selectedBranch! : 'BRANCH',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        items: volunteerBranch.map((value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Center(child: Text(value)),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBranch = value!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(30), // Rounded corners
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: selectedBranch != null
+                              ? Colors.white
+                              : Colors.white.withOpacity(
+                                  0.3), // Dropdown background color
+                        ),
+                        isDense: true, // Removes the down arrow
+                        icon: SizedBox
+                            .shrink(), // Empty icon widget to disable the down arrow
                       ),
-                      filled: true,
-                      fillColor: Colors.white, // Dropdown background color
                     ),
-                    isDense: true, // Removes the down arrow
-                    icon: SizedBox
-                        .shrink(), // Empty icon widget to disable the down arrow
                   ),
-                ),
-                Flexible(
-                  flex: 4,
-                  child: DropdownButtonFormField<String>(
-                    items: [
-                      DropdownMenuItem<String>(
-                        value: 'A-Z',
-                        child: Center(child: Text('A-Z')),
-                      ),
-                      DropdownMenuItem<String>(
-                        value: 'Z-A',
-                        child: Center(child: Text('Z-A')),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      // Handle selection
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      border: OutlineInputBorder(
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 21,
+                      decoration: BoxDecoration(
+                        color: Colors.white
+                            .withOpacity(0.3), // Uniform background color
                         borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
-                        borderSide: BorderSide.none,
+                            BorderRadius.circular(30), // Matches toggle buttons
                       ),
-                      filled: true,
-                      fillColor:
-                          Colors.grey[300], // Toggle button background color
+                      child: ToggleButtons(
+                        renderBorder: false,
+                        splashColor: Colors.white,
+                        isSelected: [selectedIndex == 0, selectedIndex == 1],
+                        onPressed: (int index) {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                          setState(() {
+                            isAscending = false;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(30),
+                        selectedColor: Colors.black,
+                        fillColor: Colors.white.withOpacity(0.9),
+                        color: Colors.white,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.arrow_upward, size: 16),
+                              SizedBox(width: 2),
+                              Text('A-Z'),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.arrow_downward, size: 16),
+                              SizedBox(width: 2),
+                              Text('Z-A'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    isDense: true, // Removes the down arrow
-                    icon: SizedBox
-                        .shrink(), // Empty icon widget to disable the down arrow
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           // ListView with bounded height
+          SizedBox(
+            height: 10,
+          ),
           Expanded(
-            child: ListView(
-              children: [
-                _buildVolunteerGroup('First Year (FE)', feVolunteers),
-                _buildVolunteerGroup('Second Year (SE)', seVolunteers),
-                _buildVolunteerGroup('Third Year (TE)', teVolunteers),
-                _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
-                _buildVolunteerGroup('Others', others),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: ListView(
+                children: [
+                  if ((selectedClass ?? '').isEmpty &&
+                      (selectedBranch ?? '').isEmpty) ...[
+                    if (isAscending) ...[
+                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                      _buildVolunteerGroup('Others', others),
+                    ] else ...[
+                      _buildVolunteerGroup('Others', others),
+                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                    ]
+                  ] else if ((selectedClass ?? '').isNotEmpty &&
+                      (selectedBranch ?? '').isNotEmpty) ...[
+                    if (selectedClass == 'FE')
+                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                    if (selectedClass == 'SE')
+                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                    if (selectedClass == 'TE')
+                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                    if (selectedClass == 'BE')
+                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                    if (selectedClass == 'Others')
+                      _buildVolunteerGroup('Others', others),
+                  ] else if ((selectedClass ?? '').isNotEmpty) ...[
+                    if (selectedClass == 'FE')
+                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                    if (selectedClass == 'SE')
+                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                    if (selectedClass == 'TE')
+                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                    if (selectedClass == 'BE')
+                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                    if (selectedClass == 'Others')
+                      _buildVolunteerGroup('Others', others),
+                  ] else if ((selectedBranch ?? '').isNotEmpty) ...[
+                    _buildVolunteerGroup(
+                      'Filtered by Branch ($selectedBranch)',
+                      volunteersData
+                          .where((volunteer) =>
+                              (volunteer['branch'] ?? '').toLowerCase() ==
+                              selectedBranch!.toLowerCase())
+                          .toList(),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
         ],
@@ -218,33 +355,49 @@ Widget _buildVolunteerGroup(
   if (volunteers.isEmpty) return const SizedBox.shrink();
 
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Divider(
-        thickness: 2,
-        color: Colors.grey.shade400,
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Expanded(
+              child: Divider(
+            color: Colors.grey,
+            indent: 10,
+            height: 3,
+          )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              title,
+              style: GoogleFonts.poppins(
+                  fontSize: 18, fontWeight: FontWeight.w500),
+            ),
           ),
-        ),
+          const Expanded(
+              child: Divider(
+            color: Colors.grey,
+            endIndent: 10,
+          )),
+        ],
+      ),
+      SizedBox(
+        height: 10,
       ),
       ...volunteers.map((volunteer) => _buildVolunteerCard(volunteer)).toList(),
+      SizedBox(
+        height: 10,
+      ),
     ],
   );
 }
 
 Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
   return Card(
+    shadowColor: Color.fromRGBO(255, 152, 148, 1),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    elevation: 4,
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(width: 2, color: Color.fromRGBO(252, 218, 217, 1.0))),
+    elevation: 5,
     margin: const EdgeInsets.symmetric(vertical: 8.0),
     child: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -261,19 +414,18 @@ Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
                   volunteer['name'] ?? 'Unknown',
                   overflow: TextOverflow.ellipsis, // Handle long names
                   maxLines: 1,
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
+                  style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.pink,
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   volunteer['sakec_mail'] ?? 'No Email',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: Color.fromARGB(255, 234, 136, 137),
                   ),
                 ),
               ],
@@ -291,19 +443,17 @@ Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
                   children: [
                     Text(
                       volunteer['class']?.toString() ?? 'N/A',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'CLASS',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: Color.fromARGB(255, 234, 136, 137),
                       ),
                     ),
                   ],
@@ -314,19 +464,18 @@ Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
                   children: [
                     Text(
                       volunteer['rollno']?.toString() ?? 'N/A',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: Colors.pink,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'ROLL NO.',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: Color.fromARGB(255, 234, 136, 137),
                       ),
                     ),
                   ],

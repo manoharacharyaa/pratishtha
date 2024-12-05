@@ -107,6 +107,8 @@ class AttendaceServices {
             'class': volunteerData['class'],
             'rollno': volunteerData['rollNo'],
             'PRN': volunteerData['PRN'],
+            'Branch': volunteerData['branch'],
+            'SakecId':volunteerData['sakec_id'],
             'name': volunteerData['name'] ?? 'Unknown',
             'attendance': volunteerData['attendanceStatus'] ?? [],
           };
