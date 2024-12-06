@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/eachVolunteerAttendace.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 class ViewAttendanceAsTeacher extends StatefulWidget {
   final String currentAcademicYear;
@@ -42,10 +42,9 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
   void initState() {
     super.initState();
     fetchVolunteersData();
-    refreshPage();
   }
 
-  String? selectedClass ;
+  String? selectedClass;
   String? selectedBranch;
   int selectedIndex = 0;
 
@@ -137,7 +136,9 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                         alignment: Alignment.center,
                         hint: Center(
                           child: Text(
-                        (selectedClass?.isNotEmpty ?? false) ? selectedClass! : 'CLASS',
+                            (selectedClass?.isNotEmpty ?? false)
+                                ? selectedClass!
+                                : 'CLASS',
                             style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
@@ -195,7 +196,9 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                         alignment: Alignment.center,
                         hint: Center(
                           child: Text(
-                           (selectedBranch?.isNotEmpty ?? false) ? selectedBranch! : 'BRANCH',
+                            (selectedBranch?.isNotEmpty ?? false)
+                                ? selectedBranch!
+                                : 'BRANCH',
                             style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600),
@@ -295,41 +298,57 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                   if ((selectedClass ?? '').isEmpty &&
                       (selectedBranch ?? '').isEmpty) ...[
                     if (isAscending) ...[
-                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
-                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
-                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
-                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
-                      _buildVolunteerGroup('Others', others),
+                      _buildVolunteerGroup(
+                          'First Year (FE)', feVolunteers, context),
+                      _buildVolunteerGroup(
+                          'Second Year (SE)', seVolunteers, context),
+                      _buildVolunteerGroup(
+                          'Third Year (TE)', teVolunteers, context),
+                      _buildVolunteerGroup(
+                          'Fourth Year (BE)', beVolunteers, context),
+                      _buildVolunteerGroup('Others', others, context),
                     ] else ...[
-                      _buildVolunteerGroup('Others', others),
-                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
-                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
-                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
-                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                      _buildVolunteerGroup('Others', others, context),
+                      _buildVolunteerGroup(
+                          'Fourth Year (BE)', beVolunteers, context),
+                      _buildVolunteerGroup(
+                          'Third Year (TE)', teVolunteers, context),
+                      _buildVolunteerGroup(
+                          'Second Year (SE)', seVolunteers, context),
+                      _buildVolunteerGroup(
+                          'First Year (FE)', feVolunteers, context),
                     ]
                   ] else if ((selectedClass ?? '').isNotEmpty &&
                       (selectedBranch ?? '').isNotEmpty) ...[
                     if (selectedClass == 'FE')
-                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                      _buildVolunteerGroup(
+                          'First Year (FE)', feVolunteers, context),
                     if (selectedClass == 'SE')
-                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                      _buildVolunteerGroup(
+                          'Second Year (SE)', seVolunteers, context),
                     if (selectedClass == 'TE')
-                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                      _buildVolunteerGroup(
+                          'Third Year (TE)', teVolunteers, context),
                     if (selectedClass == 'BE')
-                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                      _buildVolunteerGroup(
+                          'Fourth Year (BE)', beVolunteers, context),
                     if (selectedClass == 'Others')
-                      _buildVolunteerGroup('Others', others),
+                      _buildVolunteerGroup('Others', others, context),
                   ] else if ((selectedClass ?? '').isNotEmpty) ...[
                     if (selectedClass == 'FE')
-                      _buildVolunteerGroup('First Year (FE)', feVolunteers),
+                      _buildVolunteerGroup(
+                          'First Year (FE)', feVolunteers, context),
                     if (selectedClass == 'SE')
-                      _buildVolunteerGroup('Second Year (SE)', seVolunteers),
+                      _buildVolunteerGroup(
+                          'Second Year (SE)', seVolunteers, context),
                     if (selectedClass == 'TE')
-                      _buildVolunteerGroup('Third Year (TE)', teVolunteers),
+                      _buildVolunteerGroup(
+                          'Third Year (TE)', teVolunteers, context),
                     if (selectedClass == 'BE')
-                      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers),
+                      _buildVolunteerGroup(
+                          'Fourth Year (BE)', beVolunteers, context),
                     if (selectedClass == 'Others')
-                      _buildVolunteerGroup('Others', others),
+                      _buildVolunteerGroup('Others', others, context),
                   ] else if ((selectedBranch ?? '').isNotEmpty) ...[
                     _buildVolunteerGroup(
                       'Filtered by Branch ($selectedBranch)',
@@ -338,6 +357,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                               (volunteer['branch'] ?? '').toLowerCase() ==
                               selectedBranch!.toLowerCase())
                           .toList(),
+                      context,
                     ),
                   ],
                 ],
@@ -351,8 +371,8 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
 }
 
 Widget _buildVolunteerGroup(
-    String title, List<Map<String, dynamic>> volunteers) {
-  if (volunteers.isEmpty) return const SizedBox.shrink();
+    String title, List<Map<String, dynamic>> volunteer, BuildContext context) {
+  if (volunteer.isEmpty) return const SizedBox.shrink();
 
   return Column(
     children: [
@@ -383,7 +403,9 @@ Widget _buildVolunteerGroup(
       SizedBox(
         height: 10,
       ),
-      ...volunteers.map((volunteer) => _buildVolunteerCard(volunteer)).toList(),
+      ...volunteer
+          .map((volunteer) => _buildVolunteerCard(volunteer, context))
+          .toList(),
       SizedBox(
         height: 10,
       ),
@@ -391,7 +413,8 @@ Widget _buildVolunteerGroup(
   );
 }
 
-Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
+Widget _buildVolunteerCard(
+    Map<String, dynamic> volunteer, BuildContext context) {
   return Card(
     shadowColor: Color.fromRGBO(255, 152, 148, 1),
     shape: RoundedRectangleBorder(
@@ -488,7 +511,32 @@ Widget _buildVolunteerCard(Map<String, dynamic> volunteer) {
             width: 40, // Smaller size for the arrow icon
             child: IconButton(
               icon: Icon(Icons.arrow_forward_ios),
-              onPressed: () {},
+              onPressed: () {
+                print('Volunteer data: $volunteer');
+
+                final attendanceData =
+                    volunteer['attendance'] ?? volunteer['attendace'];
+                print('Attendance data: $attendanceData');
+                print('Attendance data type: ${attendanceData.runtimeType}');
+
+                if (attendanceData is List && attendanceData.isNotEmpty) {
+                  // Assuming the first item in the list is the attendance map
+                  final firstAttendanceEntry = attendanceData[0];
+                  print('First attendance entry: $firstAttendanceEntry');
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          AttendanceCalendar(firstAttendanceEntry)));
+                } else if (attendanceData is Map) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AttendanceCalendar(
+                          Map<String, dynamic>.from(attendanceData))));
+                } else {
+                  print('No valid attendance data');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No attendance data available')));
+                }
+              },
             ),
           ),
         ],
