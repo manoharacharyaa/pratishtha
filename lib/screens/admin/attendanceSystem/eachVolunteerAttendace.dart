@@ -83,123 +83,122 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
         toolbarHeight: MediaQuery.of(context).size.height / 15,
         iconTheme: const IconThemeData(color: whiteColor),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          children: [
-            Material(
-              child: TableCalendar(
-                firstDay: firstDay,
-                lastDay: lastDay,
-                focusedDay: focusedDay,
-                calendarStyle: const CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                    color: Color(0xFF00C411),
-                    shape: BoxShape.circle,
+      body: Padding(
+        padding: EdgeInsets.only(top: 18, left: 8, right: 8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: Color(0xFFFFF7FA),
+          ),
+          child: Column(
+            children: [
+              Material(
+                child: TableCalendar(
+                  firstDay: firstDay,
+                  lastDay: lastDay,
+                  focusedDay: focusedDay,
+                  calendarStyle: const CalendarStyle(
+                    isTodayHighlighted: false,
+                    outsideDaysVisible: false,
                   ),
-                ),
-                headerStyle: const HeaderStyle(
-                  titleCentered: true,
-                  formatButtonVisible: false,
-                  titleTextStyle: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  leftChevronIcon: Icon(Icons.arrow_left, size: 16),
-                  rightChevronIcon: Icon(Icons.arrow_right, size: 16),
-                ),
-                daysOfWeekStyle: const DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  weekendStyle: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                calendarBuilders: CalendarBuilders(
-                  defaultBuilder: (context, day, focusedDay) {
-                    bool isWeekend = day.weekday == 6 || day.weekday == 7;
-
-                    // Debug print for each day
-                    print('Checking day: $day');
-                    print('Attendance data keys: ${attendanceData.keys}');
-
-                    // Check if the current day exists in attendanceData
-                    bool isPresent = attendanceData.keys.any((key) =>
-                        key.year == day.year &&
-                        key.month == day.month &&
-                        key.day == day.day);
-
-                    print('Is $day present? $isPresent');
-
-                    Color textColor = isWeekend
-                        ? const Color(0xFFB2B2B2)
-                        : const Color(0xFF2E8CED);
-                    if (isPresent) {
-                      textColor = const Color(0xFF00C411);
-                    }
-
-                    return Center(
-                      child: Text(
-                        '${day.day}',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                        ),
+                  headerStyle: HeaderStyle(
+                    titleCentered: true,
+                    formatButtonVisible: false,
+                    titleTextStyle: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    leftChevronIcon: CircleAvatar(
+                      child: Icon(
+                        Icons.arrow_left,
+                        size: 30,
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                  todayBuilder: (context, day, focusedDay) {
-                    return Center(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF00C411),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${day.day}',
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
+                      backgroundColor: Colors.grey,
+                      radius: 18,
+                    ),
+                    rightChevronIcon: CircleAvatar(
+                      child: Icon(
+                        Icons.arrow_right,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: Colors.grey,
+                      radius: 18,
+                    ),
+                    headerPadding: EdgeInsets.only(bottom: 16),
+                  ),
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    weekendStyle: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  calendarBuilders: CalendarBuilders(
+                    defaultBuilder: (context, day, focusedDay) {
+                      bool isWeekend = day.weekday == 6 || day.weekday == 7;
+
+                      // Debug print for each day
+                      print('Checking day: $day');
+                      print('Attendance data keys: ${attendanceData.keys}');
+
+                      // Check if the current day exists in attendanceData
+                      bool isPresent = attendanceData.keys.any((key) =>
+                          key.year == day.year &&
+                          key.month == day.month &&
+                          key.day == day.day);
+
+                      print('Is $day present? $isPresent');
+
+                      Color textColor = isWeekend
+                          ? const Color(0xFFB2B2B2)
+                          : const Color(0xFF2E8CED);
+                      if (isPresent) {
+                        textColor = const Color(0xFF00C411);
+                      }
+
+                      return Center(
+                        child: Text(
+                          '${day.day}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: textColor,
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8.0),
-            _buildLegend(),
-          ],
+              const SizedBox(height: 20.0),
+              _buildLegend(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildLegend() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildLegendItem(const Color(0xFFB2B2B2), 'Holiday'),
-        const SizedBox(width: 8.0),
-        _buildLegendItem(const Color(0xFF2E8CED), 'Working Day'),
-        const SizedBox(width: 8.0),
-        _buildLegendItem(const Color(0xFF00C411), 'Present'),
-      ],
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildLegendItem(const Color(0xFFB2B2B2), 'Holiday'),
+          Spacer(),
+          _buildLegendItem(const Color(0xFF2E8CED), 'Working Day'),
+          Spacer(),
+          _buildLegendItem(const Color(0xFF00C411), 'Present'),
+        ],
+      ),
     );
   }
 
@@ -217,9 +216,8 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
         const SizedBox(width: 4.0),
         Text(
           text,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 12,
+          style: GoogleFonts.poppins(
+            fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
