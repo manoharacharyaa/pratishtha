@@ -50,61 +50,6 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
 
   bool isAscending = true;
 
-  void refreshPage() {
-    setState(() {
-      fetchVolunteersData();
-    });
-  }
-
-  void _categorizeVolunteers() {
-    // Clear previous lists
-    feVolunteers.clear();
-    seVolunteers.clear();
-    teVolunteers.clear();
-    beVolunteers.clear();
-    others.clear();
-
-    for (var volunteer in volunteersData) {
-      final classField = volunteer['class'] ?? '';
-      final branchField = volunteer['Branch'] ?? '';
-
-      // Skip if branch is selected but does not match
-      if (selectedBranch != null && selectedBranch!.isNotEmpty) {
-        if (branchField.toLowerCase() != selectedBranch!.toLowerCase()) {
-          continue;
-        }
-      }
-
-      // Skip if both branch and class are selected but class does not match
-      if (selectedClass != null && selectedClass!.isNotEmpty) {
-        if (!classField.startsWith(selectedClass!)) {
-          continue;
-        }
-      }
-
-      // Categorize based on class
-      if (classField.startsWith('FE')) {
-        feVolunteers.add(volunteer);
-      } else if (classField.startsWith('SE')) {
-        seVolunteers.add(volunteer);
-      } else if (classField.startsWith('TE')) {
-        teVolunteers.add(volunteer);
-      } else if (classField.startsWith('BE')) {
-        beVolunteers.add(volunteer);
-      } else {
-        others.add(volunteer);
-      }
-    }
-
-    print('Filtered and categorized volunteers:');
-    print('FE: $feVolunteers');
-    print('SE: $seVolunteers');
-    print('TE: $teVolunteers');
-    print('BE: $beVolunteers');
-    print('Others: $others');
-  }
-
-
   void fetchVolunteersData() async {
     try {
       final result = await AttendaceServices()
@@ -122,6 +67,82 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
     }
   }
 
+  void _categorizeVolunteers() {
+    // Reset the categorized lists
+    feVolunteers = [];
+    seVolunteers = [];
+    teVolunteers = [];
+    beVolunteers = [];
+    others = [];
+
+    // Start with the original list of volunteers
+    List<Map<String, dynamic>> filteredVolunteers = List.from(volunteersData);
+
+    // Apply branch filter if selected
+    if (selectedBranch != null && selectedBranch!.isNotEmpty) {
+      print("Selected Branch trigerred : $selectedBranch");
+      filteredVolunteers = filteredVolunteers
+          .where((volunteer) =>
+              (volunteer['Branch'] ?? '').toLowerCase() ==
+              selectedBranch!.toLowerCase())
+          .toList();
+    }
+
+    // Apply class filter if selected
+    // Apply class filter if selected
+    if (selectedClass != null && selectedClass!.isNotEmpty) {
+      print("Selected Class triggered: $selectedClass");
+      filteredVolunteers = filteredVolunteers
+          .where((volunteer) => (volunteer['class'] ?? '')
+              .toLowerCase()
+              .startsWith(selectedClass!.toLowerCase()))
+          .toList();
+    }
+
+    // Sort volunteers based on class
+    final classOrder = ['FE', 'SE', 'TE', 'BE', 'OTHERS'];
+    filteredVolunteers.sort((a, b) {
+      final aClass = a['class'] ?? '';
+      final bClass = b['class'] ?? '';
+      return isAscending
+          ? classOrder.indexOf(aClass).compareTo(classOrder.indexOf(bClass))
+          : classOrder.indexOf(bClass).compareTo(classOrder.indexOf(aClass));
+    });
+
+    // Categorize volunteers into groups
+    for (var volunteer in filteredVolunteers) {
+      final classField = volunteer['class'] ?? '';
+      if (classField.startsWith('FE')) {
+        feVolunteers.add(volunteer);
+      } else if (classField.startsWith('SE')) {
+        seVolunteers.add(volunteer);
+      } else if (classField.startsWith('TE')) {
+        teVolunteers.add(volunteer);
+      } else if (classField.startsWith('BE')) {
+        beVolunteers.add(volunteer);
+      } else {
+        others.add(volunteer);
+      }
+    }
+    print('Debugging volunteer year-wise');
+    print(feVolunteers);
+    print(seVolunteers);
+    print(teVolunteers);
+    print(beVolunteers);
+  }
+
+  List<Widget> _buildOrderedGroups() {
+    List<Widget> orderedGroups = [
+      _buildVolunteerGroup('First Year (FE)', feVolunteers, context),
+      _buildVolunteerGroup('Second Year (SE)', seVolunteers, context),
+      _buildVolunteerGroup('Third Year (TE)', teVolunteers, context),
+      _buildVolunteerGroup('Fourth Year (BE)', beVolunteers, context),
+      _buildVolunteerGroup('Others', others, context),
+    ];
+    print("Calling Ordered Groups");
+    print(orderedGroups);
+    return isAscending ? orderedGroups : orderedGroups.reversed.toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +150,16 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: () => print, icon: Icon(Icons.refresh))
+          IconButton(
+              onPressed: () {
+                print("Reset pressed");
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewAttendanceAsTeacher(
+                            widget.currentAcademicYear)));
+              },
+              icon: Icon(Icons.refresh))
         ],
         backgroundColor: Colors.pink,
         title: Text(
@@ -140,10 +170,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
           ),
         ),
         centerTitle: true,
-        toolbarHeight: MediaQuery
-            .of(context)
-            .size
-            .height / 15,
+        toolbarHeight: MediaQuery.of(context).size.height / 15,
         iconTheme: IconThemeData(color: whiteColor),
       ),
       body: Column(
@@ -151,10 +178,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
           // Container with the same color as the app bar
           Container(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-            height: MediaQuery
-                .of(context)
-                .size
-                .height / 14,
+            height: MediaQuery.of(context).size.height / 14,
             color: Colors.pink,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -164,10 +188,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                   Flexible(
                     flex: 4,
                     child: Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 20,
+                      height: MediaQuery.of(context).size.height / 21,
                       child: DropdownButtonFormField<String>(
                         isExpanded: true,
                         alignment: Alignment.center,
@@ -186,39 +207,36 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                             value: value,
                             child: Center(
                                 child: Text(
-                                  value,
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                )),
+                              value,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                            )),
                           );
                         }).toList(),
-                        borderRadius: BorderRadius.circular(12),
                         onChanged: (value) {
                           setState(() {
                             selectedClass = value!;
+                            print("Class dropdown selected to $value!");
                             _categorizeVolunteers();
                           });
-
-                          // Handle selection
                         },
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 10),
                           border: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.circular(25), // Rounded corners
+                                BorderRadius.circular(25), // Rounded corners
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
                           fillColor: selectedClass != null
                               ? Colors.white
                               : Colors.white.withOpacity(
-                              0.3), // Dropdown background color
+                                  0.3), // Dropdown background color
                         ),
                         style: GoogleFonts.poppins(color: Colors.white),
-                        isDense: true,
-                        // Removes the down arrow
+                        isDense: true, // Removes the down arrow
                         icon: SizedBox
                             .shrink(), // Empty icon widget to disable the down arrow
                       ),
@@ -230,10 +248,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                   Flexible(
                     flex: 4,
                     child: Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 20,
+                      height: MediaQuery.of(context).size.height / 21,
                       child: DropdownButtonFormField<String>(
                         isExpanded: true,
                         alignment: Alignment.center,
@@ -253,10 +268,10 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                             child: Center(child: Text(value)),
                           );
                         }).toList(),
-                        borderRadius: BorderRadius.circular(12),
                         onChanged: (value) {
                           setState(() {
                             selectedBranch = value!;
+                            print("Branch dropdown selected to $value!");
                             _categorizeVolunteers();
                           });
                         },
@@ -264,17 +279,16 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                           contentPadding: EdgeInsets.symmetric(vertical: 10),
                           border: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
+                                BorderRadius.circular(30), // Rounded corners
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
                           fillColor: selectedBranch != null
                               ? Colors.white
                               : Colors.white.withOpacity(
-                              0.3), // Dropdown background color
+                                  0.3), // Dropdown background color
                         ),
-                        isDense: true,
-                        // Removes the down arrow
+                        isDense: true, // Removes the down arrow
                         icon: SizedBox
                             .shrink(), // Empty icon widget to disable the down arrow
                       ),
@@ -286,15 +300,12 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                   Flexible(
                     flex: 4,
                     child: Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 21,
+                      height: MediaQuery.of(context).size.height / 21,
                       decoration: BoxDecoration(
                         color: Colors.white
                             .withOpacity(0.3), // Uniform background color
                         borderRadius:
-                        BorderRadius.circular(30), // Matches toggle buttons
+                            BorderRadius.circular(30), // Matches toggle buttons
                       ),
                       child: ToggleButtons(
                         renderBorder: false,
@@ -306,6 +317,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
                           });
                           setState(() {
                             isAscending = !isAscending;
+                            _categorizeVolunteers();
                           });
                         },
                         borderRadius: BorderRadius.circular(30),
@@ -343,26 +355,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: ListView(
-                children: [
-                  if ((selectedClass ?? '').isEmpty &&
-                      (selectedBranch ?? '').isEmpty) ...[
-                    ..._buildClassGroups(context, isAscending)
-                  ] else
-                    if ((selectedClass ?? '').isNotEmpty) ...[
-                      _buildVolunteerGroupByClass(selectedClass!, context)
-                    ] else
-                      if ((selectedBranch ?? '').isNotEmpty) ...[
-                        _buildVolunteerGroup(
-                          'Filtered by Branch ($selectedBranch)',
-                          volunteersData
-                              .where((v) =>
-                          (v['branch'] ?? '').toLowerCase() ==
-                              selectedBranch!.toLowerCase())
-                              .toList(),
-                          context,
-                        ),
-                      ],
-                ],
+                children: _buildOrderedGroups(),
               ),
             ),
           ),
@@ -370,238 +363,188 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
       ),
     );
   }
+}
 
+Widget _buildVolunteerGroup(
+    String title, List<Map<String, dynamic>> volunteer, BuildContext context) {
+  if (volunteer.isEmpty) return const SizedBox.shrink();
 
-  List<Widget> _buildClassGroups(BuildContext context, bool isAscending) {
-    final List<Map<String, dynamic>> feVolunteersTyped =
-    feVolunteers.cast<Map<String, dynamic>>();
-    final List<Map<String, dynamic>> seVolunteersTyped =
-    seVolunteers.cast<Map<String, dynamic>>();
-    final List<Map<String, dynamic>> teVolunteersTyped =
-    teVolunteers.cast<Map<String, dynamic>>();
-    final List<Map<String, dynamic>> beVolunteersTyped =
-    beVolunteers.cast<Map<String, dynamic>>();
-    final List<Map<String, dynamic>> othersTyped =
-    others.cast<Map<String, dynamic>>();
-
-    final groups = isAscending
-        ? [
-      {'title': 'First Year (FE)', 'data': feVolunteersTyped},
-      {'title': 'Second Year (SE)', 'data': seVolunteersTyped},
-      {'title': 'Third Year (TE)', 'data': teVolunteersTyped},
-      {'title': 'Fourth Year (BE)', 'data': beVolunteersTyped},
-      {'title': 'Others', 'data': othersTyped},
-    ]
-        : [
-      {'title': 'Others', 'data': othersTyped},
-      {'title': 'Fourth Year (BE)', 'data': beVolunteersTyped},
-      {'title': 'Third Year (TE)', 'data': teVolunteersTyped},
-      {'title': 'Second Year (SE)', 'data': seVolunteersTyped},
-      {'title': 'First Year (FE)', 'data': feVolunteersTyped},
-    ];
-
-    return groups.map((group) {
-      return _buildVolunteerGroup(
-          group['title'] as String, group['data'] as List<Map<String, dynamic>>, context);
-    }).toList();
-  }
-
-
-  Widget _buildVolunteerGroupByClass(String selectedClass,
-      BuildContext context) {
-    final classGroups = {
-      'FE': () =>
-          _buildVolunteerGroup('First Year (FE)', feVolunteers, context),
-      'SE': () =>
-          _buildVolunteerGroup('Second Year (SE)', seVolunteers, context),
-      'TE': () =>
-          _buildVolunteerGroup('Third Year (TE)', teVolunteers, context),
-      'BE': () =>
-          _buildVolunteerGroup('Fourth Year (BE)', beVolunteers, context),
-      'Others': () => _buildVolunteerGroup('Others', others, context),
-    };
-
-    return classGroups[selectedClass]?.call() ??
-        SizedBox(); // Default case if selectedClass doesn't match.
-  }
-
-
-  Widget _buildVolunteerGroup(String title,
-      List<Map<String, dynamic>> volunteer, BuildContext context) {
-    if (volunteer.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const Expanded(
-                child: Divider(
-                  color: Colors.grey,
-                  indent: 10,
-                  height: 3,
-                )),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                title,
-                style: GoogleFonts.poppins(
-                    fontSize: 18, fontWeight: FontWeight.w500),
-              ),
+  return Column(
+    children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Expanded(
+              child: Divider(
+            color: Colors.black54,
+            indent: 10,
+            height: 3,
+                thickness: 2,
+          )),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              title,
+              style: GoogleFonts.poppins(
+                  fontSize: 18, fontWeight: FontWeight.w500),
             ),
-            const Expanded(
-                child: Divider(
-                  color: Colors.grey,
-                  endIndent: 10,
-                )),
-          ],
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        ...volunteer
-            .map((volunteer) => _buildVolunteerCard(volunteer, context))
-            .toList(),
-        SizedBox(
-          height: 10,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildVolunteerCard(Map<String, dynamic> volunteer,
-      BuildContext context) {
-    return Card(
-      shadowColor: Color.fromRGBO(255, 152, 148, 1),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-              width: 2, color: Color.fromRGBO(252, 218, 217, 1.0))),
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Left Section: Name and Email
-            Expanded(
-              flex: 3, // Allocate more space to the name column
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    volunteer['name'] ?? 'Unknown',
-                    overflow: TextOverflow.ellipsis, // Handle long names
-                    maxLines: 1,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.pink,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    volunteer['SakecId'] ?? 'No Email',
-                    overflow: TextOverflow.ellipsis, // Handle long names
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 234, 136, 137),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Right Section: Class and Roll No
-            Expanded(
-              flex: 2, // Allocate less space for Class and Roll No
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Class
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        volunteer['class']?.toString() ?? 'N/A',
-                        style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.pink),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'CLASS',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: Color.fromARGB(255, 234, 136, 137),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Roll No
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        volunteer['rollno']?.toString() ?? 'N/A',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'ROLL NO.',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: Color.fromARGB(255, 234, 136, 137),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Navigation Icon
-            SizedBox(
-              width: 40, // Smaller size for the arrow icon
-              child: IconButton(
-                icon: Icon(Icons.arrow_forward_ios),
-                onPressed: () {
-                  print('Volunteer data: $volunteer');
-
-                  final attendanceData =
-                      volunteer['attendance'] ?? volunteer['attendace'];
-                  print('Attendance data: $attendanceData');
-                  print('Attendance data type: ${attendanceData.runtimeType}');
-
-                  if (attendanceData is List && attendanceData.isNotEmpty) {
-                    // Assuming the first item in the list is the attendance map
-                    final firstAttendanceEntry = attendanceData[0];
-                    print('First attendance entry: $firstAttendanceEntry');
-
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AttendanceCalendar(firstAttendanceEntry)));
-                  } else if (attendanceData is Map) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AttendanceCalendar(
-                                Map<String, dynamic>.from(attendanceData))));
-                  } else {
-                    print('No valid attendance data');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('No attendance data available')));
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+          const Expanded(
+              child: Divider(
+                color: Colors.black54,
+                indent: 10,
+                height: 3,
+                thickness: 2,
+              )),
+        ],
       ),
-    );
-  }
+      SizedBox(
+        height: 10,
+      ),
+      ...volunteer
+          .map((volunteer) => _buildVolunteerCard(volunteer, context))
+          .toList(),
+      SizedBox(
+        height: 10,
+      ),
+    ],
+  );
+}
+
+Widget _buildVolunteerCard(
+    Map<String, dynamic> volunteer, BuildContext context) {
+  return Card(
+    shadowColor: Color.fromRGBO(255, 152, 148, 1),
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(width: 2, color: Color.fromRGBO(252, 218, 217, 1.0))),
+    elevation: 5,
+    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Left Section: Name and Email
+          Expanded(
+            flex: 3, // Allocate more space to the name column
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  volunteer['name'] ?? 'Unknown',
+                  overflow: TextOverflow.ellipsis, // Handle long names
+                  maxLines: 1,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  volunteer['SakecId'] ?? 'No Email',
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 234, 136, 137),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Right Section: Class and Roll No
+          Expanded(
+            flex: 2, // Allocate less space for Class and Roll No
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Class
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      volunteer['class']?.toString() ?? 'N/A',
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'CLASS',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 234, 136, 137),
+                      ),
+                    ),
+                  ],
+                ),
+                // Roll No
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      volunteer['rollno']?.toString() ?? 'N/A',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.pink,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'ROLL NO.',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 234, 136, 137),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Navigation Icon
+          SizedBox(
+            width: 40, // Smaller size for the arrow icon
+            child: IconButton(
+              icon: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 10,
+                  )),
+              onPressed: () {
+                print('Volunteer data: $volunteer');
+
+                final attendanceData =
+                    volunteer['attendance'] ?? volunteer['attendace'];
+                print('Attendance data: $attendanceData');
+                print('Attendance data type: ${attendanceData.runtimeType}');
+
+                if (attendanceData is List && attendanceData.isNotEmpty) {
+                  // Assuming the first item in the list is the attendance map
+                  final firstAttendanceEntry = attendanceData[0];
+                  print('First attendance entry: $firstAttendanceEntry');
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          AttendanceCalendar(firstAttendanceEntry)));
+                } else if (attendanceData is Map) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AttendanceCalendar(
+                          Map<String, dynamic>.from(attendanceData))));
+                } else {
+                  print('No valid attendance data');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No attendance data available')));
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
