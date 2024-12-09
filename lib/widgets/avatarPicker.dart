@@ -6,7 +6,7 @@ import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 
 class AvatarPicker extends StatefulWidget {
-  AvatarPicker({Key? key, this.currentUser}) : super(key: key);
+  AvatarPicker({super.key, this.currentUser});
 
   User? currentUser;
 

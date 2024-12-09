@@ -12,8 +12,7 @@ import 'package:pratishtha/widgets/userCard.dart';
 
 class ChangeParticipantStatus extends StatefulWidget {
   ChangeParticipantStatus(
-      {Key? key, this.eventId, this.participantsList, this.event})
-      : super(key: key);
+      {super.key, this.eventId, this.participantsList, this.event});
   String? eventId;
   Event? event;
   List<List>? participantsList;
@@ -102,6 +101,7 @@ class _ChangeParticipantStatusState extends State<ChangeParticipantStatus> {
           body: buildList(widget.participantsList!)),
     );
   }
+
   buildList(List<List>? participantsList) {
     allRegisteredParticipantsList = participantsList![0] as List<User>;
     allCompletedParticipantsList = participantsList[1] as List<User>;
@@ -149,7 +149,7 @@ class _ChangeParticipantStatusState extends State<ChangeParticipantStatus> {
                       if (participantsList[0] == null ? false : true) {
                         registeredUsersSearchResults = userSearchWithIndex(
                             query: searchTextEditingController!.text,
-                            allUsersList: participantsList[0] as List<User> );
+                            allUsersList: participantsList[0] as List<User>);
                       }
                       if (participantsList[1] == null ? false : true) {
                         completedUsersSearchResults = userSearchWithIndex(
@@ -379,8 +379,8 @@ class _ChangeParticipantStatusState extends State<ChangeParticipantStatus> {
                           if (await showWarning(context: context) == true) {
                             await databaseServices.setRunnerUp(
                                 participant: participant, event: event!);
-                            widget.event =
-                                await databaseServices.getEvent(widget.eventId!);
+                            widget.event = await databaseServices
+                                .getEvent(widget.eventId!);
                             widget.participantsList = await databaseServices
                                 .getParticipants(widget.eventId!);
                             setState(() {});

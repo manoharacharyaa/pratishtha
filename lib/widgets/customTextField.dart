@@ -3,7 +3,7 @@ import 'package:pratishtha/constants/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
-    Key? key,
+    super.key,
     this.hintText,
     this.labelText,
     @required this.controller,
@@ -12,9 +12,9 @@ class CustomTextField extends StatelessWidget {
     this.isEnabled,
     this.keyboardType,
     this.labelStyle,
-     this.onChanged,
+    this.onChanged,
     this.obscureText = false,
-  }) : super(key: key);
+  });
 
   final String? hintText;
   final String? labelText;
@@ -43,7 +43,7 @@ class CustomTextField extends StatelessWidget {
           keyboardType: keyboardType,
           obscureText: obscureText!,
           obscuringCharacter: "*",
-            onChanged: onChanged as void Function(String)?,
+          onChanged: onChanged as void Function(String)?,
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             labelText: labelText,
@@ -92,7 +92,7 @@ class CustomTextField extends StatelessWidget {
 
 class CustomTextField1 extends StatelessWidget {
   const CustomTextField1(
-      {Key? key,
+      {super.key,
       this.hintText,
       this.labelText,
       @required this.controller,
@@ -103,8 +103,7 @@ class CustomTextField1 extends StatelessWidget {
       this.labelStyle,
       this.obscureText = false,
       this.suffix,
-      this.onChanged})
-      : super(key: key);
+      this.onChanged});
 
   final String? hintText;
   final String? labelText;

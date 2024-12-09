@@ -16,7 +16,7 @@ import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTeamToFest extends StatefulWidget {
-  const AddTeamToFest({Key? key}) : super(key: key);
+  const AddTeamToFest({super.key});
 
   @override
   State<AddTeamToFest> createState() => _AddTeamToFestState();

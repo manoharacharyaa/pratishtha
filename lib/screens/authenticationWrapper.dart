@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:pratishtha/models/userModel.dart' as user;
 
 class AuthenticationWrapper extends StatefulWidget {
-  const AuthenticationWrapper({Key? key}) : super(key: key);
+  const AuthenticationWrapper({super.key});
 
   @override
   _AuthenticationWrapperState createState() => _AuthenticationWrapperState();

@@ -11,7 +11,7 @@ import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
 class MyDrawer extends StatefulWidget {
-  MyDrawer({Key? key}) : super(key: key);
+  MyDrawer({super.key});
 
   @override
   _MyDrawerState createState() => _MyDrawerState();
@@ -197,17 +197,17 @@ class _MyDrawerState extends State<MyDrawer> {
                             ),
                       user?.role == 8
                           ? ListTile(
-                        title: Text('Attendance'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AttendancePage(), // Replace with your AttendancePage class
-                            ),
-                          );
-                        },
-                      )
+                              title: Text('Attendance'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        AttendancePage(), // Replace with your AttendancePage class
+                                  ),
+                                );
+                              },
+                            )
                           : Container(),
                       ListTile(
                         title: Text('LeaderBoard'),

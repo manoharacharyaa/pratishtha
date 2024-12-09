@@ -14,7 +14,7 @@ import 'package:pratishtha/widgets/rulesCard.dart';
 import 'package:pratishtha/widgets/userCard.dart';
 
 class AssignRoles extends StatefulWidget {
-  const AssignRoles({Key? key}) : super(key: key);
+  const AssignRoles({super.key});
 
   @override
   _AssignRolesState createState() => _AssignRolesState();
@@ -380,10 +380,10 @@ class _AssignRolesState extends State<AssignRoles> {
 
 class ShowEventRolePopup extends StatefulWidget {
   ShowEventRolePopup({
-    Key? key,
+    super.key,
     this.dropDownValue,
     this.eventsMap,
-  }) : super(key: key);
+  });
 
   String? dropDownValue;
   Map<String, String>? eventsMap;

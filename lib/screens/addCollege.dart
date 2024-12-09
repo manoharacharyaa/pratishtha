@@ -14,7 +14,6 @@ class AddCollege extends StatefulWidget {
 }
 
 class _AddCollegeState extends State<AddCollege> {
-
   String? selectedCollege;
 
   final FocusNode _collegeFocusNode = FocusNode();
@@ -23,13 +22,15 @@ class _AddCollegeState extends State<AddCollege> {
   final FocusNode _scoreFocusNode = FocusNode();
   final FocusNode _updatedscoreFocusNode = FocusNode();
 
-  MultiSelectController _controller = MultiSelectController(); // Assuming you have a MultiS
+  MultiSelectController _controller =
+      MultiSelectController(); // Assuming you have a MultiS
 
   Future<String?> getCollegeIdByName(String? collegeName) async {
     try {
       // Perform a query to find the document ID based on the college name
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('colleges') // Replace 'your_collection' with your actual Firestore collection name
+          .collection(
+              'colleges') // Replace 'your_collection' with your actual Firestore collection name
           .where('collegeName', isEqualTo: collegeName)
           .get();
 
@@ -54,7 +55,7 @@ class _AddCollegeState extends State<AddCollege> {
 
     try {
       QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection('colleges').get();
+          await FirebaseFirestore.instance.collection('colleges').get();
 
       querySnapshot.docs.forEach((doc) {
         colleges.add(doc['collegeName']);
@@ -69,7 +70,7 @@ class _AddCollegeState extends State<AddCollege> {
   Future<List<ValueItem>> getUserNamesFromFirestore() async {
     List<ValueItem> names = [];
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-    await FirebaseFirestore.instance.collection('users').get();
+        await FirebaseFirestore.instance.collection('users').get();
     querySnapshot.docs.forEach((doc) {
       String name = doc.data()['email'];
       String id = doc.id;
@@ -82,7 +83,7 @@ class _AddCollegeState extends State<AddCollege> {
     try {
       String UniqueCode = Uuid().v4().substring(0, 6); // Unique Code
       final CollectionReference collegecoll =
-      FirebaseFirestore.instance.collection('colleges');
+          FirebaseFirestore.instance.collection('colleges');
 
       // Check if the participant and team fields are empty and set values accordingly
       List<String> participantsList = participantcontroller.text.isEmpty
@@ -158,40 +159,42 @@ class _AddCollegeState extends State<AddCollege> {
     }
   }
 
-  Future<void> updateCollege () async {
+  Future<void> updateCollege() async {
+    // Parse the entered score
+    int scoreChange = int.tryParse(updatedscorecontroller.text) ?? 0;
 
-      // Parse the entered score
-      int scoreChange = int.tryParse(updatedscorecontroller.text) ?? 0;
+    // Get the selected college ID
+    String? selectedCollegeId = await getCollegeIdByName(selectedCollege);
 
-      // Get the selected college ID
-      String? selectedCollegeId = await getCollegeIdByName(selectedCollege);
+    // Fetch the current score from Firestore
+    DocumentSnapshot collegeDoc = await FirebaseFirestore.instance
+        .collection('colleges')
+        .doc(selectedCollegeId)
+        .get();
 
-      // Fetch the current score from Firestore
-      DocumentSnapshot collegeDoc = await FirebaseFirestore.instance
-          .collection('colleges')
-          .doc(selectedCollegeId)
-          .get();
+    // Perform addition or subtraction
+    int currentScore = collegeDoc['score'];
+    int newScore = currentScore + scoreChange;
 
-      // Perform addition or subtraction
-      int currentScore = collegeDoc['score'];
-      int newScore = currentScore + scoreChange;
+    if (newScore < 0) {
+      newScore = 0;
+    }
 
-      if(newScore < 0){
-        newScore = 0;
-      }
+    // Update the score in Firestore
+    await FirebaseFirestore.instance
+        .collection('colleges')
+        .doc(selectedCollegeId)
+        .update({
+      'score': newScore,
+    });
 
-      // Update the score in Firestore
-      await FirebaseFirestore.instance.collection('colleges').doc(selectedCollegeId).update({
-        'score': newScore,
-      });
-
-      // Update the UI if needed
-      setState(() {
-        // Update the state variables here
-        updatedscorecontroller.clear();
-      });
-
+    // Update the UI if needed
+    setState(() {
+      // Update the state variables here
+      updatedscorecontroller.clear();
+    });
   }
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController collegecontroller = TextEditingController();
   final TextEditingController participantcontroller = TextEditingController();
@@ -242,7 +245,8 @@ class _AddCollegeState extends State<AddCollege> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.85,
                         child: MyTextField(
-                          focusNode: _collegeFocusNode, // Associate the FocusNode
+                          focusNode:
+                              _collegeFocusNode, // Associate the FocusNode
                           hinttext: 'Enter College Name',
                           keyboard: TextInputType.text,
                           obscuretext: false,
@@ -262,7 +266,6 @@ class _AddCollegeState extends State<AddCollege> {
                       // SizedBox(
                       //   height: 30,
                       // ),
-
 
                       // SizedBox(
                       //   width: MediaQuery.of(context).size.width * 0.90,
@@ -300,8 +303,6 @@ class _AddCollegeState extends State<AddCollege> {
                       //     },
                       //   ),
                       // ),
-
-
 
                       // SizedBox(
                       //   width: MediaQuery.of(context).size.width * 0.85,
@@ -371,16 +372,17 @@ class _AddCollegeState extends State<AddCollege> {
                         height: 40,
                       ),
                       SizedBox(
-
                         width: MediaQuery.of(context).size.width * 0.85,
                         child: FutureBuilder<List<String>>(
                           future: fetchColleges(),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return CircularProgressIndicator(); // or any loading indicator
                             } else if (snapshot.hasError) {
                               return Text('Error loading colleges');
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
                               return Text('No colleges available');
                             } else {
                               List<String>? colleges = snapshot.data;
@@ -388,13 +390,16 @@ class _AddCollegeState extends State<AddCollege> {
                               return DropdownButtonFormField(
                                 style: TextStyle(
                                   color: Colors.black, // Set text color
-                                  fontSize: 16.0,       // Set text size
+                                  fontSize: 16.0, // Set text size
                                 ),
-                                elevation: 8, // Set elevation for the dropdown menu
-                                dropdownColor: Colors.white, // Set background color for the dropdown menu
+                                elevation:
+                                    8, // Set elevation for the dropdown menu
+                                dropdownColor: Colors
+                                    .white, // Set background color for the dropdown menu
                                 focusColor: Colors.white,
                                 icon: Icon(
-                                  Icons.arrow_drop_down, // Customize the dropdown icon
+                                  Icons
+                                      .arrow_drop_down, // Customize the dropdown icon
                                   color: Colors.black,
                                 ),
 
@@ -408,9 +413,8 @@ class _AddCollegeState extends State<AddCollege> {
                                   // Handle the selected college
                                   print('Selected College: $value');
 
-                                  selectedCollege = value; // Update the selectedCollege variable
-
-
+                                  selectedCollege =
+                                      value; // Update the selectedCollege variable
                                 },
                                 decoration: InputDecoration(
                                   filled: true,
@@ -418,7 +422,8 @@ class _AddCollegeState extends State<AddCollege> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 12.0),
                                   hintText: 'Select your College',
                                   prefixIcon: Icon(
                                     FontAwesomeIcons.university,
@@ -434,7 +439,9 @@ class _AddCollegeState extends State<AddCollege> {
                           },
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.85,
                         child: MyTextField(
@@ -461,7 +468,7 @@ class _AddCollegeState extends State<AddCollege> {
                           minWidth: 275,
                           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                           onPressed: () {
-                           updateCollege();
+                            updateCollege();
                           },
                           child: Text(
                             'Update',
@@ -470,7 +477,6 @@ class _AddCollegeState extends State<AddCollege> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),
@@ -493,14 +499,15 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const MyTextField({
-    Key? key,
+    super.key,
     required this.hinttext,
     required this.obscuretext,
     required this.controller,
     required this.icon,
     required this.validator,
-    this.keyboard = TextInputType.text, required this.focusNode, // Provide a default value for keyboard
-  }) : super(key: key);
+    this.keyboard = TextInputType.text,
+    required this.focusNode, // Provide a default value for keyboard
+  });
 
   @override
   Widget build(BuildContext context) {

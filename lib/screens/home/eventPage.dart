@@ -35,7 +35,7 @@ import 'editMatchPage.dart';
 
 class EventPage extends StatefulWidget {
   Event event;
-  EventPage({Key? key, required this.event}) : super(key: key);
+  EventPage({super.key, required this.event});
 
   @override
   _EventPageState createState() => _EventPageState();

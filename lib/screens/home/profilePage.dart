@@ -24,12 +24,11 @@ import 'package:pratishtha/widgets/achievementsWidget.dart';
 import 'package:pratishtha/widgets/eventCard.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_page_transition_plus/flutter_page_transition_plus.dart';
 
 class ProfilePage extends StatefulWidget {
   user.User? selectedUser;
   Event? event;
-  ProfilePage({Key? key, this.selectedUser}) : super(key: key);
+  ProfilePage({super.key, this.selectedUser});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
