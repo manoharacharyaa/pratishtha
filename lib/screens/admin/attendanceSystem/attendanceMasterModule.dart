@@ -5,7 +5,9 @@ import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
+import 'package:pratishtha/services/searchServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
+import 'package:pratishtha/widgets/customTextField.dart';
 
 class AttendanceMasterModule extends StatefulWidget {
   final User? user;
@@ -46,7 +48,6 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
 
   void openUserSelectionModal(BuildContext context) {
     TextEditingController searchController = TextEditingController();
-    List<User> filteredData = [];
 
     showModalBottomSheet(
       context: context,
@@ -81,12 +82,12 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (snapshot.hasData) {
                       List<User> data = snapshot.data!;
-                      // Initialize filteredData to show all data initially
-                      filteredData = filteredData.isEmpty ? data : filteredData;
+                      List<User> srch = [];
+                      srch.addAll(data);
 
                       return Column(
                         children: [
-                          // Search Bar
+                          // Search Bar Container
                           Container(
                             color: Colors.white,
                             padding: EdgeInsets.symmetric(
@@ -94,37 +95,28 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: TextField(
+                                  child: CustomTextField1(
                                     controller: searchController,
-                                    decoration: InputDecoration(
-                                      labelText: "Search Students",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
+                                    hintText: 'Enter User Name',
+                                    labelText: 'Enter User Name',
+                                    labelStyle: TextStyle(
+                                      color: Colors.black87,
                                     ),
-                                    onChanged: (query) {
-                                      setState(() {
-                                        if (query.isEmpty) {
-                                          filteredData =
-                                              data; // Show all data when input is cleared
-                                        } else {
-                                          filteredData = data
-                                              .where((user) =>
-                                                  user.firstName!
-                                                      .toLowerCase()
-                                                      .contains(query
-                                                          .toLowerCase()) ||
-                                                  user.lastName!
-                                                      .toLowerCase()
-                                                      .contains(
-                                                          query.toLowerCase()))
-                                              .toList();
-                                        }
-                                      });
-                                    },
+                                    suffix: InkWell(
+                                        onTap: () {
+                                          srch.clear();
+                                          setState(() {
+                                            srch.addAll(userSearch(
+                                                allUsersList: data,
+                                                query: searchController.text
+                                                    .trim()));
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.search,
+                                          color: Colors.black87,
+                                          size: 24,
+                                        )),
                                   ),
                                 ),
                               ],
@@ -134,15 +126,15 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                           Flexible(
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: filteredData.length,
+                              itemCount: srch.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
                                   title: Text(
-                                      "${filteredData[index].firstName} ${filteredData[index].lastName}"),
+                                      "${srch[index].firstName} ${srch[index].lastName}"),
                                   onTap: () {
                                     setState(() {
                                       deptHeadorCoheadNameController.text =
-                                          "${filteredData[index].firstName} ${filteredData[index].lastName}";
+                                          "${srch[index].firstName} ${srch[index].lastName}";
                                     });
                                     Navigator.pop(context);
                                   },
