@@ -673,192 +673,193 @@ class _AddEventState extends State<AddEvent> {
                             IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(
-                                      context: context,
-                                      elevation: 10,
-                                      isScrollControlled: true,
-                                      clipBehavior: Clip.antiAlias,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(10),
-                                        ),
+                                    context: context,
+                                    elevation: 10,
+                                    isScrollControlled: true,
+                                    clipBehavior: Clip.antiAlias,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(10),
                                       ),
-                                      builder: (context) {
-                                        return Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              1.5,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(10),
-                                            ),
+                                    ),
+                                    builder: (context) {
+                                      return Container(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                1.5,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(10),
                                           ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(10),
-                                            ),
-                                            child: FutureBuilder<List<User>>(
-                                                future: db.getSakecUsers(),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    var data = snapshot.data;
-                                                    List<User> srch = [];
-                                                    srch.addAll(data!);
-                                                    List istapped =
-                                                        List.generate(
-                                                            data.length,
-                                                            (index) => false);
-                                                    return StatefulBuilder(
-                                                        builder: (context, ss) {
-                                                      return Column(
-                                                        children: [
-                                                          Container(
-                                                            color: Colors.white,
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        15,
-                                                                    horizontal:
-                                                                        10),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Select Event Head",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16),
-                                                                ),
-                                                                Spacer(),
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    setS(() {
-                                                                      srch.clear();
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    color: Colors
-                                                                        .lightBlue,
-                                                                    padding: EdgeInsets
-                                                                        .fromLTRB(
-                                                                            4,
-                                                                            2,
-                                                                            4,
-                                                                            3),
-                                                                    child: Text(
-                                                                      "Save",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            color: Colors.white,
-                                                            child:
-                                                                CustomTextField1(
-                                                              controller:
-                                                                  search,
-                                                              hintText:
-                                                                  'Enter User Name',
-                                                              labelText:
-                                                                  'Enter User Name',
-                                                              labelStyle:
-                                                                  TextStyle(
-                                                                color: Colors
-                                                                    .black87,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(10),
+                                          ),
+                                          child: FutureBuilder<List<User>>(
+                                              future: db.getSakecUsers(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  var data = snapshot.data;
+                                                  List<User> srch = [];
+                                                  srch.addAll(data!);
+                                                  List istapped = List.generate(
+                                                      data.length,
+                                                      (index) => false);
+                                                  return StatefulBuilder(
+                                                      builder: (context, ss) {
+                                                    return Column(
+                                                      children: [
+                                                        Container(
+                                                          color: Colors.white,
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical: 15,
+                                                                  horizontal:
+                                                                      10),
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                "Select Event Head",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16),
                                                               ),
-                                                              // onChanged: (v) {
-                                                              //   print(userSearch(
-                                                              //       allUsersList: data,
-                                                              //       query: v));
-                                                              // },
-                                                              suffix: InkWell(
-                                                                  onTap: () {
+                                                              Spacer(),
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  setS(() {
                                                                     srch.clear();
-
-                                                                    ss(() {
-                                                                      srch.addAll(userSearch(
-                                                                          allUsersList:
-                                                                              data,
-                                                                          query: search
-                                                                              .text
-                                                                              .trim()));
-                                                                    });
-                                                                  },
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .search,
-                                                                    color: Colors
-                                                                        .black87,
-                                                                    size: 24,
-                                                                  )),
-                                                            ),
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  color: Colors
+                                                                      .lightBlue,
+                                                                  padding: EdgeInsets
+                                                                      .fromLTRB(
+                                                                          4,
+                                                                          2,
+                                                                          4,
+                                                                          3),
+                                                                  child: Text(
+                                                                    "Save",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
                                                           ),
-                                                          Flexible(
-                                                            child: ListView
-                                                                .builder(
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    itemCount: srch
-                                                                        .length,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    itemBuilder:
-                                                                        (context,
-                                                                            index) {
-                                                                      return ListTile(
-                                                                        tileColor: istapped[index]
-                                                                            ? Colors.blue
-                                                                            : Colors.white,
-                                                                        title: Text(
-                                                                            "${srch[index].firstName} ${srch[index].lastName}"),
-                                                                        onTap:
-                                                                            () {
-                                                                          if (!istapped[
-                                                                              index]) {
-                                                                            var contain = eventhead.where((element) =>
-                                                                                element.smartcardNo ==
-                                                                                srch[index].smartcardNo);
-                                                                            if (contain.isEmpty) {
-                                                                              setState(() {
-                                                                                eventhead.add(srch[index]);
-                                                                              });
-                                                                            }
-                                                                          } else {
+                                                        ),
+                                                        Container(
+                                                          color: Colors.white,
+                                                          child:
+                                                              CustomTextField1(
+                                                            controller: search,
+                                                            hintText:
+                                                                'Enter User Name',
+                                                            labelText:
+                                                                'Enter User Name',
+                                                            labelStyle:
+                                                                TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                            // onChanged: (v) {
+                                                            //   print(userSearch(
+                                                            //       allUsersList: data,
+                                                            //       query: v));
+                                                            // },
+                                                            suffix: InkWell(
+                                                                onTap: () {
+                                                                  srch.clear();
+
+                                                                  ss(() {
+                                                                    srch.addAll(userSearch(
+                                                                        allUsersList:
+                                                                            data,
+                                                                        query: search
+                                                                            .text
+                                                                            .trim()));
+                                                                  });
+                                                                },
+                                                                child: Icon(
+                                                                  Icons.search,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                  size: 24,
+                                                                )),
+                                                          ),
+                                                        ),
+                                                        Flexible(
+                                                          child:
+                                                              ListView.builder(
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  itemCount: srch
+                                                                      .length,
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    return ListTile(
+                                                                      tileColor: istapped[
+                                                                              index]
+                                                                          ? Colors
+                                                                              .blue
+                                                                          : Colors
+                                                                              .white,
+                                                                      title: Text(
+                                                                          "${srch[index].firstName} ${srch[index].lastName}"),
+                                                                      onTap:
+                                                                          () {
+                                                                        if (!istapped[
+                                                                            index]) {
+                                                                          var contain = eventhead.where((element) =>
+                                                                              element.smartcardNo ==
+                                                                              srch[index].smartcardNo);
+                                                                          if (contain
+                                                                              .isEmpty) {
                                                                             setState(() {
-                                                                              eventhead.remove(srch[index]);
+                                                                              eventhead.add(srch[index]);
                                                                             });
                                                                           }
-                                                                          ss(() {
-                                                                            istapped[index] =
-                                                                                !istapped[index];
+                                                                        } else {
+                                                                          setState(
+                                                                              () {
+                                                                            eventhead.remove(srch[index]);
                                                                           });
-                                                                        },
-                                                                      );
-                                                                    }),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    });
-                                                  } else {
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
+                                                                        }
+                                                                        ss(() {
+                                                                          istapped[index] =
+                                                                              !istapped[index];
+                                                                        });
+                                                                      },
+                                                                    );
+                                                                  }),
+                                                        ),
+                                                      ],
                                                     );
-                                                  }
-                                                }),
-                                          ),
-                                        );
-                                      });
+                                                  });
+                                                } else {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                }
+                                              }),
+                                        ),
+                                      );
+                                    },
+                                  );
                                 },
                                 icon: Icon(Icons.add))
                           ],

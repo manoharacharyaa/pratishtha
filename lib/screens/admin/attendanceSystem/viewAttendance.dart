@@ -379,7 +379,7 @@ Widget _buildVolunteerGroup(
             color: Colors.black54,
             indent: 10,
             height: 3,
-                thickness: 2,
+            thickness: 2,
           )),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -391,11 +391,11 @@ Widget _buildVolunteerGroup(
           ),
           const Expanded(
               child: Divider(
-                color: Colors.black54,
-                indent: 10,
-                height: 3,
-                thickness: 2,
-              )),
+            color: Colors.black54,
+            indent: 10,
+            height: 3,
+            thickness: 2,
+          )),
         ],
       ),
       SizedBox(
