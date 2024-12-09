@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
@@ -20,6 +21,29 @@ class MyDrawer extends StatefulWidget {
 class _MyDrawerState extends State<MyDrawer> {
   Map? features;
   User? user;
+
+  Future<bool> checkFieldExists() async {
+    try {
+      // Get the document
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user!.uid)
+          .get();
+
+      // Check if the document exists
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+        return data?.containsKey("isDeptHead2024_25") ?? false;
+      }
+      return false; // Document does not exist
+    } catch (e) {
+      print("Error checking field in document: $e");
+      return false;
+    }
+  }
+
+  bool? isEventHead24_25;
+
 
   @override
   void initState() {
@@ -71,6 +95,15 @@ class _MyDrawerState extends State<MyDrawer> {
                 features = snapshot.data[0];
                 user = snapshot.data[1];
                 //print(features['1']['roles']);
+                // Call checkFieldExists() after user is populated
+                if (isEventHead24_25 == null) {
+                  checkFieldExists().then((exists) {
+                    setState(() {
+                      isEventHead24_25 = exists;
+                      print("UUid Exists or not: $exists");
+                    });
+                  });
+                }
                 return SizedBox(
                   width: MediaQuery.of(context).size.width,
                   //height: MediaQuery.of(context).size.height / 1.9,
@@ -195,7 +228,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8 || user?.role == 9
+                      user?.role == 8 || user?.role == 9 || (isEventHead24_25! == true)
                           ? ListTile(
                               title: Text('Attendance'),
                               onTap: () {
@@ -209,6 +242,7 @@ class _MyDrawerState extends State<MyDrawer> {
                               },
                             )
                           : Container(),
+
                       ListTile(
                         title: Text('LeaderBoard'),
                         onTap: () {

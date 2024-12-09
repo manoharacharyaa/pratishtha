@@ -23,6 +23,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   TextEditingController departmentNameController = TextEditingController();
   TextEditingController deptHeadorCoheadNameController =
       TextEditingController();
+
+  TextEditingController departmentPersonUUidController = TextEditingController();
+
   final addkey = GlobalKey<FormState>();
 
   var db = DatabaseServices();
@@ -141,6 +144,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                                       "${filteredData[index].firstName} ${filteredData[index].lastName}"),
                                   onTap: () {
                                     setState(() {
+                                      departmentPersonUUidController.text = filteredData[index].uid!;
                                       deptHeadorCoheadNameController.text =
                                           "${filteredData[index].firstName} ${filteredData[index].lastName}";
                                     });
@@ -302,6 +306,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       widget.currentAcademicYear,
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
+                        departmentPersonUUidController.text,
                     );
 
                     if (result == "Member Added" ||
