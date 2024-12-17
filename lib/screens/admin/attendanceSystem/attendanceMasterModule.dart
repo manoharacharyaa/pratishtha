@@ -24,6 +24,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   TextEditingController departmentNameController = TextEditingController();
   TextEditingController deptHeadorCoheadNameController =
       TextEditingController();
+
+  TextEditingController departmentPersonUUidController = TextEditingController();
+
   final addkey = GlobalKey<FormState>();
 
   var db = DatabaseServices();
@@ -129,31 +132,17 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                                   ? srch.length
                                   : filteredUser.length,
                               itemBuilder: (context, index) {
-                                return searchController.text.isEmpty
-                                    ? ListTile(
-                                        title: Text(
-                                            "${srch[index].firstName} ${srch[index].lastName}"),
-                                        onTap: () {
-                                          setState(() {
-                                            deptHeadorCoheadNameController
-                                                    .text =
-                                                "${srch[index].firstName} ${srch[index].lastName}";
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    : ListTile(
-                                        title: Text(
-                                            "${filteredUser[index].firstName} ${filteredUser[index].lastName}"),
-                                        onTap: () {
-                                          setState(() {
-                                            deptHeadorCoheadNameController
-                                                    .text =
-                                                "${filteredUser[index].firstName} ${filteredUser[index].lastName}";
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                      );
+                                return ListTile(
+                                  title: Text(
+                                      "${srch[index].firstName} ${srch[index].lastName}"),
+                                  onTap: () {
+                                    setState(() {
+                                      deptHeadorCoheadNameController.text =
+                                          "${srch[index].firstName} ${srch[index].lastName}";
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -180,107 +169,136 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
       ),
       body: Column(
         children: [
-          Form(
-            key: addkey,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: TextField(
-                      controller: departmentNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Dept Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 3,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: TextField(
-                      controller: deptHeadorCoheadNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Select Member',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 3,
-                              strokeAlign: BorderSide.strokeAlignOutside),
-                        ),
-                      ),
-                      readOnly: true,
-                      onTap: () => openUserSelectionModal(context),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           InkWell(
             child: Container(
               margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                    style: BorderStyle.solid, color: primaryColor, width: 2),
-                color: Colors.transparent,
+                color: widget.user!.role == 8
+                    ? primaryColor
+                    : primaryColor.withOpacity(0.4),
               ),
               alignment: Alignment.center,
               child: Text(
-                "Add Dept Details",
+                "Add Dept Head / Co-head",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black),
+                    color: Colors.white),
               ),
             ),
-            onTap: () async {
-              try {
-                if (addkey.currentState!.validate()) {
-                  String result = await at.addHeadorCohead(
-                    widget.currentAcademicYear,
-                    departmentNameController.text,
-                    deptHeadorCoheadNameController.text,
-                  );
+            onTap: widget.user!.role == 8
+                ? () {
+                    setState(() {
+                      showTextBoxes = !showTextBoxes;
+                    });
+                  }
+                : null, // No action for roles other than 8
+          ),
+          if (showTextBoxes) ...[
+            Form(
+              key: addkey,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: TextField(
+                        controller: departmentNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Dept Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 2,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 2,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 3,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: TextField(
+                        controller: deptHeadorCoheadNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Select Member',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 2,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 2,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: Colors.blue,
+                                width: 3,
+                                strokeAlign: BorderSide.strokeAlignOutside),
+                          ),
+                        ),
+                        readOnly: true,
+                        onTap: () => openUserSelectionModal(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      style: BorderStyle.solid, color: primaryColor, width: 2),
+                  color: Colors.transparent,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Add Dept Details",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ),
+              onTap: () async {
+                try {
+                  if (addkey.currentState!.validate()) {
+                    String result = await at.addHeadorCohead(
+                      widget.currentAcademicYear,
+                      departmentNameController.text,
+                      deptHeadorCoheadNameController.text,
+                    );
 
                   if (result == "Member Added" || result == "Member Updated") {
                     Fluttertoast.showToast(
