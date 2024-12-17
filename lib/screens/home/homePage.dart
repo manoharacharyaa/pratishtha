@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/sponsorshipsModel.dart';
 import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/models/eventModel.dart';
@@ -52,6 +51,7 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 0.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SponsorCarousel(sponsors: sponsors),
                       SizedBox(height: 15.0),
@@ -195,7 +195,7 @@ class FestList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
-      margin: EdgeInsets.only(left: 50),
+      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.16),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: fests.length,

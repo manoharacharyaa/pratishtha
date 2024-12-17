@@ -3,19 +3,16 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/avatars.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/constants/keys.dart';
 import 'package:pratishtha/models/eventModel.dart';
-import 'package:pratishtha/models/teamModel.dart';
-import 'package:pratishtha/screens/admin/changeParticpantStatus.dart';
 import 'package:pratishtha/screens/admin/editEvent.dart';
 import 'package:pratishtha/screens/home/addMatchFormPage.dart';
 import 'package:pratishtha/screens/home/addTeams.dart';
 import 'package:pratishtha/screens/home/eventPointsCard.dart';
+import 'package:pratishtha/screens/home/matches_details_page.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
@@ -1598,120 +1595,52 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              AppBar(
-                                leading: const Icon(Icons.info),
-                                elevation: 0,
-                                title: RichText(
-                                  text: TextSpan(
-                                    text: 'Match $index',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                //car name
-                                backgroundColor: Theme.of(context).primaryColor,
-                                centerTitle: true,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, left: 16, bottom: 17),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text: "Match :\t",
-                                      style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MatchesDetailsPage(
+                                        matchIndex: index,
+                                        eventId: widget.event.id!,
                                       ),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: matchesList[index]["team01"]
-                                                  .toUpperCase() +
-                                              '\tVS\t ' +
-                                              matchesList[index]['team02'],
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.all(30),
+                                  height: 147,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 15.0,
+                                        color: Colors.yellow,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        color: Colors.black,
+                                      ),
+                                      Text(
+                                        '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
+                                        style: TextStyle(
+                                          fontSize: 33,
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, bottom: 17),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text:
-                                          "Team ${matchesList[index]['team01']} Score : \t",
-                                      style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
                                       ),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: matchesList[index]["score01"] ??
-                                              'No Score',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, bottom: 17),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text:
-                                          "Team ${matchesList[index]['team02']} Score :\t",
-                                      style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        color: Colors.black,
                                       ),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: matchesList[index]["score02"] ??
-                                              'No Score',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, bottom: 17),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text: "Result :\t",
-                                      style: TextStyle(
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text: matchesList[index]
-                                                    ["result"] ??
-                                                'No Result'),
-                                      ],
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ),

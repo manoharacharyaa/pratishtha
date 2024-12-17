@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/models/ewalletModel.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/walletServices.dart';
 import 'package:pratishtha/widgets/balanceCard.dart';

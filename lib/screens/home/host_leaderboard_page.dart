@@ -1,4 +1,3 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 
@@ -34,9 +33,8 @@ class _HostLeaderBoardPageState extends State<HostLeaderBoardPage> {
                   child: SizedBox(
                     height: 80,
                     child: Card(
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                            cornerRadius: 10, cornerSmoothing: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       color: primaryColor,
                     ),
@@ -52,9 +50,8 @@ class _HostLeaderBoardPageState extends State<HostLeaderBoardPage> {
                   child: SizedBox(
                     height: 80,
                     child: Card(
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                            cornerRadius: 10, cornerSmoothing: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       color: primaryColor,
                     ),

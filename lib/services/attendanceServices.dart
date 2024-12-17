@@ -49,7 +49,6 @@ class AttendaceServices {
       String? first_name, String? last_name, String currentAcademicYear) async {
     try {
       String name = "$first_name $last_name";
-      if (name == null) return null;
 
       final teamQuery = await firestore
           .collection('attendance')
@@ -108,7 +107,7 @@ class AttendaceServices {
             'rollno': volunteerData['rollNo'],
             'PRN': volunteerData['PRN'],
             'Branch': volunteerData['branch'],
-            'SakecId':volunteerData['sakec_id'],
+            'SakecId': volunteerData['sakec_id'],
             'name': volunteerData['name'] ?? 'Unknown',
             'attendance': volunteerData['attendanceStatus'] ?? [],
           };

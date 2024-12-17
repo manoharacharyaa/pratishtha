@@ -1,4 +1,3 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
@@ -312,11 +311,8 @@ class _SearchPageState extends State<SearchPage> {
       {BuildContext? context, List<Event>? allEvents, List<User>? allUsers}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: ClipSmoothRect(
-        radius: SmoothBorderRadius(
-          cornerRadius: 15,
-          cornerSmoothing: 1,
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
         child: TextFormField(
           controller: titleSearchController,
           decoration: InputDecoration(

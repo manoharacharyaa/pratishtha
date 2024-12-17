@@ -6,6 +6,7 @@ import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
@@ -195,9 +196,9 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8 || user?.role == 9
+                      user?.role == 8
                           ? ListTile(
-                              title: Text('Attendance'),
+                              title: Text('Add Dept Head'),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -208,7 +209,22 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             )
-                          : Container(),
+                          : SizedBox(),
+                      user?.role == 9
+                          ? ListTile(
+                              title: Text('Attendance'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ViewAttendanceAsTeacher(
+                                            '2024-2025'), // Replace with your AttendancePage class
+                                  ),
+                                );
+                              },
+                            )
+                          : SizedBox(),
                       ListTile(
                         title: Text('LeaderBoard'),
                         onTap: () {

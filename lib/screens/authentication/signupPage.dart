@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/constants/keys.dart';
-import 'package:pratishtha/screens/home/eventPage.dart';
 import 'package:pratishtha/services/authenticationServices.dart';
 import 'package:pratishtha/screens/authentication/loginPage.dart';
 import 'package:pratishtha/screens/authenticationWrapper.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pratishtha/constants/colors.dart';
 
 /// A beautiful and animated bottom navigation that paints a rounded shape

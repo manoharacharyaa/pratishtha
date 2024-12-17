@@ -1,4 +1,3 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
@@ -12,11 +11,8 @@ class PointsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-      child: ClipSmoothRect(
-        radius: SmoothBorderRadius(
-          cornerRadius: 12,
-          cornerSmoothing: 1,
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
         child: Container(
           height: 100,
           width: MediaQuery.of(context).size.width,

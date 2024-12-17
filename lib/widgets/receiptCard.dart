@@ -4,9 +4,7 @@ import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/ewalletModel.dart';
 import 'package:pratishtha/models/pointModel.dart';
 import 'package:pratishtha/models/userModel.dart';
-import 'package:pratishtha/screens/home/walletPage.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
-import 'package:pratishtha/styles/mainTheme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 Widget ReceiptCard(
