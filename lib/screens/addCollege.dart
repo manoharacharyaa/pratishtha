@@ -1,9 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:uuid/uuid.dart';
+
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 
@@ -531,14 +537,14 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const MyTextField({
-    super.key,
+    Key? key,
+    required this.focusNode,
     required this.hinttext,
     required this.obscuretext,
     required this.controller,
+    this.keyboard = TextInputType.text,
     required this.icon,
     required this.validator,
-    this.keyboard = TextInputType.text,
-    required this.focusNode, // Provide a default value for keyboard
   }) : super(key: key);
 
   @override

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
+import 'package:pratishtha/models/cricketInterCollege.dart';
+import 'package:pratishtha/models/footballInterCollege.dart';
 import 'package:pratishtha/models/interCollege.dart';
+import 'package:pratishtha/models/kabaddiInterCollege.dart';
 import 'package:uuid/uuid.dart';
 
 class InterCollegeServices {
@@ -14,22 +16,6 @@ class InterCollegeServices {
     String collegeLocation,
     File imageFile,
   ) async {
-=======
-import 'package:pratishtha/models/cricketInterCollege.dart';
-import 'package:pratishtha/models/footballInterCollege.dart';
-import 'package:pratishtha/models/interCollege.dart';
-import 'package:pratishtha/models/kabaddiInterCollege.dart';
-import 'package:uuid/uuid.dart';
-
-class InterCollegeServices {
-
-  Future<String> addCollegeForInter(
-      String collegeName,
-      String collegeShortName,
-      String collegeLocation,
-      File imageFile,
-      ) async {
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     try {
       // Calculate the academic year
       DateTime now = DateTime.now();
@@ -46,13 +32,8 @@ class InterCollegeServices {
       String uniqueCode = Uuid().v4().substring(0, 6); // Unique Code
 
       // Reference to Firebase Storage
-<<<<<<< HEAD
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('interCollege_Logo/$collegeName.png');
-=======
-      final storageRef = FirebaseStorage.instance.ref().child('colleges/$collegeName.png');
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
+      final storageRef =
+          FirebaseStorage.instance.ref().child('colleges/$collegeName.png');
 
       // Upload image to Firebase Storage
       UploadTask uploadTask = storageRef.putFile(imageFile);
@@ -92,17 +73,10 @@ class InterCollegeServices {
   }
 
   Future<String> updateCollege(
-<<<<<<< HEAD
     String collegeName,
     String collegeId,
     TextEditingController updatedScoreController,
   ) async {
-=======
-      String collegeName,
-      String collegeId,
-      TextEditingController updatedScoreController,
-      ) async {
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     try {
       // Parse the entered score
       int scoreChange = int.tryParse(updatedScoreController.text) ?? 0;
@@ -127,14 +101,10 @@ class InterCollegeServices {
       }
 
       // Update the score in Firestore
-<<<<<<< HEAD
       await FirebaseFirestore.instance
           .collection('colleges')
           .doc(collegeId)
           .update({
-=======
-      await FirebaseFirestore.instance.collection('colleges').doc(collegeId).update({
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
         'score': newScore,
       });
 
@@ -149,7 +119,6 @@ class InterCollegeServices {
     }
   }
 
-<<<<<<< HEAD
   Future<List<InterCollege>> getAllCollegesInter() async {
     try {
       print("Getting all Colleges");
@@ -162,27 +131,14 @@ class InterCollegeServices {
               InterCollege.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-=======
-  Future<List<InterCollege>> getAllCollegesInter() async{
-    try{
-      print("Getting all Colleges");
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("colleges").where('soft_delete',isEqualTo: false).get();
-      return querySnapshot.docs.map((doc) => InterCollege.fromMap(doc.data() as Map<String,dynamic>, doc.id)).toList();
-    }catch(e)
-    {
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
       print("Error in getAllCollegesInter() method, :${e}");
       return [];
     }
   }
 
   Future<List<String>> fetchImagesFromFirebase() async {
-<<<<<<< HEAD
     final ListResult result =
         await FirebaseStorage.instance.ref('interCollege_Banner').listAll();
-=======
-    final ListResult result = await FirebaseStorage.instance.ref('intercollege_Logo').listAll();
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     final List<String> urls = await Future.wait(
       result.items.map((item) => item.getDownloadURL()).toList(),
     );
@@ -193,29 +149,18 @@ class InterCollegeServices {
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Azad Maidan, CSMT
     required String matchType, //Like GroupStage, RO16, QF,SF,Final
-<<<<<<< HEAD
     required String matchTime, // Like 1.30 PM
     required String matchDayDate, // Like Sun, 24 Dec 2024
-=======
-    required String matchTime,  // Like 1.30 PM
-    required String matchDayDate,  // Like Sun, 24 Dec 2024
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     required String teamBattingFirst, // Team batting first
     required String teamBattingSecond, // Team batting second
     required String teamBattingFirstScore, // Format: "127/8"
     required String teamBattingSecondScore, // Format: "120/7"
     required String teamBattingFirstTopBatter, // e.g., "PlayerName: 45(30)"
-<<<<<<< HEAD
     required String
         teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
     required String teamBattingSecondTopBatter, // e.g., "PlayerName: 50(40)"
     required String
         teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
-=======
-    required String teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
-    required String teamBattingSecondTopBatter, // e.g., "PlayerName: 50(40)"
-    required String teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     required String teamBattingFirstLogoUrl, // Firebase storage URL
     required String teamBattingSecondLogoUrl, // Firebase storage URL
     required String teamBattingFirstId,
@@ -224,19 +169,12 @@ class InterCollegeServices {
     try {
       String winningTeamDcId;
       int teamBattingFirstRuns = int.parse(teamBattingFirstScore.split('/')[0]);
-<<<<<<< HEAD
       int.parse(teamBattingFirstScore.split('/')[1]);
 
       int teamBattingSecondRuns =
           int.parse(teamBattingSecondScore.split('/')[0]);
       int teamBattingSecondWickets =
           int.parse(teamBattingSecondScore.split('/')[1]);
-=======
-      int teamBattingFirstWickets = int.parse(teamBattingFirstScore.split('/')[1]);
-
-      int teamBattingSecondRuns = int.parse(teamBattingSecondScore.split('/')[0]);
-      int teamBattingSecondWickets = int.parse(teamBattingSecondScore.split('/')[1]);
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
 
       // Determine the result
       String result;
@@ -252,13 +190,9 @@ class InterCollegeServices {
         result = "$teamBattingSecond won by $wicketMargin wickets";
       }
 
-<<<<<<< HEAD
       DocumentReference teamDocRef = FirebaseFirestore.instance
           .collection('colleges')
           .doc(winningTeamDcId);
-=======
-      DocumentReference teamDocRef = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
 
       DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -274,10 +208,6 @@ class InterCollegeServices {
 
       print("Updated matchesWon for cricket successfully!");
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
       CollectionReference cricketColl = FirebaseFirestore.instance
           .collection('inter_coll') // Root collection
           .doc(academicYear) // Document for the academic year
@@ -290,17 +220,11 @@ class InterCollegeServices {
         'teamBattingFirstScore': teamBattingFirstScore,
         'teamBattingSecondScore': teamBattingSecondScore,
         'teamBattingFirstTopBatter': teamBattingFirstTopBatter,
-<<<<<<< HEAD
         'teamBattingFirstTopBowlerPerformance':
             teamBattingFirstTopBowlerPerformance,
         'teamBattingSecondTopBatter': teamBattingSecondTopBatter,
         'teamBattingSecondTopBowlerPerformance':
             teamBattingSecondTopBowlerPerformance,
-=======
-        'teamBattingFirstTopBowlerPerformance': teamBattingFirstTopBowlerPerformance,
-        'teamBattingSecondTopBatter': teamBattingSecondTopBatter,
-        'teamBattingSecondTopBowlerPerformance': teamBattingSecondTopBowlerPerformance,
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
         'teamBattingFirstLogoUrl': teamBattingFirstLogoUrl,
         'teamBattingSecondLogoUrl': teamBattingSecondLogoUrl,
         'result': result, // Store the calculated result
@@ -308,19 +232,12 @@ class InterCollegeServices {
         'matchTime': matchTime,
         'matchDayDate': matchDayDate,
         'matchType': matchType,
-<<<<<<< HEAD
         'timestamp':
             FieldValue.serverTimestamp(), // Record the match date and time
-      });
-
-      return "Match record added successfully";
-=======
-        'timestamp': FieldValue.serverTimestamp(), // Record the match date and time
         'soft_delete': false,
       });
 
       return "Cricket Match Record Added Successfully";
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
     } catch (e) {
       print("Error recording match: $e");
       return "Failed to record match";
@@ -341,15 +258,10 @@ class InterCollegeServices {
     String? teamBTopGoalScorer, // Optional: Top scorer for Team B
     required String teamALogoUrl, // Firebase storage URL for Team A logo
     required String teamBLogoUrl, // Firebase storage URL for Team B logo
-<<<<<<< HEAD
     required String
         teamAId, // Document ID for Team A in the colleges collection
     required String
         teamBId, // Document ID for Team B in the colleges collection
-=======
-    required String teamAId, // Document ID for Team A in the colleges collection
-    required String teamBId, // Document ID for Team B in the colleges collection
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
   }) async {
     try {
       String result;
@@ -367,13 +279,9 @@ class InterCollegeServices {
       }
 
       if (winningTeamDcId.isNotEmpty) {
-<<<<<<< HEAD
         DocumentReference teamDocRef = FirebaseFirestore.instance
             .collection('colleges')
             .doc(winningTeamDcId);
-=======
-        DocumentReference teamDocRef = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
 
         DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -411,10 +319,7 @@ class InterCollegeServices {
         'matchDayDate': matchDayDate,
         'matchType': matchType,
         'timestamp': FieldValue.serverTimestamp(),
-<<<<<<< HEAD
-=======
         'soft_delete': false,
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
       });
 
       return "Football Match Record Added Successfully";
@@ -441,15 +346,10 @@ class InterCollegeServices {
     String? teamBTopDefender, // Optional: Top defender for Team B
     required String teamALogoUrl, // Firebase storage URL for Team A logo
     required String teamBLogoUrl, // Firebase storage URL for Team B logo
-<<<<<<< HEAD
     required String
         teamAId, // Document ID for Team A in the colleges collection
     required String
         teamBId, // Document ID for Team B in the colleges collection
-=======
-    required String teamAId, // Document ID for Team A in the colleges collection
-    required String teamBId, // Document ID for Team B in the colleges collection
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
   }) async {
     try {
       String result;
@@ -467,13 +367,9 @@ class InterCollegeServices {
       }
 
       if (winningTeamDcId.isNotEmpty) {
-<<<<<<< HEAD
         DocumentReference teamDocRef = FirebaseFirestore.instance
             .collection('colleges')
             .doc(winningTeamDcId);
-=======
-        DocumentReference teamDocRef = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
 
         DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -513,10 +409,7 @@ class InterCollegeServices {
         'matchDayDate': matchDayDate,
         'matchType': matchType,
         'timestamp': FieldValue.serverTimestamp(),
-<<<<<<< HEAD
-=======
         'soft_delete': false,
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
       });
 
       return "Kabaddi Match Record Added Successfully";
@@ -525,22 +418,27 @@ class InterCollegeServices {
       return "Failed to record kabaddi match";
     }
   }
-<<<<<<< HEAD
-}
-=======
 
-  Future<List<InterCollegeCricketMatch>> getAllInterCollegeCricketMatches(String currentAcademicYear) async{
-    try{
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("intercollege_sports").doc(currentAcademicYear).collection('cricket').where('soft_delete', isEqualTo: false).get();
-      return querySnapshot.docs.map((doc) => InterCollegeCricketMatch.fromFirestore(doc)).toList();
-    }catch(e)
-    {
+  Future<List<InterCollegeCricketMatch>> getAllInterCollegeCricketMatches(
+      String currentAcademicYear) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("intercollege_sports")
+          .doc(currentAcademicYear)
+          .collection('cricket')
+          .where('soft_delete', isEqualTo: false)
+          .get();
+      return querySnapshot.docs
+          .map((doc) => InterCollegeCricketMatch.fromFirestore(doc))
+          .toList();
+    } catch (e) {
       print("Error in getting cricket matches : $e");
       return [];
     }
   }
 
-  Future<List<InterCollegeFootballMatch>> getAllInterCollegeFootballMatches(String currentAcademicYear) async {
+  Future<List<InterCollegeFootballMatch>> getAllInterCollegeFootballMatches(
+      String currentAcademicYear) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("intercollege_sports")
@@ -548,15 +446,17 @@ class InterCollegeServices {
           .collection('football')
           .where('soft_delete', isEqualTo: false)
           .get();
-      return querySnapshot.docs.map((doc) => InterCollegeFootballMatch.fromFirestore(doc)).toList();
+      return querySnapshot.docs
+          .map((doc) => InterCollegeFootballMatch.fromFirestore(doc))
+          .toList();
     } catch (e) {
       print("Error in getting football matches: $e");
       return [];
     }
   }
 
-
-  Future<List<InterCollegeKabaddiMatch>> getAllInterCollegeKabaddiMatches(String currentAcademicYear) async {
+  Future<List<InterCollegeKabaddiMatch>> getAllInterCollegeKabaddiMatches(
+      String currentAcademicYear) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("intercollege_sports")
@@ -564,12 +464,12 @@ class InterCollegeServices {
           .collection('kabaddi')
           .where('soft_delete', isEqualTo: false)
           .get();
-      return querySnapshot.docs.map((doc) => InterCollegeKabaddiMatch.fromFirestore(doc)).toList();
+      return querySnapshot.docs
+          .map((doc) => InterCollegeKabaddiMatch.fromFirestore(doc))
+          .toList();
     } catch (e) {
       print("Error in getting kabaddi matches: $e");
       return [];
     }
   }
-
 }
->>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
