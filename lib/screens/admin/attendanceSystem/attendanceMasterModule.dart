@@ -5,15 +5,17 @@ import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
-import 'package:pratishtha/services/searchServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
 import 'package:pratishtha/widgets/customTextField.dart';
 
 class AttendanceMasterModule extends StatefulWidget {
   final User? user;
   final String currentAcademicYear;
-  const AttendanceMasterModule(this.user, this.currentAcademicYear,
-      {super.key});
+  const AttendanceMasterModule(
+    this.user,
+    this.currentAcademicYear, {
+    super.key,
+  });
 
   @override
   State<AttendanceMasterModule> createState() => _AttendanceMasterModule();
@@ -22,11 +24,13 @@ class AttendanceMasterModule extends StatefulWidget {
 class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   bool showTextBoxes = false;
   List<User> userList = [];
+  late Future<List<User>> users;
   TextEditingController departmentNameController = TextEditingController();
   TextEditingController deptHeadorCoheadNameController =
       TextEditingController();
 
-  TextEditingController departmentPersonUUidController = TextEditingController();
+  TextEditingController departmentPersonUUidController =
+      TextEditingController();
 
   final addkey = GlobalKey<FormState>();
 
@@ -37,6 +41,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   @override
   void initState() {
     super.initState();
+    users = db.getSakecUsers();
     // Run both futures concurrently using Future.wait
     Future.wait([fetchUsers()]).then((results) {
       setState(() {
@@ -51,6 +56,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
 
   void openUserSelectionModal(BuildContext context) {
     TextEditingController searchController = TextEditingController();
+    List<User> filteredUser = [];
 
     showModalBottomSheet(
       context: context,
@@ -77,7 +83,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                   top: Radius.circular(10),
                 ),
                 child: FutureBuilder<List<User>>(
-                  future: db.getSakecUsers(),
+                  future: users,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -87,7 +93,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       List<User> data = snapshot.data!;
                       List<User> srch = [];
                       srch.addAll(data);
-
+                      if (filteredUser.isEmpty) filteredUser = data;
                       return Column(
                         children: [
                           // Search Bar Container
@@ -105,21 +111,25 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                                     labelStyle: TextStyle(
                                       color: Colors.black87,
                                     ),
-                                    suffix: InkWell(
-                                        onTap: () {
-                                          srch.clear();
-                                          setState(() {
-                                            srch.addAll(userSearch(
-                                                allUsersList: data,
-                                                query: searchController.text
-                                                    .trim()));
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.search,
-                                          color: Colors.black87,
-                                          size: 24,
-                                        )),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        filteredUser = data
+                                            .where(
+                                              (user) =>
+                                                  user.firstName!
+                                                      .toLowerCase()
+                                                      .contains(
+                                                        value.toLowerCase(),
+                                                      ) ||
+                                                  user.lastName!
+                                                      .toLowerCase()
+                                                      .contains(
+                                                        value.toLowerCase(),
+                                                      ),
+                                            )
+                                            .toList();
+                                      });
+                                    },
                                   ),
                                 ),
                               ],
@@ -127,25 +137,41 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                           ),
                           // List of Students
                           Flexible(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: srch.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                      "${srch[index].firstName} ${srch[index].lastName}"),
-                                  onTap: () {
-                                    setState(() {
-                                      departmentPersonUUidController.text = filteredData[index].uid!;
-                                      deptHeadorCoheadNameController.text =
-                                          "${srch[index].firstName} ${srch[index].lastName}";
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: searchController.text.isEmpty
+                                ? srch.length
+                                : filteredUser.length,
+                            itemBuilder: (context, index) {
+                              return searchController.text.isEmpty
+                                  ? ListTile(
+                                      title: Text(
+                                          "${srch[index].firstName} ${srch[index].lastName}"),
+                                      onTap: () {
+                                        setState(() {
+                                          departmentPersonUUidController.text =
+                                              srch[index].uid!;
+                                          deptHeadorCoheadNameController.text =
+                                              "${srch[index].firstName} ${srch[index].lastName}";
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  : ListTile(
+                                      title: Text(
+                                          "${filteredUser[index].firstName} ${filteredUser[index].lastName}"),
+                                      onTap: () {
+                                        setState(() {
+                                          departmentPersonUUidController.text =
+                                              filteredUser[index].uid!;
+                                          deptHeadorCoheadNameController.text =
+                                              "${filteredUser[index].firstName} ${filteredUser[index].lastName}";
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                            },
+                          )),
                         ],
                       );
                     } else {
@@ -298,11 +324,10 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       widget.currentAcademicYear,
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
-                        departmentPersonUUidController.text,
+                      departmentPersonUUidController.text,
                     );
 
-                    if (result == "Member Added" ||
-                        result == "Member Updated") {
+                    if (result == "Member Added/Updated Successfully") {
                       Fluttertoast.showToast(
                         msg: "Event Added Successfully",
                         toastLength: Toast.LENGTH_LONG,
@@ -312,6 +337,11 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                         textColor: Colors.black,
                         fontSize: 16.0,
                       );
+                      setState(() {
+                        departmentNameController.clear();
+                        deptHeadorCoheadNameController.clear();
+                        showTextBoxes = !showTextBoxes;
+                      });
                     } else {
                       Fluttertoast.showToast(
                         msg: "Failed to add Details",

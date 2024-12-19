@@ -8,6 +8,7 @@ import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
@@ -32,7 +33,8 @@ class _MyDrawerState extends State<MyDrawer> {
 
       // Check if the document exists
       if (docSnapshot.exists) {
-        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data =
+            docSnapshot.data() as Map<String, dynamic>?;
         return data?.containsKey("isDeptHead2024_25") ?? false;
       }
       return false; // Document does not exist
@@ -43,7 +45,6 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   bool? isEventHead24_25;
-
 
   @override
   void initState() {
@@ -228,7 +229,9 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8 || user?.role == 9 || (isEventHead24_25! == true)
+                      user?.role == 8 ||
+                              user?.role == 9 ||
+                              (isEventHead24_25 == true)
                           ? ListTile(
                               title: Text('Attendance'),
                               onTap: () {
@@ -250,6 +253,20 @@ class _MyDrawerState extends State<MyDrawer> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) => LeaderBoard(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Inter College'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  InterCollegeHome(
+                                userRole: user!.role,
+                              ),
                             ),
                           );
                         },

@@ -33,20 +33,28 @@ class _AttendancePageState extends State<AttendancePage> {
         _loadUser(),
       ]);
 
-      // After fetching user, use their data to fetch the team
+      // Safely extract results
+      final fetchedAcademicYear = results[0] as String?;
       final fetchedUser = results[1] as User?;
-      final fetchedTeamId = fetchedUser != null
-          ? await AttendaceServices().fetchUsersDepartment(
+
+      if (fetchedAcademicYear == null) {
+        throw Exception("Failed to fetch academic year.");
+      }
+
+      String fetchedTeamId = "";
+      if (fetchedUser != null) {
+        fetchedTeamId = await AttendaceServices().fetchUsersDepartment(
               fetchedUser.firstName,
               fetchedUser.lastName,
-              results[0] as String,
-            )
-          : "";
+              fetchedAcademicYear,
+            ) ??
+            ""; // Default to empty string if null
+      }
 
       setState(() {
-        currentAcademicYear = results[0] as String;
+        currentAcademicYear = fetchedAcademicYear;
         user = fetchedUser;
-        teamId = fetchedTeamId!;
+        teamId = fetchedTeamId;
         print('Attendance page debugging');
         print(currentAcademicYear);
         print(user);
