@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 
@@ -21,11 +20,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
       ),
       body: Column(
         children: [
-          ClipSmoothRect(
-            radius: SmoothBorderRadius(
-              cornerRadius: 15,
-              cornerSmoothing: 1,
-            ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
             child: Container(
               color: primaryColor,
               height: mediaQuery.height * 0.2,
@@ -86,11 +82,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                         horizontal: 15.0,
                         vertical: 8,
                       ),
-                      child: ClipSmoothRect(
-                        radius: SmoothBorderRadius(
-                          cornerRadius: 18,
-                          cornerSmoothing: 1,
-                        ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
                         child: Container(
                           height: 60,
                           color: purpleAccentColor,
@@ -137,11 +130,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                   vertical: 8,
                                   horizontal: 10,
                                 ),
-                                child: ClipSmoothRect(
-                                  radius: SmoothBorderRadius(
-                                    cornerRadius: 12,
-                                    cornerSmoothing: 1,
-                                  ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
                                   child: Container(
                                     width:
                                         MediaQuery.of(context).size.width / 6,

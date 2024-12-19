@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
-import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
@@ -40,7 +39,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
 
   @override
   void initState() {
+    users = db.getSakecUsers();
     super.initState();
+<<<<<<< HEAD
     users = db.getSakecUsers();
     // Run both futures concurrently using Future.wait
     Future.wait([fetchUsers()]).then((results) {
@@ -48,6 +49,8 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
         userList = results[0];
       });
     });
+=======
+>>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
   }
 
   Future<List<User>> fetchUsers() async {
@@ -137,6 +140,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                           ),
                           // List of Students
                           Flexible(
+<<<<<<< HEAD
                               child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: searchController.text.isEmpty
@@ -172,6 +176,28 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                                     );
                             },
                           )),
+=======
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: searchController.text.isEmpty
+                                  ? srch.length
+                                  : filteredUser.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                      "${srch[index].firstName} ${srch[index].lastName}"),
+                                  onTap: () {
+                                    setState(() {
+                                      deptHeadorCoheadNameController.text =
+                                          "${srch[index].firstName} ${srch[index].lastName}";
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+>>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
                         ],
                       );
                     } else {
@@ -324,6 +350,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       widget.currentAcademicYear,
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
+<<<<<<< HEAD
                       departmentPersonUUidController.text,
                     );
 
@@ -353,51 +380,46 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                         fontSize: 16.0,
                       );
                     }
+=======
+                    );
+
+                  if (result == "Member Added" || result == "Member Updated") {
+                    Fluttertoast.showToast(
+                      msg: "Event Added Successfully",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey[500],
+                      textColor: Colors.black,
+                      fontSize: 16.0,
+                    );
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "Failed to add Details",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey[300],
+                      textColor: Colors.red,
+                      fontSize: 16.0,
+                    );
+>>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
                   }
-                } catch (e) {
-                  // Log or show a toast with the error message
-                  Fluttertoast.showToast(
-                    msg: "An error occurred: $e",
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red[700],
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                  print('Error: $e'); // For debugging purposes
                 }
-              },
-            ),
-          ],
-          InkWell(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: widget.user!.role == 9
-                    ? primaryColor
-                    : primaryColor.withOpacity(0.4),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "View Attendance as Teacher",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ),
-            onTap: widget.user!.role == 9
-                ? () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewAttendanceAsTeacher(
-                                widget.currentAcademicYear)));
-                  }
-                : null, // No action for roles other than 8
+              } catch (e) {
+                // Log or show a toast with the error message
+                Fluttertoast.showToast(
+                  msg: "An error occurred: $e",
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red[700],
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
+                print('Error: $e'); // For debugging purposes
+              }
+            },
           ),
         ],
       ),

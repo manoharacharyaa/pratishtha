@@ -7,9 +7,9 @@ import 'package:pratishtha/services/sharedPreferencesServices.dart' as sh;
 
 class AssignEventRoles extends StatefulWidget {
   const AssignEventRoles({
-    Key? key,
+    super.key,
     this.role,
-  }) : super(key: key);
+  });
   final int? role;
 
   @override

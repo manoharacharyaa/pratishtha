@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class splashScreen extends StatefulWidget {
-  const splashScreen({Key? key}) : super(key: key);
+  const splashScreen({super.key});
 
   @override
   _splashScreenState createState() => _splashScreenState();
@@ -30,8 +30,8 @@ class _splashScreenState extends State<splashScreen> {
   }
 
   route() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => AuthenticationWrapper()));
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => AuthenticationWrapper()));
   }
 
   @override
@@ -52,13 +52,11 @@ class _splashScreenState extends State<splashScreen> {
                     textStyle: TextStyle(
                         fontSize: 10,
                         color: sakecColor,
-                        fontWeight: FontWeight.bold
-                    )
-                )),
+                        fontWeight: FontWeight.bold))),
             Padding(padding: EdgeInsets.only(top: 20.0)),
             Container(
               child: Image.asset('assets/images/SakecLogo.png'),
-              width: MediaQuery.of(context).size.width*0.7,
+              width: MediaQuery.of(context).size.width * 0.7,
             ),
             Padding(padding: EdgeInsets.only(top: 20.0)),
             Text('Shah And Anchor Kutchhi Engineering College',
@@ -68,9 +66,7 @@ class _splashScreenState extends State<splashScreen> {
                     textStyle: TextStyle(
                         fontSize: 15,
                         color: sakecColor,
-                        fontWeight: FontWeight.bold
-                    )
-                )),
+                        fontWeight: FontWeight.bold))),
           ],
         ),
       ),

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,12 +23,11 @@ import 'package:pratishtha/widgets/achievementsWidget.dart';
 import 'package:pratishtha/widgets/eventCard.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_page_transition_plus/flutter_page_transition_plus.dart';
 
 class ProfilePage extends StatefulWidget {
   user.User? selectedUser;
   Event? event;
-  ProfilePage({Key? key, this.selectedUser}) : super(key: key);
+  ProfilePage({super.key, this.selectedUser});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -541,11 +539,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
-                                    child: ClipSmoothRect(
-                                      radius: SmoothBorderRadius(
-                                        cornerRadius: 15,
-                                        cornerSmoothing: 1,
-                                      ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
                                       child: Container(
                                         color: primaryColor,
                                         height: 300,
@@ -570,12 +565,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   child: Card(
                                                     color: secondaryColor,
                                                     shape:
-                                                        SmoothRectangleBorder(
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
-                                                          SmoothBorderRadius(
-                                                        cornerRadius: 10,
-                                                        cornerSmoothing: 1,
-                                                      ),
+                                                          BorderRadius.circular(
+                                                              10),
                                                     ),
                                                     child: Row(
                                                       children: [
@@ -583,13 +576,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           padding:
                                                               const EdgeInsets
                                                                   .all(8.0),
-                                                          child: ClipSmoothRect(
-                                                            radius:
-                                                                SmoothBorderRadius(
-                                                              cornerRadius: 8,
-                                                              cornerSmoothing:
-                                                                  1,
-                                                            ),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
                                                             child: Image.asset(
                                                               'assets/images/pageNotFound1.png',
                                                               fit: BoxFit.cover,

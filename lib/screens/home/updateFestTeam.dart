@@ -11,7 +11,7 @@ import '../../widgets/connectivityChecker.dart';
 class updateFestTeam extends StatefulWidget {
   List<dynamic> eventIdList;
   String idString;
-  updateFestTeam(this.idString, this.eventIdList, {Key? key}) : super(key: key);
+  updateFestTeam(this.idString, this.eventIdList, {super.key});
 
   @override
   State<updateFestTeam> createState() => _updateFestTeamState();

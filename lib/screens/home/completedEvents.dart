@@ -10,9 +10,7 @@ import 'package:pratishtha/widgets/loadingWidget.dart';
 import 'package:pratishtha/widgets/noContentWidget.dart';
 
 class CompletedEvents extends StatefulWidget {
-  const CompletedEvents({Key?
-  
-   key}) : super(key: key);
+  const CompletedEvents({super.key});
 
   @override
   _CompletedEventsState createState() => _CompletedEventsState();

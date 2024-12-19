@@ -15,7 +15,7 @@ import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:pratishtha/widgets/aboutUsHeader.dart';
 
 class AboutUs extends StatefulWidget {
-  const AboutUs({Key? key}) : super(key: key);
+  const AboutUs({super.key});
 
   @override
   State<AboutUs> createState() => _AboutUsState();
@@ -61,9 +61,10 @@ class _AboutUsState extends State<AboutUs> {
                 //print("info: ${snapshot.data[2]}");
                 return LiquidSwipe(
                     liquidController: _liquidController,
-                    slideIconWidget: Icon(Icons.arrow_back_ios_sharp, color: whiteColor),
+                    slideIconWidget:
+                        Icon(Icons.arrow_back_ios_sharp, color: whiteColor),
                     //positionSlideIcon: 0.7,
-                    enableSideReveal:  true,
+                    enableSideReveal: true,
                     waveType: WaveType.liquidReveal,
                     pages: [
                       //sakec
@@ -80,10 +81,15 @@ class _AboutUsState extends State<AboutUs> {
                       webTeam(teamDetails: (snapshot.data as List)[0]),
 
                       //council
-                      council(councilDetails: (snapshot.data as List)[1], year: '2021-2022'),
-                      council2(councilDetails: (snapshot.data as List)[1], year: '2022-2023'),
-                      council3(councilDetails: (snapshot.data as List)[1], year: '2023-2024'),
-
+                      council(
+                          councilDetails: (snapshot.data as List)[1],
+                          year: '2021-2022'),
+                      council2(
+                          councilDetails: (snapshot.data as List)[1],
+                          year: '2022-2023'),
+                      council3(
+                          councilDetails: (snapshot.data as List)[1],
+                          year: '2023-2024'),
                     ]);
               } else if (snapshot.hasError) {
                 debugPrint("council snapshot error: ${snapshot.error}");
@@ -115,12 +121,12 @@ class _AboutUsState extends State<AboutUs> {
                 //height: MediaQuery.of(context).size.height / 1.3,
                 child: infoList?.length != 0
                     ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: infoList?.length,
-                    itemBuilder: (context, index) {
-                      return InfoCard(info: infoList![index]);
-                    })
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: infoList?.length,
+                        itemBuilder: (context, index) {
+                          return InfoCard(info: infoList![index]);
+                        })
                     : SizedBox.shrink(),
               ),
             ],
@@ -152,17 +158,17 @@ class _AboutUsState extends State<AboutUs> {
                 //height: MediaQuery.of(context).size.height / 1.3,
                 child: facultyMembers.length != 0
                     ? GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 2),
-                    itemCount: facultyMembers.length,
-                    itemBuilder: (context, index) {
-                      return TeamCard(teamMember: facultyMembers[index]);
-                    })
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 2),
+                        itemCount: facultyMembers.length,
+                        itemBuilder: (context, index) {
+                          return TeamCard(teamMember: facultyMembers[index]);
+                        })
                     : SizedBox.shrink(),
               ),
             ],
@@ -194,17 +200,17 @@ class _AboutUsState extends State<AboutUs> {
                 //height: MediaQuery.of(context).size.height / 1.3,
                 child: appTeamMembers.length != 0
                     ? GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 2),
-                    itemCount: appTeamMembers.length,
-                    itemBuilder: (context, index) {
-                      return TeamCard(teamMember: appTeamMembers[index]);
-                    })
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 2),
+                        itemCount: appTeamMembers.length,
+                        itemBuilder: (context, index) {
+                          return TeamCard(teamMember: appTeamMembers[index]);
+                        })
                     : SizedBox.shrink(),
               ),
             ],
@@ -218,7 +224,7 @@ class _AboutUsState extends State<AboutUs> {
     webTeamMembers.clear();
     webTeamMembers.addAll(teamDetails!);
     webTeamMembers.removeWhere(
-            (teamMember) => teamMember.position != "Website Developer");
+        (teamMember) => teamMember.position != "Website Developer");
     return Scaffold(
       backgroundColor: secondaryColor,
       body: SingleChildScrollView(
@@ -236,17 +242,17 @@ class _AboutUsState extends State<AboutUs> {
                 //height: MediaQuery.of(context).size.height / 1.3,
                 child: webTeamMembers.length != 0
                     ? GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 2),
-                    itemCount: webTeamMembers.length,
-                    itemBuilder: (context, index) {
-                      return TeamCard(teamMember: webTeamMembers[index]);
-                    })
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 2),
+                        itemCount: webTeamMembers.length,
+                        itemBuilder: (context, index) {
+                          return TeamCard(teamMember: webTeamMembers[index]);
+                        })
                     : SizedBox.shrink(),
               ),
             ],
@@ -258,8 +264,7 @@ class _AboutUsState extends State<AboutUs> {
 
   Widget council({List<Council>? councilDetails, required String year}) {
     List<Council> filteredCouncils = councilDetails!
-        .where((council) =>
-    council.year == "2021-2022")
+        .where((council) => council.year == "2021-2022")
         .toList();
 
     return Scaffold(
@@ -279,17 +284,18 @@ class _AboutUsState extends State<AboutUs> {
                 height: MediaQuery.of(context).size.height / 1.45,
                 child: filteredCouncils.length != 0
                     ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 2,
-                  ),
-                  itemCount: filteredCouncils.length,
-                  itemBuilder: (context, index) {
-                    return CouncilCard(council: filteredCouncils[index], year: year);
-                  },
-                )
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2,
+                        ),
+                        itemCount: filteredCouncils.length,
+                        itemBuilder: (context, index) {
+                          return CouncilCard(
+                              council: filteredCouncils[index], year: year);
+                        },
+                      )
                     : SizedBox.shrink(),
               ),
             ],
@@ -301,8 +307,7 @@ class _AboutUsState extends State<AboutUs> {
 
   Widget council2({List<Council>? councilDetails, required String year}) {
     List<Council> filteredCouncils = councilDetails!
-        .where((council) =>
-    council.year == "2022-2023")
+        .where((council) => council.year == "2022-2023")
         .toList();
 
     return Scaffold(
@@ -322,17 +327,18 @@ class _AboutUsState extends State<AboutUs> {
                 height: MediaQuery.of(context).size.height / 1.45,
                 child: filteredCouncils.length != 0
                     ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 2,
-                  ),
-                  itemCount: filteredCouncils.length,
-                  itemBuilder: (context, index) {
-                    return CouncilCard(council: filteredCouncils[index], year: year);
-                  },
-                )
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2,
+                        ),
+                        itemCount: filteredCouncils.length,
+                        itemBuilder: (context, index) {
+                          return CouncilCard(
+                              council: filteredCouncils[index], year: year);
+                        },
+                      )
                     : SizedBox.shrink(),
               ),
             ],
@@ -344,8 +350,7 @@ class _AboutUsState extends State<AboutUs> {
 
   Widget council3({List<Council>? councilDetails, required String year}) {
     List<Council> filteredCouncils = councilDetails!
-        .where((council) =>
-    council.year == "2023-2024")
+        .where((council) => council.year == "2023-2024")
         .toList();
 
     return Scaffold(
@@ -365,17 +370,18 @@ class _AboutUsState extends State<AboutUs> {
                 height: MediaQuery.of(context).size.height / 1.45,
                 child: filteredCouncils.length != 0
                     ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 2,
-                  ),
-                  itemCount: filteredCouncils.length,
-                  itemBuilder: (context, index) {
-                    return CouncilCard(council: filteredCouncils[index], year: year);
-                  },
-                )
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2,
+                        ),
+                        itemCount: filteredCouncils.length,
+                        itemBuilder: (context, index) {
+                          return CouncilCard(
+                              council: filteredCouncils[index], year: year);
+                        },
+                      )
                     : SizedBox.shrink(),
               ),
             ],

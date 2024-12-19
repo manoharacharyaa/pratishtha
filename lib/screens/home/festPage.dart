@@ -22,7 +22,7 @@ class FestPage extends StatefulWidget {
   Event event;
   // List<Event> childEvents;
 
-  FestPage({Key? key, required this.event}) : super(key: key);
+  FestPage({super.key, required this.event});
 
   @override
   _FestPageState createState() => _FestPageState();

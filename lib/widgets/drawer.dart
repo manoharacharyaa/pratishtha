@@ -7,13 +7,14 @@ import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
 class MyDrawer extends StatefulWidget {
-  MyDrawer({Key? key}) : super(key: key);
+  MyDrawer({super.key});
 
   @override
   _MyDrawerState createState() => _MyDrawerState();
@@ -229,11 +230,15 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
+<<<<<<< HEAD
                       user?.role == 8 ||
                               user?.role == 9 ||
                               (isEventHead24_25 == true)
+=======
+                      user?.role == 8 || user?.role == 9
+>>>>>>> 6acf13baf20dd3182aaca24f9ba6c3719231cce5
                           ? ListTile(
-                              title: Text('Attendance'),
+                              title: Text('Add Dept Head'),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -245,7 +250,6 @@ class _MyDrawerState extends State<MyDrawer> {
                               },
                             )
                           : Container(),
-
                       ListTile(
                         title: Text('LeaderBoard'),
                         onTap: () {

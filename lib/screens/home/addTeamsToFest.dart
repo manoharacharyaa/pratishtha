@@ -1,22 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/constants/keys.dart';
-import 'package:pratishtha/screens/admin/addEvent.dart';
-import 'package:pratishtha/screens/home/olympusLeaderboardPage.dart';
 import 'package:pratishtha/screens/home/updateFestTeam.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTeamToFest extends StatefulWidget {
-  const AddTeamToFest({Key? key}) : super(key: key);
+  const AddTeamToFest({super.key});
 
   @override
   State<AddTeamToFest> createState() => _AddTeamToFestState();

@@ -10,14 +10,13 @@ import 'package:pratishtha/widgets/loadingWidget.dart';
 import 'package:pratishtha/widgets/noContentWidget.dart';
 
 class RegisteredEvents extends StatefulWidget {
-  const RegisteredEvents({Key? key}) : super(key: key);
+  const RegisteredEvents({super.key});
 
   @override
   _RegisteredEventsState createState() => _RegisteredEventsState();
 }
 
 class _RegisteredEventsState extends State<RegisteredEvents> {
-
   List<Event> registeredEvents = [];
   User? currentUser;
   DatabaseServices databaseServices = DatabaseServices();
@@ -25,26 +24,26 @@ class _RegisteredEventsState extends State<RegisteredEvents> {
   Future<List<Event>> getRegisteredEvents() async {
     currentUser = await sh.getUserFromPrefs();
     List<String> registeredEventIds = [];
-    if(currentUser!.registeredEvents!.isEmpty){
+    if (currentUser!.registeredEvents!.isEmpty) {
       return [];
     }
-    for(String key in currentUser!.registeredEvents!.keys) {
+    for (String key in currentUser!.registeredEvents!.keys) {
       //print(key);
-      if(currentUser!.completedEvents!.keys.contains(key)){
-        if (currentUser!.registeredEvents![key]-currentUser!.completedEvents![key] == 0) {
+      if (currentUser!.completedEvents!.keys.contains(key)) {
+        if (currentUser!.registeredEvents![key] -
+                currentUser!.completedEvents![key] ==
+            0) {
           continue;
-        }
-        else{
+        } else {
           registeredEventIds.add(key);
         }
-      }
-      else{
+      } else {
         registeredEventIds.add(key);
       }
       // print(key);
       // print('-' * 80);
     }
-    
+
     //print(registeredEventIds);
     return await databaseServices.getSpecificEvents(registeredEventIds);
   }
@@ -63,20 +62,18 @@ class _RegisteredEventsState extends State<RegisteredEvents> {
           builder: (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return loadingWidget();
-            }
-            else if(snapshot.hasError){
-              debugPrint("registered events page snapshot error: ${snapshot.error}");
+            } else if (snapshot.hasError) {
+              debugPrint(
+                  "registered events page snapshot error: ${snapshot.error}");
               return CustomErrorWidget();
-            }
-            else {
-              if(snapshot.data!.isNotEmpty){
+            } else {
+              if (snapshot.data!.isNotEmpty) {
                 List<Event> tempList = [];
-                if(currentUser!.role==5||currentUser!.role==3){
+                if (currentUser!.role == 5 || currentUser!.role == 3) {
                   registeredEvents = snapshot.data!;
-                }
-                else{
+                } else {
                   snapshot.data!.forEach((event) {
-                    if(event.goLive){
+                    if (event.goLive) {
                       tempList.add(event);
                     }
                   });
@@ -92,24 +89,24 @@ class _RegisteredEventsState extends State<RegisteredEvents> {
   }
 
   buildList() {
-    return registeredEvents.isEmpty ?
-    Center(
-        child: noContentWidget(message: "What are you waiting for? Go register for some events right now!")
-    ) :
-      Container(
-      height: MediaQuery.of(context).size.height - 30,
-      padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-      margin: MediaQuery.of(context).padding,
-      child: ListView.builder(
-        itemCount: registeredEvents.length,
-        itemBuilder: (context, index) {
-          return EventCard(
-            context: context,
-            event: registeredEvents[index],
-            isVerified: currentUser!.isVerified
+    return registeredEvents.isEmpty
+        ? Center(
+            child: noContentWidget(
+                message:
+                    "What are you waiting for? Go register for some events right now!"))
+        : Container(
+            height: MediaQuery.of(context).size.height - 30,
+            padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+            margin: MediaQuery.of(context).padding,
+            child: ListView.builder(
+              itemCount: registeredEvents.length,
+              itemBuilder: (context, index) {
+                return EventCard(
+                    context: context,
+                    event: registeredEvents[index],
+                    isVerified: currentUser!.isVerified);
+              },
+            ),
           );
-        },
-      ),
-    );
   }
 }

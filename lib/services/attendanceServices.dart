@@ -78,7 +78,6 @@ class AttendaceServices {
       String? first_name, String? last_name, String currentAcademicYear) async {
     try {
       String name = "$first_name $last_name";
-      if (name == null) return null;
 
       final teamQuery = await firestore
           .collection('attendance')
