@@ -298,6 +298,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       widget.currentAcademicYear,
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
+                      departmentPersonUUidController.text
                     );
 
                   if (result == "Member Added" || result == "Member Updated") {
@@ -337,6 +338,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
               }
             },
           ),
+        ],
         ],
       ),
     );
