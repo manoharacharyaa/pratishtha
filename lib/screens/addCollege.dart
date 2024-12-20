@@ -1,10 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/styles/mainTheme.dart';
-import 'package:uuid/uuid.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/services/interCollegeServices.dart';
 
 class AddCollege extends StatefulWidget {
   const AddCollege({super.key});
@@ -17,8 +24,6 @@ class _AddCollegeState extends State<AddCollege> {
   String? selectedCollege;
 
   final FocusNode _collegeFocusNode = FocusNode();
-  final FocusNode _participantFocusNode = FocusNode();
-  final FocusNode _teamFocusNode = FocusNode();
   final FocusNode _scoreFocusNode = FocusNode();
   final FocusNode _updatedscoreFocusNode = FocusNode();
 
@@ -201,6 +206,37 @@ class _AddCollegeState extends State<AddCollege> {
   final TextEditingController teamcontroller = TextEditingController();
   final TextEditingController scorecontroller = TextEditingController();
   final TextEditingController updatedscorecontroller = TextEditingController();
+  final TextEditingController collegeNameController = TextEditingController();
+  final TextEditingController collegeShortNameController =
+      TextEditingController();
+  final TextEditingController collegeLocation = TextEditingController();
+
+  File? _pickedImage;
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1800,
+        maxHeight: 1800,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _pickedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error picking image: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red[700],
+        textColor: Colors.white,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +364,7 @@ class _AddCollegeState extends State<AddCollege> {
                         width: MediaQuery.of(context).size.width * 0.85,
                         child: MyTextField(
                           focusNode: _scoreFocusNode,
-                          hinttext: 'Enter Score',
+                          hinttext: 'Enter College Short Name',
                           keyboard: TextInputType.number,
                           obscuretext: false,
                           controller: scorecontroller,
@@ -338,38 +374,37 @@ class _AddCollegeState extends State<AddCollege> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a score';
+                              return 'Please enter a short name';
                             }
                             return null;
                           },
                         ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 10,
                       ),
-                      Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(30),
-                        color: cardBackgroundColor,
-                        child: MaterialButton(
-                          minWidth: 275,
-                          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                          onPressed: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              // Form is valid, process the data
-                              // Add your logic here
-                              addCollege(); // Call the addCollege method
-                            }
-                          },
-                          child: Text(
-                            'Submit',
-                            style: mainTheme.textTheme.displayLarge,
-                            textAlign: TextAlign.center,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        child: MyTextField(
+                          focusNode: _scoreFocusNode,
+                          hinttext: 'Enter College Location',
+                          keyboard: TextInputType.number,
+                          obscuretext: false,
+                          controller: scorecontroller,
+                          icon: Icon(
+                            Icons.score,
+                            color: headline2Color,
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a location';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       SizedBox(
-                        height: 40,
+                        height: 10,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.85,
@@ -458,7 +493,7 @@ class _AddCollegeState extends State<AddCollege> {
                         ),
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                       Material(
                         elevation: 5,
@@ -471,8 +506,11 @@ class _AddCollegeState extends State<AddCollege> {
                             updateCollege();
                           },
                           child: Text(
-                            'Update',
-                            style: mainTheme.textTheme.displayLarge,
+                            'Submit',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -499,15 +537,15 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const MyTextField({
-    super.key,
+    Key? key,
+    required this.focusNode,
     required this.hinttext,
     required this.obscuretext,
     required this.controller,
+    this.keyboard = TextInputType.text,
     required this.icon,
     required this.validator,
-    this.keyboard = TextInputType.text,
-    required this.focusNode, // Provide a default value for keyboard
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -7,8 +7,8 @@ import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
-import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
@@ -229,7 +229,9 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8 || user?.role == 9
+                      user?.role == 8 ||
+                              user?.role == 9 ||
+                              (isEventHead24_25 == true)
                           ? ListTile(
                               title: Text('Add Dept Head'),
                               onTap: () {
@@ -250,6 +252,20 @@ class _MyDrawerState extends State<MyDrawer> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) => LeaderBoard(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Inter College'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  InterCollegeHome(
+                                userRole: user!.role,
+                              ),
                             ),
                           );
                         },

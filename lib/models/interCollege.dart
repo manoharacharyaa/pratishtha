@@ -1,4 +1,4 @@
-class InterCollege{
+class InterCollege {
   String id;
   String collegeName;
   String collegeShortName;
@@ -7,7 +7,7 @@ class InterCollege{
   String imageUrl;
   String academicYear;
   bool softDelete;
-  List<Map<String,int>>? matchesWon;
+  List<Map<String, int>>? matchesWon;
 
   InterCollege({
     required this.id,
@@ -20,7 +20,6 @@ class InterCollege{
     required this.softDelete,
     this.matchesWon,
   });
-
 
   factory InterCollege.fromMap(Map<String, dynamic> data, String id) {
     return InterCollege(

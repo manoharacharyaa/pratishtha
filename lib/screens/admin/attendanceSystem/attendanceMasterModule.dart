@@ -10,8 +10,11 @@ import 'package:pratishtha/widgets/customTextField.dart';
 class AttendanceMasterModule extends StatefulWidget {
   final User? user;
   final String currentAcademicYear;
-  const AttendanceMasterModule(this.user, this.currentAcademicYear,
-      {super.key});
+  const AttendanceMasterModule(
+    this.user,
+    this.currentAcademicYear, {
+    super.key,
+  });
 
   @override
   State<AttendanceMasterModule> createState() => _AttendanceMasterModule();
@@ -25,7 +28,8 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   TextEditingController deptHeadorCoheadNameController =
       TextEditingController();
 
-  TextEditingController departmentPersonUUidController = TextEditingController();
+  TextEditingController departmentPersonUUidController =
+      TextEditingController();
 
   final addkey = GlobalKey<FormState>();
 
@@ -37,6 +41,12 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
   void initState() {
     users = db.getSakecUsers();
     super.initState();
+    // Run both futures concurrently using Future.wait
+    Future.wait([fetchUsers()]).then((results) {
+      setState(() {
+        userList = results[0];
+      });
+    });
   }
 
   Future<List<User>> fetchUsers() async {
@@ -126,26 +136,41 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                           ),
                           // List of Students
                           Flexible(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: searchController.text.isEmpty
-                                  ? srch.length
-                                  : filteredUser.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                      "${srch[index].firstName} ${srch[index].lastName}"),
-                                  onTap: () {
-                                    setState(() {
-                                      deptHeadorCoheadNameController.text =
-                                          "${srch[index].firstName} ${srch[index].lastName}";
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: searchController.text.isEmpty
+                                ? srch.length
+                                : filteredUser.length,
+                            itemBuilder: (context, index) {
+                              return searchController.text.isEmpty
+                                  ? ListTile(
+                                      title: Text(
+                                          "${srch[index].firstName} ${srch[index].lastName}"),
+                                      onTap: () {
+                                        setState(() {
+                                          departmentPersonUUidController.text =
+                                              srch[index].uid!;
+                                          deptHeadorCoheadNameController.text =
+                                              "${srch[index].firstName} ${srch[index].lastName}";
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  : ListTile(
+                                      title: Text(
+                                          "${filteredUser[index].firstName} ${filteredUser[index].lastName}"),
+                                      onTap: () {
+                                        setState(() {
+                                          departmentPersonUUidController.text =
+                                              filteredUser[index].uid!;
+                                          deptHeadorCoheadNameController.text =
+                                              "${filteredUser[index].firstName} ${filteredUser[index].lastName}";
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                            },
+                          )),
                         ],
                       );
                     } else {
@@ -298,46 +323,49 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       widget.currentAcademicYear,
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
-                      departmentPersonUUidController.text
+                      departmentPersonUUidController.text,
+                     
                     );
 
-                  if (result == "Member Added" || result == "Member Updated") {
-                    Fluttertoast.showToast(
-                      msg: "Event Added Successfully",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.grey[500],
-                      textColor: Colors.black,
-                      fontSize: 16.0,
-                    );
-                  } else {
-                    Fluttertoast.showToast(
-                      msg: "Failed to add Details",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.grey[300],
-                      textColor: Colors.red,
-                      fontSize: 16.0,
-                    );
+                    if (result == "Member Added" ||
+                        result == "Member Updated") {
+                      Fluttertoast.showToast(
+                        msg: "Event Added Successfully",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey[500],
+                        textColor: Colors.black,
+                        fontSize: 16.0,
+                      );
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "Failed to add Details",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey[300],
+                        textColor: Colors.red,
+                        fontSize: 16.0,
+                      );
+                    }
                   }
+                } catch (e) {
+                  // Log or show a toast with the error message
+                  Fluttertoast.showToast(
+                    msg: "An error occurred: $e",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red[700],
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  print('Error: $e'); // For debugging purposes
                 }
-              } catch (e) {
-                // Log or show a toast with the error message
-                Fluttertoast.showToast(
-                  msg: "An error occurred: $e",
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red[700],
-                  textColor: Colors.white,
-                  fontSize: 16.0,
-                );
-                print('Error: $e'); // For debugging purposes
-              }
-            },
-          ),
+              },
+            ),
+          ],
         ],
         ],
       ),
