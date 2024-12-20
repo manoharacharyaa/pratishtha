@@ -138,7 +138,7 @@ class InterCollegeServices {
 
   Future<List<String>> fetchImagesFromFirebase() async {
     final ListResult result =
-        await FirebaseStorage.instance.ref('interCollege_Banner').listAll();
+        await FirebaseStorage.instance.ref('interCollege_Banners').listAll();
     final List<String> urls = await Future.wait(
       result.items.map((item) => item.getDownloadURL()).toList(),
     );

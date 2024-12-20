@@ -367,7 +367,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
             ),
           ],
         ],
-        ],
+        
       ),
     );
   }
