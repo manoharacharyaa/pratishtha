@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/interCollege.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
+import 'package:pratishtha/widgets/customTextField.dart';
 
 class AdminInterCollegePage extends StatefulWidget {
   const AdminInterCollegePage({super.key});
@@ -35,6 +37,39 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
   File? _pickedImage;
   List<InterCollege> allCollegeList = [];
 
+  TextEditingController teamANameController = TextEditingController();
+  TextEditingController teamBNameController = TextEditingController();
+  TextEditingController teamAScoreController = TextEditingController();
+  TextEditingController teamBScoreController = TextEditingController();
+  TextEditingController teamALogoUrlController = TextEditingController();
+  TextEditingController teamBLogoUrlController = TextEditingController();
+  TextEditingController teamADocIdController = TextEditingController();
+  TextEditingController teamBDocIdController = TextEditingController();
+
+  TextEditingController matchTypeController = TextEditingController();
+  TextEditingController matchDayDateController = TextEditingController();
+  TextEditingController matchLocationController = TextEditingController();
+  TextEditingController matchTimeController = TextEditingController();
+
+  TextEditingController teamABestPlayer1Controller = TextEditingController();
+  TextEditingController teamABestPlayer2Controller = TextEditingController();
+  TextEditingController teamBBestPlayer1Controller = TextEditingController();
+  TextEditingController teamBBestPlayer2Controller = TextEditingController();
+
+  String selectedSport = '';
+  List<String> sportsList = [
+    'Cricket',
+    'Football',
+    'Kabaddi',
+    'Volleyball(Girls)',
+    'Volleyball(Boys)',
+    'BasketBall'
+  ];
+  GlobalKey<FormState> addMatchKey = GlobalKey();
+
+  late Future<List<InterCollege>> colleges;
+  var ic = InterCollegeServices();
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +86,276 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
     }).catchError((error) {
       log("Error fetching colleges: $error");
     });
+  }
+
+  Widget _buildAnimatedTextField({
+    required TextEditingController controller,
+    required String labelText,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    TextInputType? keyboardType,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        onTap: onTap,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: labelText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.deepPurple.shade200),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.deepPurple.shade200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.teal.shade700, width: 2),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        ),
+      ),
+    );
+  }
+
+  void openUserSelectionModalCollege1(BuildContext context) {
+    TextEditingController searchController = TextEditingController();
+    List<InterCollege> filteredData = [];
+
+    showModalBottomSheet(
+      context: context,
+      elevation: 10,
+      isScrollControlled: true,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
+        ),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height / 1.5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+                child: FutureBuilder<List<InterCollege>>(
+                  future: colleges,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      List<InterCollege> data = snapshot.data!;
+                      List<InterCollege> srch = [];
+                      srch.addAll(data);
+                      if (filteredData.isEmpty) filteredData = data;
+                      return Column(
+                        children: [
+                          // Search Bar Container
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField1(
+                                    controller: searchController,
+                                    hintText: 'Enter College Name',
+                                    labelText: 'Enter College Name',
+                                    labelStyle: TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        filteredData = data
+                                            .where((college) => college
+                                                .collegeName
+                                                .toLowerCase()
+                                                .contains(
+                                                  value.toLowerCase(),
+                                                ))
+                                            .toList();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // List of Students
+                          Flexible(
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: searchController.text.isEmpty
+                                ? srch.length
+                                : filteredData.length,
+                            itemBuilder: (context, index) {
+                              // Determine which list to use based on search status
+                              InterCollege selectedCollege =
+                                  searchController.text.isEmpty
+                                      ? srch[index]
+                                      : filteredData[index];
+
+                              return ListTile(
+                                title: Text("${selectedCollege.collegeName}"),
+                                onTap: () {
+                                  teamANameController.text =
+                                      selectedCollege.collegeShortName;
+                                  teamADocIdController.text =
+                                      selectedCollege.id;
+                                  teamALogoUrlController.text =
+                                      selectedCollege.imageUrl;
+                                  Navigator.pop(context);
+                                  print(
+                                      "${teamANameController.text} + ${teamADocIdController.text} + ${teamALogoUrlController.text}");
+                                },
+                              );
+                            },
+                          )),
+                        ],
+                      );
+                    } else {
+                      return Center(child: Text('No colleges available'));
+                    }
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void openUserSelectionModalCollege2(BuildContext context) {
+    TextEditingController searchController = TextEditingController();
+    List<InterCollege> filteredData = [];
+
+    showModalBottomSheet(
+      context: context,
+      elevation: 10,
+      isScrollControlled: true,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
+        ),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height / 1.5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10),
+                ),
+                child: FutureBuilder<List<InterCollege>>(
+                  future: colleges,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      List<InterCollege> data = snapshot.data!;
+                      List<InterCollege> srch = [];
+                      srch.addAll(data);
+                      if (filteredData.isEmpty) filteredData = data;
+                      return Column(
+                        children: [
+                          // Search Bar Container
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField1(
+                                    controller: searchController,
+                                    hintText: 'Enter College Name',
+                                    labelText: 'Enter College Name',
+                                    labelStyle: TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        filteredData = data
+                                            .where((college) => college
+                                                .collegeName
+                                                .toLowerCase()
+                                                .contains(
+                                                  value.toLowerCase(),
+                                                ))
+                                            .toList();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // List of Students
+                          Flexible(
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: searchController.text.isEmpty
+                                ? srch.length
+                                : filteredData.length,
+                            itemBuilder: (context, index) {
+                              // Determine which list to use based on search status
+                              InterCollege selectedCollege =
+                                  searchController.text.isEmpty
+                                      ? srch[index]
+                                      : filteredData[index];
+
+                              return ListTile(
+                                title: Text("${selectedCollege.collegeName}"),
+                                onTap: () {
+                                  teamBNameController.text =
+                                      selectedCollege.collegeShortName;
+                                  teamBDocIdController.text =
+                                      selectedCollege.id;
+                                  teamBLogoUrlController.text =
+                                      selectedCollege.imageUrl;
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          )),
+                        ],
+                      );
+                    } else {
+                      return Center(child: Text('No colleges available'));
+                    }
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _pickImage() async {
@@ -479,324 +784,365 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return Dialog(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize:
-                                    MainAxisSize.min, // This is the key change
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Stack(
+                          return StatefulBuilder(
+                            builder: (context, setStateDialog) {
+                              return Dialog(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize
+                                        .min, // This is the key change
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
-                                      // Main Content
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
+                                      Stack(
                                         children: [
-                                          Form(
-                                            key: _formKey,
-                                            child: Container(
-                                              padding: EdgeInsets.all(5),
-                                              margin: EdgeInsets.all(10),
-                                              // decoration: BoxDecoration(
-                                              //   color: primaryColor,
-                                              //   borderRadius:
-                                              //       BorderRadius.circular(10),
-                                              // ),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 40,
-                                                    ),
-                                                    Text(
-                                                      'Add College',
-                                                      style: TextStyle(
-                                                          fontSize: 30,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.white),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 40,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.85,
-                                                      child: MyTextField(
-                                                        focusNode:
-                                                            _collegeNameFocusNode, // Associate the FocusNode
-                                                        hinttext:
-                                                            'Enter College Name',
-                                                        keyboard:
-                                                            TextInputType.text,
-                                                        obscuretext: false,
-                                                        controller:
-                                                            collegeNameController,
-                                                        icon: Icon(
-                                                          Icons.school_rounded,
-                                                          color: headline2Color,
+                                          // Main Content
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Form(
+                                                key: _formKey,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  margin: EdgeInsets.all(10),
+                                                  // decoration: BoxDecoration(
+                                                  //   color: primaryColor,
+                                                  //   borderRadius:
+                                                  //       BorderRadius.circular(10),
+                                                  // ),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 40,
                                                         ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please enter college name';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.85,
-                                                      child: MyTextField(
-                                                        focusNode:
-                                                            _collegeShortNameFocusNode,
-                                                        hinttext:
-                                                            'Enter College Short Name',
-                                                        keyboard: TextInputType
-                                                            .number,
-                                                        obscuretext: false,
-                                                        controller:
-                                                            collegeShortNameController,
-                                                        icon: Icon(
-                                                          Icons.score,
-                                                          color: headline2Color,
+                                                        Text(
+                                                          'Add College',
+                                                          style: TextStyle(
+                                                              fontSize: 30,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
                                                         ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please enter college short name';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.85,
-                                                      child: MyTextField(
-                                                        focusNode:
-                                                            _collegeLocationFocusNode,
-                                                        hinttext:
-                                                            'Enter College Location',
-                                                        keyboard: TextInputType
-                                                            .number,
-                                                        obscuretext: false,
-                                                        controller:
-                                                            collegeLocationController,
-                                                        icon: Icon(
-                                                          Icons.location_city,
-                                                          color: headline2Color,
+                                                        SizedBox(
+                                                          height: 40,
                                                         ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please enter college location';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.85,
-                                                      child: GestureDetector(
-                                                        onTap: _pickImage,
-                                                        child: AbsorbPointer(
                                                           child: MyTextField(
+                                                            focusNode:
+                                                                _collegeNameFocusNode, // Associate the FocusNode
                                                             hinttext:
-                                                                'Enter College Logo',
+                                                                'Enter College Name',
+                                                            keyboard:
+                                                                TextInputType
+                                                                    .text,
                                                             obscuretext: false,
                                                             controller:
-                                                                TextEditingController(
-                                                              text: _pickedImage !=
-                                                                      null
-                                                                  ? _pickedImage!
-                                                                      .path
-                                                                      .split(
-                                                                          '/')
-                                                                      .last
-                                                                  : '',
-                                                            ),
+                                                                collegeNameController,
                                                             icon: Icon(
-                                                              Icons.upload_file,
+                                                              Icons
+                                                                  .school_rounded,
                                                               color:
                                                                   headline2Color,
                                                             ),
                                                             validator: (value) {
-                                                              if (_pickedImage ==
-                                                                  null) {
-                                                                return 'Please enter a logo';
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter college name';
                                                               }
                                                               return null;
                                                             },
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.85,
+                                                          child: MyTextField(
                                                             focusNode:
-                                                                _collegeLogoFocusNode,
+                                                                _collegeShortNameFocusNode,
+                                                            hinttext:
+                                                                'Enter College Short Name',
+                                                            keyboard:
+                                                                TextInputType
+                                                                    .number,
+                                                            obscuretext: false,
+                                                            controller:
+                                                                collegeShortNameController,
+                                                            icon: Icon(
+                                                              Icons.score,
+                                                              color:
+                                                                  headline2Color,
+                                                            ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter college short name';
+                                                              }
+                                                              return null;
+                                                            },
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                    if (_pickedImage != null)
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 10),
-                                                        child: Image.file(
-                                                          _pickedImage!,
-                                                          height: 100,
-                                                          width: 100,
-                                                          fit: BoxFit.cover,
+                                                        SizedBox(
+                                                          height: 10,
                                                         ),
-                                                      ),
-                                                    SizedBox(
-                                                      height: 30,
-                                                    ),
-                                                    Material(
-                                                      elevation: 5,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30),
-                                                      color:
-                                                          cardBackgroundColor,
-                                                      child: MaterialButton(
-                                                        minWidth: 275,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                20, 15, 20, 15),
-                                                        onPressed: () async {
-                                                          if (_formKey
-                                                              .currentState!
-                                                              .validate()) {
-                                                            String result =
-                                                                await InterCollegeServices()
-                                                                    .addCollegeForInter(
-                                                              collegeNameController
-                                                                  .text,
-                                                              collegeShortNameController
-                                                                  .text,
-                                                              collegeLocationController
-                                                                  .text,
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.85,
+                                                          child: MyTextField(
+                                                            focusNode:
+                                                                _collegeLocationFocusNode,
+                                                            hinttext:
+                                                                'Enter College Location',
+                                                            keyboard:
+                                                                TextInputType
+                                                                    .number,
+                                                            obscuretext: false,
+                                                            controller:
+                                                                collegeLocationController,
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .location_city,
+                                                              color:
+                                                                  headline2Color,
+                                                            ),
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'Please enter college location';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.85,
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              await _pickImage();
+                                                              setStateDialog(
+                                                                  () {});
+                                                            },
+                                                            child:
+                                                                AbsorbPointer(
+                                                              child:
+                                                                  MyTextField(
+                                                                hinttext:
+                                                                    'Enter College Logo',
+                                                                obscuretext:
+                                                                    false,
+                                                                controller:
+                                                                    TextEditingController(
+                                                                  text: _pickedImage !=
+                                                                          null
+                                                                      ? _pickedImage!
+                                                                          .path
+                                                                          .split(
+                                                                              '/')
+                                                                          .last
+                                                                      : '',
+                                                                ),
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .upload_file,
+                                                                  color:
+                                                                      headline2Color,
+                                                                ),
+                                                                validator:
+                                                                    (value) {
+                                                                  if (_pickedImage ==
+                                                                      null) {
+                                                                    return 'Please enter a logo';
+                                                                  }
+                                                                  return null;
+                                                                },
+                                                                focusNode:
+                                                                    _collegeLogoFocusNode,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        if (_pickedImage !=
+                                                            null)
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        10),
+                                                            child: Image.file(
                                                               _pickedImage!,
-                                                            );
-
-                                                            if (result ==
-                                                                'Success') {
-                                                              Fluttertoast
-                                                                  .showToast(
-                                                                msg:
-                                                                    "College added successfully",
-                                                                toastLength: Toast
-                                                                    .LENGTH_LONG,
-                                                                gravity:
-                                                                    ToastGravity
-                                                                        .BOTTOM,
-                                                                backgroundColor:
-                                                                    Colors.green[
-                                                                        700],
-                                                                textColor:
-                                                                    Colors
-                                                                        .white,
-                                                              );
-                                                            }
-                                                            Navigator.pop(
-                                                                context);
-                                                          } else {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                              msg:
-                                                                  "Failed to add college",
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .BOTTOM,
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .red[700],
-                                                              textColor:
-                                                                  Colors.white,
-                                                            );
-                                                            Navigator.pop(
-                                                                context);
-                                                          }
-                                                        },
-                                                        child: Text(
-                                                          'SUBMIT',
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                              height: 100,
+                                                              width: 100,
+                                                              fit: BoxFit.cover,
+                                                            ),
                                                           ),
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                        SizedBox(
+                                                          height: 30,
                                                         ),
-                                                      ),
+                                                        Material(
+                                                          elevation: 5,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
+                                                          color:
+                                                              cardBackgroundColor,
+                                                          child: MaterialButton(
+                                                            minWidth: 275,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    20,
+                                                                    15,
+                                                                    20,
+                                                                    15),
+                                                            onPressed:
+                                                                () async {
+                                                              if (_formKey
+                                                                  .currentState!
+                                                                  .validate()) {
+                                                                String result =
+                                                                    await InterCollegeServices()
+                                                                        .addCollegeForInter(
+                                                                  collegeNameController
+                                                                      .text,
+                                                                  collegeShortNameController
+                                                                      .text,
+                                                                  collegeLocationController
+                                                                      .text,
+                                                                  _pickedImage!,
+                                                                );
+
+                                                                if (result ==
+                                                                    'Success') {
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                    msg:
+                                                                        "College added successfully",
+                                                                    toastLength:
+                                                                        Toast
+                                                                            .LENGTH_LONG,
+                                                                    gravity:
+                                                                        ToastGravity
+                                                                            .BOTTOM,
+                                                                    backgroundColor:
+                                                                        Colors.green[
+                                                                            700],
+                                                                    textColor:
+                                                                        Colors
+                                                                            .white,
+                                                                  );
+                                                                }
+                                                                Navigator.pop(
+                                                                    context);
+                                                              } else {
+                                                                Fluttertoast
+                                                                    .showToast(
+                                                                  msg:
+                                                                      "Failed to add college",
+                                                                  toastLength: Toast
+                                                                      .LENGTH_LONG,
+                                                                  gravity:
+                                                                      ToastGravity
+                                                                          .BOTTOM,
+                                                                  backgroundColor:
+                                                                      Colors.red[
+                                                                          700],
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white,
+                                                                );
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
+                                                            },
+                                                            child: Text(
+                                                              'SUBMIT',
+                                                              style: GoogleFonts
+                                                                  .poppins(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          // Close Button
+                                          Positioned(
+                                            right: 10,
+                                            top: 10,
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.red,
+                                              radius: 20,
+                                              child: IconButton(
+                                                icon: Icon(Icons.close,
+                                                    color: Colors.white),
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-
-                                      // Close Button
-                                      Positioned(
-                                        right: 10,
-                                        top: 10,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.red,
-                                          radius: 20,
-                                          child: IconButton(
-                                            icon: Icon(Icons.close,
-                                                color: Colors.white),
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                          ),
-                                        ),
-                                      ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           );
                         },
                       );
                     },
                     child: Text(
-                      "Submit Attendance",
+                      "Add College",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -814,9 +1160,752 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return Dialog(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    elevation: 10,
+                                    child: Stack(
+                                      children: [
+                                        // Main Content
+                                        Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                // Title
+                                                Center(
+                                                  child: Text(
+                                                    'Add New Match',
+                                                    style: TextStyle(
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 20),
+
+                                                // Form
+                                                SingleChildScrollView(
+                                                  child: Form(
+                                                    key: addMatchKey,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Sport Select Dropdown
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 10),
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .deepPurple
+                                                                      .shade200),
+                                                            ),
+                                                            child:
+                                                                DropdownButtonFormField<
+                                                                    String>(
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                contentPadding:
+                                                                    EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            15,
+                                                                        vertical:
+                                                                            5),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                              ),
+                                                              value: sportsList
+                                                                      .contains(
+                                                                          selectedSport)
+                                                                  ? selectedSport
+                                                                  : null,
+                                                              items: sportsList
+                                                                  .map((value) =>
+                                                                      DropdownMenuItem<
+                                                                          String>(
+                                                                        value:
+                                                                            value,
+                                                                        child: Text(
+                                                                            value),
+                                                                      ))
+                                                                  .toList(),
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  selectedSport =
+                                                                      value!;
+                                                                });
+                                                                print(
+                                                                    selectedSport);
+                                                              },
+                                                              hint: Text(
+                                                                "Select Sport",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        // Member Selection 1
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamANameController,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Select Team Batting First'
+                                                              : 'Select Team A',
+                                                          readOnly: true,
+                                                          onTap: () =>
+                                                              openUserSelectionModalCollege1(
+                                                                  context),
+                                                        ),
+
+                                                        // Member Selection 1
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamBNameController,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Select Team Batting Second'
+                                                              : 'Select Team B',
+                                                          readOnly: true,
+                                                          onTap: () =>
+                                                              openUserSelectionModalCollege2(
+                                                                  context),
+                                                        ),
+
+                                                        // Team A,B Score Input
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamAScoreController,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team A Score Eg. 137/8'
+                                                              : 'Enter Team A Points / Goals',
+                                                        ),
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamBScoreController,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team B Score Eg. 137/8'
+                                                              : 'Enter Team B Points / Goals',
+                                                        ),
+
+                                                        // Match Type, Location, DayDate, Time
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  _buildAnimatedTextField(
+                                                                controller:
+                                                                    matchTypeController,
+                                                                labelText:
+                                                                    'Enter Match Type (Group Stage - M(num), QF, SF, Final',
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Expanded(
+                                                              child:
+                                                                  _buildAnimatedTextField(
+                                                                controller:
+                                                                    matchLocationController,
+                                                                labelText:
+                                                                    'Enter Match Location',
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  // Open Date Picker
+                                                                  DateTime?
+                                                                      pickedDate =
+                                                                      await showDatePicker(
+                                                                    context:
+                                                                        context,
+                                                                    initialDate:
+                                                                        DateTime
+                                                                            .now(), // Start with the current date
+                                                                    firstDate:
+                                                                        DateTime(
+                                                                            2000), // Earliest date the user can select
+                                                                    lastDate:
+                                                                        DateTime(
+                                                                            2100), // Latest date the user can select
+                                                                  );
+
+                                                                  // Handle the selected date
+                                                                  if (pickedDate !=
+                                                                      null) {
+                                                                    // Format the picked date as "EEE, dd MMM yyyy"
+                                                                    final formattedDate = DateFormat(
+                                                                            'EEE, dd MMM yyyy')
+                                                                        .format(
+                                                                            pickedDate);
+
+                                                                    // Set the formatted date to the text controller
+                                                                    setState(
+                                                                        () {
+                                                                      matchDayDateController
+                                                                              .text =
+                                                                          formattedDate;
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    _buildAnimatedTextField(
+                                                                  controller:
+                                                                      matchDayDateController,
+                                                                  labelText:
+                                                                      'Select Match Date',
+                                                                  readOnly:
+                                                                      true, // Prevent direct editing
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  // Open Time Picker
+                                                                  TimeOfDay?
+                                                                      pickedTime =
+                                                                      await showTimePicker(
+                                                                    context:
+                                                                        context,
+                                                                    initialTime:
+                                                                        TimeOfDay
+                                                                            .now(),
+                                                                  );
+
+                                                                  // Handle the selected time
+                                                                  if (pickedTime !=
+                                                                      null) {
+                                                                    // Format the picked time in 24-hour or AM/PM format
+                                                                    final formattedTime =
+                                                                        pickedTime
+                                                                            .format(context);
+
+                                                                    // Set the formatted time to the text controller
+                                                                    setState(
+                                                                        () {
+                                                                      matchTimeController
+                                                                              .text =
+                                                                          formattedTime;
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    _buildAnimatedTextField(
+                                                                  controller:
+                                                                      matchTimeController,
+                                                                  labelText:
+                                                                      'Select Match Start Time',
+                                                                  readOnly:
+                                                                      true, // Prevent direct editing
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+
+                                                        //Team A, B Top Players
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamABestPlayer1Controller,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team A Top Scorer'
+                                                              : selectedSport ==
+                                                                      'Football'
+                                                                  ? 'Enter Team A Top GoalScorer'
+                                                                  : selectedSport ==
+                                                                          'Kabaddi'
+                                                                      ? 'Enter Team A Top Raider'
+                                                                      : 'Enter Team A Top Player / Null',
+                                                        ),
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamABestPlayer2Controller,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team A Top Bowler'
+                                                              : selectedSport ==
+                                                                      'Kabaddi'
+                                                                  ? 'Enter Team A Top Defender '
+                                                                  : 'Leave this',
+                                                        ),
+
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamBBestPlayer1Controller,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team B Top Scorer'
+                                                              : selectedSport ==
+                                                                      'Football'
+                                                                  ? 'Enter Team B Top GoalScorer'
+                                                                  : selectedSport ==
+                                                                          'Kabaddi'
+                                                                      ? 'Enter Team B Top Raider'
+                                                                      : 'Enter Team B Top Player / Null',
+                                                        ),
+                                                        _buildAnimatedTextField(
+                                                          controller:
+                                                              teamBBestPlayer2Controller,
+                                                          labelText: selectedSport ==
+                                                                  'Cricket'
+                                                              ? 'Enter Team B Top Bowler'
+                                                              : selectedSport ==
+                                                                      'Kabaddi'
+                                                                  ? 'Enter Team B Top Defender '
+                                                                  : 'Leave this',
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                SizedBox(height: 20),
+
+                                                // Add Volunteer Button
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.blue.shade800,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 15),
+                                                  ),
+                                                  onPressed: () async {
+                                                    if (selectedSport ==
+                                                        'Cricket') {
+                                                      try {
+                                                        if (addMatchKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          String result = await InterCollegeServices().recordCricketMatch(
+                                                              academicYear:
+                                                                  "2024-25",
+                                                              matchLocation:
+                                                                  matchLocationController
+                                                                      .text,
+                                                              matchType:
+                                                                  matchTypeController
+                                                                      .text,
+                                                              matchTime:
+                                                                  matchTimeController
+                                                                      .text,
+                                                              matchDayDate:
+                                                                  matchDayDateController
+                                                                      .text,
+                                                              teamBattingFirst:
+                                                                  teamANameController
+                                                                      .text,
+                                                              teamBattingSecond:
+                                                                  teamBNameController
+                                                                      .text,
+                                                              teamBattingFirstScore:
+                                                                  teamAScoreController
+                                                                      .text,
+                                                              teamBattingSecondScore:
+                                                                  teamBScoreController
+                                                                      .text,
+                                                              teamBattingFirstTopBatter:
+                                                                  teamABestPlayer1Controller
+                                                                      .text,
+                                                              teamBattingFirstTopBowlerPerformance:
+                                                                  teamABestPlayer2Controller
+                                                                      .text,
+                                                              teamBattingSecondTopBatter:
+                                                                  teamBBestPlayer1Controller
+                                                                      .text,
+                                                              teamBattingSecondTopBowlerPerformance:
+                                                                  teamBBestPlayer2Controller
+                                                                      .text,
+                                                              teamBattingFirstLogoUrl:
+                                                                  teamALogoUrlController.text,
+                                                              teamBattingSecondLogoUrl: teamBLogoUrlController.text,
+                                                              teamBattingFirstId: teamADocIdController.text,
+                                                              teamBattingSecondId: teamBDocIdController.text);
+
+                                                          if (result ==
+                                                              'Cricket Match Record Added Successfully') {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                              msg:
+                                                                  "Cricket Match Added Successfully",
+                                                              toastLength: Toast
+                                                                  .LENGTH_LONG,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.green[
+                                                                      700],
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
+                                                          }
+                                                        } else {
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Failed to add Cricket Match)",
+                                                            toastLength: Toast
+                                                                .LENGTH_LONG,
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .BOTTOM,
+                                                            backgroundColor:
+                                                                Colors.red[700],
+                                                            textColor:
+                                                                Colors.white,
+                                                          );
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      } catch (e) {
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "An error occurred: $e",
+                                                          toastLength:
+                                                              Toast.LENGTH_LONG,
+                                                          gravity: ToastGravity
+                                                              .BOTTOM,
+                                                          backgroundColor:
+                                                              Colors.red[700],
+                                                          textColor:
+                                                              Colors.white,
+                                                        );
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        print('Error: $e');
+                                                      }
+                                                    } else if (selectedSport ==
+                                                        'Football') {
+                                                      try {
+                                                        if (addMatchKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          String result = await InterCollegeServices().recordFootballMatch(
+                                                              academicYear:
+                                                                  "2024-25",
+                                                              matchLocation:
+                                                                  matchLocationController
+                                                                      .text,
+                                                              matchType:
+                                                                  matchTypeController
+                                                                      .text,
+                                                              matchTime:
+                                                                  matchTimeController
+                                                                      .text,
+                                                              matchDayDate:
+                                                                  matchDayDateController
+                                                                      .text,
+                                                              teamAName:
+                                                                  teamANameController
+                                                                      .text,
+                                                              teamBName:
+                                                                  teamBNameController
+                                                                      .text,
+                                                              teamAGoals: int.parse(
+                                                                  teamAScoreController
+                                                                      .text),
+                                                              teamBGoals: int.parse(
+                                                                  teamBScoreController
+                                                                      .text),
+                                                              teamATopGoalScorer:
+                                                                  teamABestPlayer1Controller.text,
+                                                              teamBTopGoalScorer: teamBBestPlayer1Controller.text,
+                                                              teamALogoUrl: teamALogoUrlController.text,
+                                                              teamBLogoUrl: teamBLogoUrlController.text,
+                                                              teamAId: teamADocIdController.text,
+                                                              teamBId: teamBDocIdController.text);
+
+                                                          if (result ==
+                                                              'Football Match Record Added Successfully') {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                              msg:
+                                                                  "Football Match Added Successfully",
+                                                              toastLength: Toast
+                                                                  .LENGTH_LONG,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.green[
+                                                                      700],
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
+                                                          }
+                                                        } else {
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Failed to add Football Match)",
+                                                            toastLength: Toast
+                                                                .LENGTH_LONG,
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .BOTTOM,
+                                                            backgroundColor:
+                                                                Colors.red[700],
+                                                            textColor:
+                                                                Colors.white,
+                                                          );
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      } catch (e) {
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "An error occurred: $e",
+                                                          toastLength:
+                                                              Toast.LENGTH_LONG,
+                                                          gravity: ToastGravity
+                                                              .BOTTOM,
+                                                          backgroundColor:
+                                                              Colors.red[700],
+                                                          textColor:
+                                                              Colors.white,
+                                                        );
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        print('Error: $e');
+                                                      }
+                                                    } else if (selectedSport ==
+                                                        'Kabaddi') {
+                                                      try {
+                                                        int teamAPoints = int
+                                                                .tryParse(
+                                                                    teamAScoreController
+                                                                        .text) ??
+                                                            0; // Default to 0 if parsing fails
+                                                        int teamBPoints = int
+                                                                .tryParse(
+                                                                    teamBScoreController
+                                                                        .text) ??
+                                                            0; // Default to 0 if parsing fails
+                                                        if (addMatchKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          String result = await InterCollegeServices().recordKabaddiMatch(
+                                                              academicYear:
+                                                                  "2024-25",
+                                                              matchLocation:
+                                                                  matchLocationController
+                                                                      .text,
+                                                              matchType:
+                                                                  matchTypeController
+                                                                      .text,
+                                                              matchTime:
+                                                                  matchTimeController
+                                                                      .text,
+                                                              matchDayDate:
+                                                                  matchDayDateController
+                                                                      .text,
+                                                              teamAName:
+                                                                  teamANameController
+                                                                      .text,
+                                                              teamBName:
+                                                                  teamBNameController
+                                                                      .text,
+                                                              teamAPoints:
+                                                                  teamAPoints,
+                                                              teamBPoints:
+                                                                  teamBPoints,
+                                                              teamATopRaider:
+                                                                  teamABestPlayer1Controller
+                                                                      .text,
+                                                              teamATopDefender:
+                                                                  teamABestPlayer2Controller
+                                                                      .text,
+                                                              teamBTopRaider:
+                                                                  teamBBestPlayer1Controller
+                                                                      .text,
+                                                              teamBTopDefender:
+                                                                  teamBBestPlayer2Controller
+                                                                      .text,
+                                                              teamALogoUrl:
+                                                                  teamALogoUrlController
+                                                                      .text,
+                                                              teamBLogoUrl:
+                                                                  teamBLogoUrlController
+                                                                      .text,
+                                                              teamAId: teamADocIdController.text,
+                                                              teamBId: teamBDocIdController.text);
+
+                                                          if (result ==
+                                                              'Kabaddi Match Record Added Successfully') {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                              msg:
+                                                                  "Kabaddi Match Added Successfully",
+                                                              toastLength: Toast
+                                                                  .LENGTH_LONG,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.green[
+                                                                      700],
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
+                                                          }
+                                                        } else {
+                                                          Fluttertoast
+                                                              .showToast(
+                                                            msg:
+                                                                "Failed to add Football Match)",
+                                                            toastLength: Toast
+                                                                .LENGTH_LONG,
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .BOTTOM,
+                                                            backgroundColor:
+                                                                Colors.red[700],
+                                                            textColor:
+                                                                Colors.white,
+                                                          );
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      } catch (e) {
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "An error occurred: $e",
+                                                          toastLength:
+                                                              Toast.LENGTH_LONG,
+                                                          gravity: ToastGravity
+                                                              .BOTTOM,
+                                                          backgroundColor:
+                                                              Colors.red[700],
+                                                          textColor:
+                                                              Colors.white,
+                                                        );
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        print('Error: $e');
+                                                      }
+                                                    } else {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Method Still Not Defined for $selectedSport",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.red[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Text(
+                                                    'Add New Match',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Close Button
+                                        Positioned(
+                                          right: 10,
+                                          top: 10,
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.red,
+                                            radius: 20,
+                                            child: IconButton(
+                                              icon: Icon(Icons.close,
+                                                  color: Colors.white),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                              },
+                            );
+                          },
+                          child: Text(
+                            "Add Match",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     child: Text(
-                      "Edit Attendance",
+                      "Add Match",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

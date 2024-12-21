@@ -22,50 +22,61 @@ class InterCollegeServices {
       int currentYear = now.year;
       String academicYear;
       if (now.month >= 6) {
-        // From June to December: current year to next year
         academicYear = "$currentYear-${currentYear + 1}";
       } else {
-        // From January to May: previous year to current year
         academicYear = "${currentYear - 1}-$currentYear";
       }
 
-      String uniqueCode = Uuid().v4().substring(0, 6); // Unique Code
+      String uniqueCode = Uuid().v4().substring(0, 6);
 
-      // Reference to Firebase Storage
-      final storageRef =
-          FirebaseStorage.instance.ref().child('colleges/$collegeName.png');
+      // Create a unique filename with timestamp to avoid conflicts
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName =
+          'colleges/${timestamp}_${collegeName.replaceAll(' ', '_')}.jpg';
 
-      // Upload image to Firebase Storage
-      UploadTask uploadTask = storageRef.putFile(imageFile);
+      // Reference to Firebase Storage with the unique filename
+      final storageRef = FirebaseStorage.instance.ref().child(fileName);
 
-      // Wait for the image to be uploaded
-      TaskSnapshot snapshot = await uploadTask;
+      // Set proper metadata
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {
+          'collegeName': collegeName,
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
 
-      // Get the image URL after upload
-      String imageUrl = await snapshot.ref.getDownloadURL();
+      // Upload image to Firebase Storage with metadata
+      final uploadTask = await storageRef.putFile(imageFile, metadata);
 
-      // Add college document to Firestore
-      final collegeColl = FirebaseFirestore.instance.collection('colleges');
+      if (uploadTask.state == TaskState.success) {
+        // Get the image URL after upload
+        String imageUrl = await uploadTask.ref.getDownloadURL();
 
-      // Add the document without the ID
-      DocumentReference docRef = await collegeColl.add({
-        'unique_code': uniqueCode,
-        'collegeName': collegeName,
-        'collegeShortName': collegeShortName,
-        'collegeLocation': collegeLocation,
-        'score': 0, // Default score
-        'soft_delete': false,
-        'imageUrl': imageUrl,
-        'academicYear': academicYear,
-      });
+        // Add college document to Firestore
+        final collegeColl = FirebaseFirestore.instance.collection('colleges');
 
-      // Get the ID of the added document
-      String docId = docRef.id;
+        // Add the document with initial data
+        DocumentReference docRef = await collegeColl.add({
+          'unique_code': uniqueCode,
+          'collegeName': collegeName,
+          'collegeShortName': collegeShortName,
+          'collegeLocation': collegeLocation,
+          'score': 0,
+          'soft_delete': false,
+          'imageUrl': imageUrl,
+          'academicYear': academicYear,
+          'matchesWon': {}, // Initialize empty matchesWon map
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
-      // Update the document with the ID
-      await docRef.update({'id': docId});
+        // Update the document with its ID
+        await docRef.update({'id': docRef.id});
 
-      return "Success";
+        return "Success";
+      } else {
+        throw Exception('Upload failed: ${uploadTask.state}');
+      }
     } catch (e) {
       print('Error adding college: $e');
       return "Failed";
@@ -121,24 +132,27 @@ class InterCollegeServices {
 
   Future<List<InterCollege>> getAllCollegesInter() async {
     try {
-      print("Getting all Colleges");
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("colleges")
+      final collegeColl = FirebaseFirestore.instance.collection('colleges');
+      final snapshot = await collegeColl
           .where('soft_delete', isEqualTo: false)
+          // .orderBy('score', descending: true)
           .get();
-      return querySnapshot.docs
-          .map((doc) =>
-              InterCollege.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-          .toList();
+
+      List<InterCollege> colleges = [];
+      for (var doc in snapshot.docs) {
+        colleges.add(InterCollege.fromMap(doc.data(), doc.id));
+      }
+
+      return colleges;
     } catch (e) {
-      print("Error in getAllCollegesInter() method, :${e}");
+      print('Error fetching colleges: $e');
       return [];
     }
   }
 
   Future<List<String>> fetchImagesFromFirebase() async {
     final ListResult result =
-        await FirebaseStorage.instance.ref('interCollege_Banner').listAll();
+        await FirebaseStorage.instance.ref('interCollege_Banners').listAll();
     final List<String> urls = await Future.wait(
       result.items.map((item) => item.getDownloadURL()).toList(),
     );
