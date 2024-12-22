@@ -439,17 +439,23 @@ class InterCollegeServices {
   Future<List<InterCollegeCricketMatch>> getAllInterCollegeCricketMatches(
       String currentAcademicYear) async {
     try {
+      // Query the Firestore collection
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("intercollege_sports")
           .doc(currentAcademicYear)
           .collection('cricket')
-          .where('soft_delete', isEqualTo: false)
+          // .where('soft_delete', isEqualTo: false)
           .get();
+
+      // Map the documents to a list of `InterCollegeCricketMatch`
       return querySnapshot.docs
           .map((doc) => InterCollegeCricketMatch.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print("Error in getting cricket matches : $e");
+      // Log the error
+      print("Error in getting cricket matches: $e");
+
+      // Return an empty list to indicate failure gracefully
       return [];
     }
   }

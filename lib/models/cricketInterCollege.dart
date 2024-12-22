@@ -17,7 +17,7 @@ class InterCollegeCricketMatch {
   final String matchTime;
   final String matchDayDate;
   final String matchType;
-  final Bool softDelete;
+  final bool softDelete;
 
   InterCollegeCricketMatch({
     required this.docId,
@@ -47,10 +47,10 @@ class InterCollegeCricketMatch {
       teamBattingSecondScore: data['teamBattingSecondScore'] ?? '',
       teamBattingFirstTopBatter: data['teamBattingFirstTopBatter'] ?? '',
       teamBattingFirstTopBowlerPerformance:
-      data['teamBattingFirstTopBowlerPerformance'] ?? '',
+          data['teamBattingFirstTopBowlerPerformance'] ?? '',
       teamBattingSecondTopBatter: data['teamBattingSecondTopBatter'] ?? '',
       teamBattingSecondTopBowlerPerformance:
-      data['teamBattingSecondTopBowlerPerformance'] ?? '',
+          data['teamBattingSecondTopBowlerPerformance'] ?? '',
       result: data['result'] ?? '',
       matchLocation: data['matchLocation'] ?? '',
       matchTime: data['matchTime'] ?? '',
