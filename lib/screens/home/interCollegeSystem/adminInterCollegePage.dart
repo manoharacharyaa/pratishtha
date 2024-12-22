@@ -35,7 +35,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
   final TextEditingController updatedScoreController = TextEditingController();
 
   File? _pickedImage;
-  List<InterCollege> allCollegeList = [];
+  late List<InterCollege> allCollegeList = [];
 
   TextEditingController teamANameController = TextEditingController();
   TextEditingController teamBNameController = TextEditingController();
@@ -73,15 +73,15 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
   @override
   void initState() {
     super.initState();
-    Future.wait([
-      InterCollegeServices().getAllCollegesInter(),
-    ]).then((results) {
+    // Initialize the Future that FutureBuilder will use
+    colleges = InterCollegeServices().getAllCollegesInter();
+
+    // If you still want to keep allCollegeList updated
+    colleges.then((results) {
       setState(() {
-        allCollegeList =
-            results[0]; // Assuming results[0] is already a List<InterCollege>
+        allCollegeList = results;
         log("Printing all college list");
-        log(allCollegeList
-            .toString()); // Use toString() instead of type casting
+        log(allCollegeList.toString());
       });
     }).catchError((error) {
       log("Error fetching colleges: $error");
@@ -1153,6 +1153,23 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                 ),
                 SizedBox(width: 16),
                 Expanded(
+                  // child: ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.redAccent,
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //   ),
+                  //   onPressed: () {},
+                  //   child: Text(
+                  //     "Add Match",
+                  //     style: TextStyle(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.bold,
+                  //       color: Colors.white,
+                  //     ),
+                  //   ),
+                  // ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
@@ -1161,747 +1178,649 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                       ),
                     ),
                     onPressed: () {
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return StatefulBuilder(
-                                    builder: (context, setState) {
-                                  return Dialog(
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    elevation: 10,
-                                    child: Stack(
-                                      children: [
-                                        // Main Content
-                                        Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                // Title
-                                                Center(
-                                                  child: Text(
-                                                    'Add New Match',
-                                                    style: TextStyle(
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return StatefulBuilder(builder: (context, setState) {
+                            return Dialog(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 10,
+                              child: Stack(
+                                children: [
+                                  // Main Content
+                                  Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          // Title
+                                          Center(
+                                            child: Text(
+                                              'Add New Match',
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 20),
+
+                                          // Form
+                                          SingleChildScrollView(
+                                            child: Form(
+                                              key: addMatchKey,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  // Sport Select Dropdown
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 10),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .deepPurple
+                                                                .shade200),
+                                                      ),
+                                                      child:
+                                                          DropdownButtonFormField<
+                                                              String>(
+                                                        decoration:
+                                                            InputDecoration(
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          5),
+                                                          border:
+                                                              InputBorder.none,
+                                                        ),
+                                                        value:
+                                                            sportsList.contains(
+                                                                    selectedSport)
+                                                                ? selectedSport
+                                                                : null,
+                                                        items: sportsList
+                                                            .map((value) =>
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value: value,
+                                                                  child: Text(
+                                                                      value),
+                                                                ))
+                                                            .toList(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            selectedSport =
+                                                                value!;
+                                                          });
+                                                          print(selectedSport);
+                                                        },
+                                                        hint: Text(
+                                                          "Select Sport",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(height: 20),
 
-                                                // Form
-                                                SingleChildScrollView(
-                                                  child: Form(
-                                                    key: addMatchKey,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Sport Select Dropdown
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 10),
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15),
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .deepPurple
-                                                                      .shade200),
-                                                            ),
-                                                            child:
-                                                                DropdownButtonFormField<
-                                                                    String>(
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                contentPadding:
-                                                                    EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            15,
-                                                                        vertical:
-                                                                            5),
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                              ),
-                                                              value: sportsList
-                                                                      .contains(
-                                                                          selectedSport)
-                                                                  ? selectedSport
-                                                                  : null,
-                                                              items: sportsList
-                                                                  .map((value) =>
-                                                                      DropdownMenuItem<
-                                                                          String>(
-                                                                        value:
-                                                                            value,
-                                                                        child: Text(
-                                                                            value),
-                                                                      ))
-                                                                  .toList(),
-                                                              onChanged:
-                                                                  (value) {
-                                                                setState(() {
-                                                                  selectedSport =
-                                                                      value!;
-                                                                });
-                                                                print(
-                                                                    selectedSport);
-                                                              },
-                                                              hint: Text(
-                                                                "Select Sport",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ),
+                                                  // Member Selection 1
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamANameController,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Select Team Batting First'
+                                                        : 'Select Team A',
+                                                    readOnly: true,
+                                                    onTap: () =>
+                                                        openUserSelectionModalCollege1(
+                                                            context),
+                                                  ),
+
+                                                  // Member Selection 1
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamBNameController,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Select Team Batting Second'
+                                                        : 'Select Team B',
+                                                    readOnly: true,
+                                                    onTap: () =>
+                                                        openUserSelectionModalCollege2(
+                                                            context),
+                                                  ),
+
+                                                  // Team A,B Score Input
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamAScoreController,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team A Score Eg. 137/8'
+                                                        : 'Enter Team A Points / Goals',
+                                                  ),
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamBScoreController,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team B Score Eg. 137/8'
+                                                        : 'Enter Team B Points / Goals',
+                                                  ),
+
+                                                  // Match Type, Location, DayDate, Time
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                            _buildAnimatedTextField(
+                                                          controller:
+                                                              matchTypeController,
+                                                          labelText:
+                                                              'Enter Match Type (Group Stage - M(num), QF, SF, Final',
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      Expanded(
+                                                        child:
+                                                            _buildAnimatedTextField(
+                                                          controller:
+                                                              matchLocationController,
+                                                          labelText:
+                                                              'Enter Match Location',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      // Date Picker
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            final DateTime?
+                                                                pickedDate =
+                                                                await showDatePicker(
+                                                              context: context,
+                                                              initialDate:
+                                                                  DateTime
+                                                                      .now(),
+                                                              firstDate:
+                                                                  DateTime(
+                                                                      2000),
+                                                              lastDate:
+                                                                  DateTime(
+                                                                      2100),
+                                                            );
+
+                                                            if (pickedDate !=
+                                                                null) {
+                                                              final formattedDate =
+                                                                  DateFormat(
+                                                                          'EEE, dd MMM yyyy')
+                                                                      .format(
+                                                                          pickedDate);
+                                                              setState(() {
+                                                                matchDayDateController
+                                                                        .text =
+                                                                    formattedDate;
+                                                              });
+                                                            }
+                                                          },
+                                                          child:
+                                                              _buildAnimatedTextField(
+                                                            controller:
+                                                                matchDayDateController,
+                                                            labelText:
+                                                                'Select Match Date',
+                                                            readOnly: false,
                                                           ),
                                                         ),
+                                                      ),
+                                                      SizedBox(width: 10),
+// Time Picker
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            final TimeOfDay?
+                                                                pickedTime =
+                                                                await showTimePicker(
+                                                              context: context,
+                                                              initialTime:
+                                                                  TimeOfDay
+                                                                      .now(),
+                                                            );
 
-                                                        // Member Selection 1
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamANameController,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Select Team Batting First'
-                                                              : 'Select Team A',
-                                                          readOnly: true,
-                                                          onTap: () =>
-                                                              openUserSelectionModalCollege1(
-                                                                  context),
+                                                            if (pickedTime !=
+                                                                null) {
+                                                              final formattedTime =
+                                                                  pickedTime
+                                                                      .format(
+                                                                          context);
+                                                              setState(() {
+                                                                matchTimeController
+                                                                        .text =
+                                                                    formattedTime;
+                                                              });
+                                                            }
+                                                          },
+                                                          child:
+                                                              _buildAnimatedTextField(
+                                                            controller:
+                                                                matchTimeController,
+                                                            labelText:
+                                                                'Select Match Start Time',
+                                                            readOnly: false,
+                                                          ),
                                                         ),
-
-                                                        // Member Selection 1
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamBNameController,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Select Team Batting Second'
-                                                              : 'Select Team B',
-                                                          readOnly: true,
-                                                          onTap: () =>
-                                                              openUserSelectionModalCollege2(
-                                                                  context),
-                                                        ),
-
-                                                        // Team A,B Score Input
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamAScoreController,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team A Score Eg. 137/8'
-                                                              : 'Enter Team A Points / Goals',
-                                                        ),
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamBScoreController,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team B Score Eg. 137/8'
-                                                              : 'Enter Team B Points / Goals',
-                                                        ),
-
-                                                        // Match Type, Location, DayDate, Time
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child:
-                                                                  _buildAnimatedTextField(
-                                                                controller:
-                                                                    matchTypeController,
-                                                                labelText:
-                                                                    'Enter Match Type (Group Stage - M(num), QF, SF, Final',
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            Expanded(
-                                                              child:
-                                                                  _buildAnimatedTextField(
-                                                                controller:
-                                                                    matchLocationController,
-                                                                labelText:
-                                                                    'Enter Match Location',
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  // Open Date Picker
-                                                                  DateTime?
-                                                                      pickedDate =
-                                                                      await showDatePicker(
-                                                                    context:
-                                                                        context,
-                                                                    initialDate:
-                                                                        DateTime
-                                                                            .now(), // Start with the current date
-                                                                    firstDate:
-                                                                        DateTime(
-                                                                            2000), // Earliest date the user can select
-                                                                    lastDate:
-                                                                        DateTime(
-                                                                            2100), // Latest date the user can select
-                                                                  );
-
-                                                                  // Handle the selected date
-                                                                  if (pickedDate !=
-                                                                      null) {
-                                                                    // Format the picked date as "EEE, dd MMM yyyy"
-                                                                    final formattedDate = DateFormat(
-                                                                            'EEE, dd MMM yyyy')
-                                                                        .format(
-                                                                            pickedDate);
-
-                                                                    // Set the formatted date to the text controller
-                                                                    setState(
-                                                                        () {
-                                                                      matchDayDateController
-                                                                              .text =
-                                                                          formattedDate;
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    _buildAnimatedTextField(
-                                                                  controller:
-                                                                      matchDayDateController,
-                                                                  labelText:
-                                                                      'Select Match Date',
-                                                                  readOnly:
-                                                                      true, // Prevent direct editing
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  // Open Time Picker
-                                                                  TimeOfDay?
-                                                                      pickedTime =
-                                                                      await showTimePicker(
-                                                                    context:
-                                                                        context,
-                                                                    initialTime:
-                                                                        TimeOfDay
-                                                                            .now(),
-                                                                  );
-
-                                                                  // Handle the selected time
-                                                                  if (pickedTime !=
-                                                                      null) {
-                                                                    // Format the picked time in 24-hour or AM/PM format
-                                                                    final formattedTime =
-                                                                        pickedTime
-                                                                            .format(context);
-
-                                                                    // Set the formatted time to the text controller
-                                                                    setState(
-                                                                        () {
-                                                                      matchTimeController
-                                                                              .text =
-                                                                          formattedTime;
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    _buildAnimatedTextField(
-                                                                  controller:
-                                                                      matchTimeController,
-                                                                  labelText:
-                                                                      'Select Match Start Time',
-                                                                  readOnly:
-                                                                      true, // Prevent direct editing
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-
-                                                        //Team A, B Top Players
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamABestPlayer1Controller,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team A Top Scorer'
-                                                              : selectedSport ==
-                                                                      'Football'
-                                                                  ? 'Enter Team A Top GoalScorer'
-                                                                  : selectedSport ==
-                                                                          'Kabaddi'
-                                                                      ? 'Enter Team A Top Raider'
-                                                                      : 'Enter Team A Top Player / Null',
-                                                        ),
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamABestPlayer2Controller,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team A Top Bowler'
-                                                              : selectedSport ==
-                                                                      'Kabaddi'
-                                                                  ? 'Enter Team A Top Defender '
-                                                                  : 'Leave this',
-                                                        ),
-
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamBBestPlayer1Controller,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team B Top Scorer'
-                                                              : selectedSport ==
-                                                                      'Football'
-                                                                  ? 'Enter Team B Top GoalScorer'
-                                                                  : selectedSport ==
-                                                                          'Kabaddi'
-                                                                      ? 'Enter Team B Top Raider'
-                                                                      : 'Enter Team B Top Player / Null',
-                                                        ),
-                                                        _buildAnimatedTextField(
-                                                          controller:
-                                                              teamBBestPlayer2Controller,
-                                                          labelText: selectedSport ==
-                                                                  'Cricket'
-                                                              ? 'Enter Team B Top Bowler'
-                                                              : selectedSport ==
-                                                                      'Kabaddi'
-                                                                  ? 'Enter Team B Top Defender '
-                                                                  : 'Leave this',
-                                                        ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                    ],
                                                   ),
-                                                ),
 
-                                                SizedBox(height: 20),
-
-                                                // Add Volunteer Button
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.blue.shade800,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 15),
+                                                  //Team A, B Top Players
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamABestPlayer1Controller,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team A Top Scorer'
+                                                        : selectedSport ==
+                                                                'Football'
+                                                            ? 'Enter Team A Top GoalScorer'
+                                                            : selectedSport ==
+                                                                    'Kabaddi'
+                                                                ? 'Enter Team A Top Raider'
+                                                                : 'Enter Team A Top Player / Null',
                                                   ),
-                                                  onPressed: () async {
-                                                    if (selectedSport ==
-                                                        'Cricket') {
-                                                      try {
-                                                        if (addMatchKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          String result = await InterCollegeServices().recordCricketMatch(
-                                                              academicYear:
-                                                                  "2024-25",
-                                                              matchLocation:
-                                                                  matchLocationController
-                                                                      .text,
-                                                              matchType:
-                                                                  matchTypeController
-                                                                      .text,
-                                                              matchTime:
-                                                                  matchTimeController
-                                                                      .text,
-                                                              matchDayDate:
-                                                                  matchDayDateController
-                                                                      .text,
-                                                              teamBattingFirst:
-                                                                  teamANameController
-                                                                      .text,
-                                                              teamBattingSecond:
-                                                                  teamBNameController
-                                                                      .text,
-                                                              teamBattingFirstScore:
-                                                                  teamAScoreController
-                                                                      .text,
-                                                              teamBattingSecondScore:
-                                                                  teamBScoreController
-                                                                      .text,
-                                                              teamBattingFirstTopBatter:
-                                                                  teamABestPlayer1Controller
-                                                                      .text,
-                                                              teamBattingFirstTopBowlerPerformance:
-                                                                  teamABestPlayer2Controller
-                                                                      .text,
-                                                              teamBattingSecondTopBatter:
-                                                                  teamBBestPlayer1Controller
-                                                                      .text,
-                                                              teamBattingSecondTopBowlerPerformance:
-                                                                  teamBBestPlayer2Controller
-                                                                      .text,
-                                                              teamBattingFirstLogoUrl:
-                                                                  teamALogoUrlController.text,
-                                                              teamBattingSecondLogoUrl: teamBLogoUrlController.text,
-                                                              teamBattingFirstId: teamADocIdController.text,
-                                                              teamBattingSecondId: teamBDocIdController.text);
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamABestPlayer2Controller,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team A Top Bowler'
+                                                        : selectedSport ==
+                                                                'Kabaddi'
+                                                            ? 'Enter Team A Top Defender '
+                                                            : 'Leave this',
+                                                  ),
 
-                                                          if (result ==
-                                                              'Cricket Match Record Added Successfully') {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                              msg:
-                                                                  "Cricket Match Added Successfully",
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .BOTTOM,
-                                                              backgroundColor:
-                                                                  Colors.green[
-                                                                      700],
-                                                              textColor:
-                                                                  Colors.white,
-                                                            );
-                                                          }
-                                                        } else {
-                                                          Fluttertoast
-                                                              .showToast(
-                                                            msg:
-                                                                "Failed to add Cricket Match)",
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .BOTTOM,
-                                                            backgroundColor:
-                                                                Colors.red[700],
-                                                            textColor:
-                                                                Colors.white,
-                                                          );
-                                                        }
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      } catch (e) {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "An error occurred: $e",
-                                                          toastLength:
-                                                              Toast.LENGTH_LONG,
-                                                          gravity: ToastGravity
-                                                              .BOTTOM,
-                                                          backgroundColor:
-                                                              Colors.red[700],
-                                                          textColor:
-                                                              Colors.white,
-                                                        );
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        print('Error: $e');
-                                                      }
-                                                    } else if (selectedSport ==
-                                                        'Football') {
-                                                      try {
-                                                        if (addMatchKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          String result = await InterCollegeServices().recordFootballMatch(
-                                                              academicYear:
-                                                                  "2024-25",
-                                                              matchLocation:
-                                                                  matchLocationController
-                                                                      .text,
-                                                              matchType:
-                                                                  matchTypeController
-                                                                      .text,
-                                                              matchTime:
-                                                                  matchTimeController
-                                                                      .text,
-                                                              matchDayDate:
-                                                                  matchDayDateController
-                                                                      .text,
-                                                              teamAName:
-                                                                  teamANameController
-                                                                      .text,
-                                                              teamBName:
-                                                                  teamBNameController
-                                                                      .text,
-                                                              teamAGoals: int.parse(
-                                                                  teamAScoreController
-                                                                      .text),
-                                                              teamBGoals: int.parse(
-                                                                  teamBScoreController
-                                                                      .text),
-                                                              teamATopGoalScorer:
-                                                                  teamABestPlayer1Controller.text,
-                                                              teamBTopGoalScorer: teamBBestPlayer1Controller.text,
-                                                              teamALogoUrl: teamALogoUrlController.text,
-                                                              teamBLogoUrl: teamBLogoUrlController.text,
-                                                              teamAId: teamADocIdController.text,
-                                                              teamBId: teamBDocIdController.text);
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamBBestPlayer1Controller,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team B Top Scorer'
+                                                        : selectedSport ==
+                                                                'Football'
+                                                            ? 'Enter Team B Top GoalScorer'
+                                                            : selectedSport ==
+                                                                    'Kabaddi'
+                                                                ? 'Enter Team B Top Raider'
+                                                                : 'Enter Team B Top Player / Null',
+                                                  ),
+                                                  _buildAnimatedTextField(
+                                                    controller:
+                                                        teamBBestPlayer2Controller,
+                                                    labelText: selectedSport ==
+                                                            'Cricket'
+                                                        ? 'Enter Team B Top Bowler'
+                                                        : selectedSport ==
+                                                                'Kabaddi'
+                                                            ? 'Enter Team B Top Defender '
+                                                            : 'Leave this',
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
 
-                                                          if (result ==
-                                                              'Football Match Record Added Successfully') {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                              msg:
-                                                                  "Football Match Added Successfully",
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .BOTTOM,
-                                                              backgroundColor:
-                                                                  Colors.green[
-                                                                      700],
-                                                              textColor:
-                                                                  Colors.white,
-                                                            );
-                                                          }
-                                                        } else {
-                                                          Fluttertoast
-                                                              .showToast(
-                                                            msg:
-                                                                "Failed to add Football Match)",
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .BOTTOM,
-                                                            backgroundColor:
-                                                                Colors.red[700],
-                                                            textColor:
-                                                                Colors.white,
-                                                          );
-                                                        }
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      } catch (e) {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "An error occurred: $e",
-                                                          toastLength:
-                                                              Toast.LENGTH_LONG,
-                                                          gravity: ToastGravity
-                                                              .BOTTOM,
-                                                          backgroundColor:
-                                                              Colors.red[700],
-                                                          textColor:
-                                                              Colors.white,
-                                                        );
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        print('Error: $e');
-                                                      }
-                                                    } else if (selectedSport ==
-                                                        'Kabaddi') {
-                                                      try {
-                                                        int teamAPoints = int
-                                                                .tryParse(
-                                                                    teamAScoreController
-                                                                        .text) ??
-                                                            0; // Default to 0 if parsing fails
-                                                        int teamBPoints = int
-                                                                .tryParse(
-                                                                    teamBScoreController
-                                                                        .text) ??
-                                                            0; // Default to 0 if parsing fails
-                                                        if (addMatchKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          String result = await InterCollegeServices().recordKabaddiMatch(
-                                                              academicYear:
-                                                                  "2024-25",
-                                                              matchLocation:
-                                                                  matchLocationController
-                                                                      .text,
-                                                              matchType:
-                                                                  matchTypeController
-                                                                      .text,
-                                                              matchTime:
-                                                                  matchTimeController
-                                                                      .text,
-                                                              matchDayDate:
-                                                                  matchDayDateController
-                                                                      .text,
-                                                              teamAName:
-                                                                  teamANameController
-                                                                      .text,
-                                                              teamBName:
-                                                                  teamBNameController
-                                                                      .text,
-                                                              teamAPoints:
-                                                                  teamAPoints,
-                                                              teamBPoints:
-                                                                  teamBPoints,
-                                                              teamATopRaider:
-                                                                  teamABestPlayer1Controller
-                                                                      .text,
-                                                              teamATopDefender:
-                                                                  teamABestPlayer2Controller
-                                                                      .text,
-                                                              teamBTopRaider:
-                                                                  teamBBestPlayer1Controller
-                                                                      .text,
-                                                              teamBTopDefender:
-                                                                  teamBBestPlayer2Controller
-                                                                      .text,
-                                                              teamALogoUrl:
-                                                                  teamALogoUrlController
-                                                                      .text,
-                                                              teamBLogoUrl:
-                                                                  teamBLogoUrlController
-                                                                      .text,
-                                                              teamAId: teamADocIdController.text,
-                                                              teamBId: teamBDocIdController.text);
+                                          SizedBox(height: 20),
 
-                                                          if (result ==
-                                                              'Kabaddi Match Record Added Successfully') {
-                                                            Fluttertoast
-                                                                .showToast(
-                                                              msg:
-                                                                  "Kabaddi Match Added Successfully",
-                                                              toastLength: Toast
-                                                                  .LENGTH_LONG,
-                                                              gravity:
-                                                                  ToastGravity
-                                                                      .BOTTOM,
-                                                              backgroundColor:
-                                                                  Colors.green[
-                                                                      700],
-                                                              textColor:
-                                                                  Colors.white,
-                                                            );
-                                                          }
-                                                        } else {
-                                                          Fluttertoast
-                                                              .showToast(
-                                                            msg:
-                                                                "Failed to add Football Match)",
-                                                            toastLength: Toast
-                                                                .LENGTH_LONG,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .BOTTOM,
-                                                            backgroundColor:
-                                                                Colors.red[700],
-                                                            textColor:
-                                                                Colors.white,
-                                                          );
-                                                        }
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      } catch (e) {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "An error occurred: $e",
-                                                          toastLength:
-                                                              Toast.LENGTH_LONG,
-                                                          gravity: ToastGravity
-                                                              .BOTTOM,
-                                                          backgroundColor:
-                                                              Colors.red[700],
-                                                          textColor:
-                                                              Colors.white,
-                                                        );
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        print('Error: $e');
-                                                      }
-                                                    } else {
+                                          // Add Volunteer Button
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.blue.shade800,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 15),
+                                            ),
+                                            onPressed: () async {
+                                              if (selectedSport == 'Cricket') {
+                                                try {
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordCricketMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamBattingFirst:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBattingSecond:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamBattingFirstScore:
+                                                            teamAScoreController
+                                                                .text,
+                                                        teamBattingSecondScore:
+                                                            teamBScoreController
+                                                                .text,
+                                                        teamBattingFirstTopBatter:
+                                                            teamABestPlayer1Controller
+                                                                .text,
+                                                        teamBattingFirstTopBowlerPerformance:
+                                                            teamABestPlayer2Controller.text,
+                                                        teamBattingSecondTopBatter: teamBBestPlayer1Controller.text,
+                                                        teamBattingSecondTopBowlerPerformance: teamBBestPlayer2Controller.text,
+                                                        teamBattingFirstLogoUrl: teamALogoUrlController.text,
+                                                        teamBattingSecondLogoUrl: teamBLogoUrlController.text,
+                                                        teamBattingFirstId: teamADocIdController.text,
+                                                        teamBattingSecondId: teamBDocIdController.text);
+
+                                                    if (result ==
+                                                        'Cricket Match Record Added Successfully') {
                                                       Fluttertoast.showToast(
                                                         msg:
-                                                            "Method Still Not Defined for $selectedSport",
+                                                            "Cricket Match Added Successfully",
                                                         toastLength:
                                                             Toast.LENGTH_LONG,
                                                         gravity:
                                                             ToastGravity.BOTTOM,
                                                         backgroundColor:
-                                                            Colors.red[700],
+                                                            Colors.green[700],
                                                         textColor: Colors.white,
                                                       );
                                                     }
-                                                  },
-                                                  child: Text(
-                                                    'Add New Match',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add Cricket Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else if (selectedSport ==
+                                                  'Football') {
+                                                try {
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordFootballMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType: matchTypeController
+                                                            .text,
+                                                        matchTime: matchTimeController
+                                                            .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName: teamANameController
+                                                            .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamAGoals: int.parse(
+                                                            teamAScoreController
+                                                                .text),
+                                                        teamBGoals: int.parse(
+                                                            teamBScoreController
+                                                                .text),
+                                                        teamATopGoalScorer:
+                                                            teamABestPlayer1Controller.text,
+                                                        teamBTopGoalScorer: teamBBestPlayer1Controller.text,
+                                                        teamALogoUrl: teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                        teamAId: teamADocIdController.text,
+                                                        teamBId: teamBDocIdController.text);
 
-                                        // Close Button
-                                        Positioned(
-                                          right: 10,
-                                          top: 10,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.red,
-                                            radius: 20,
-                                            child: IconButton(
-                                              icon: Icon(Icons.close,
-                                                  color: Colors.white),
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
+                                                    if (result ==
+                                                        'Football Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Football Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add Football Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else if (selectedSport ==
+                                                  'Kabaddi') {
+                                                try {
+                                                  int teamAPoints = int.tryParse(
+                                                          teamAScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  int teamBPoints = int.tryParse(
+                                                          teamBScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordKabaddiMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamAPoints:
+                                                            teamAPoints,
+                                                        teamBPoints:
+                                                            teamBPoints,
+                                                        teamATopRaider:
+                                                            teamABestPlayer1Controller
+                                                                .text,
+                                                        teamATopDefender:
+                                                            teamABestPlayer2Controller
+                                                                .text,
+                                                        teamBTopRaider:
+                                                            teamBBestPlayer1Controller
+                                                                .text,
+                                                        teamBTopDefender:
+                                                            teamBBestPlayer2Controller
+                                                                .text,
+                                                        teamALogoUrl:
+                                                            teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                        teamAId: teamADocIdController.text,
+                                                        teamBId: teamBDocIdController.text);
+
+                                                    if (result ==
+                                                        'Kabaddi Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Kabaddi Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add Football Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Method Still Not Defined for $selectedSport",
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  backgroundColor:
+                                                      Colors.red[700],
+                                                  textColor: Colors.white,
+                                                );
+                                              }
+                                            },
+                                            child: Text(
+                                              'Add New Match',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  );
-                                });
-                              },
+                                  ),
+
+                                  // Close Button
+                                  Positioned(
+                                    right: 10,
+                                    top: 10,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.red,
+                                      radius: 20,
+                                      child: IconButton(
+                                        icon: Icon(Icons.close,
+                                            color: Colors.white),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
-                          },
-                          child: Text(
-                            "Add Match",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                          });
+                        },
                       );
                     },
                     child: Text(
@@ -1916,7 +1835,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

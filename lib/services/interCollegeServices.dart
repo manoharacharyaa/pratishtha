@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:pratishtha/models/cricketInterCollege.dart';
 import 'package:pratishtha/models/footballInterCollege.dart';
 import 'package:pratishtha/models/interCollege.dart';
+import 'package:pratishtha/models/interCollegeBoysVolleyballMatch.dart';
+import 'package:pratishtha/models/interCollegeGirlsVolleyballMatch.dart';
+import 'package:pratishtha/models/interCollegeTugOfWarMatch.dart';
 import 'package:pratishtha/models/kabaddiInterCollege.dart';
 import 'package:uuid/uuid.dart';
 
@@ -223,7 +226,7 @@ class InterCollegeServices {
       print("Updated matchesWon for cricket successfully!");
 
       CollectionReference cricketColl = FirebaseFirestore.instance
-          .collection('inter_coll') // Root collection
+          .collection('intercollege_sports') // Root collection
           .doc(academicYear) // Document for the academic year
           .collection('cricket'); // Cricket matches collection
 
@@ -483,6 +486,229 @@ class InterCollegeServices {
           .toList();
     } catch (e) {
       print("Error in getting kabaddi matches: $e");
+      return [];
+    }
+  }
+
+  Future<String> recordVolleyballBoysMatch({
+    required String academicYear,
+    required String matchLocation,
+    required String matchType,
+    required String matchTime,
+    required String matchDayDate,
+    required String teamAName,
+    required String teamBName,
+    required String teamAScore,
+    required String teamBScore,
+    required String teamALogoUrl,
+    required String teamBLogoUrl,
+  }) async {
+    try {
+      String result;
+      if (int.parse(teamAScore) > int.parse(teamBScore)) {
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+      } else {
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+      }
+
+      CollectionReference volleyballColl = FirebaseFirestore.instance
+          .collection('intercollege_sports')
+          .doc(academicYear)
+          .collection('volleyball_boys');
+
+      // Add the document and get the document reference
+      DocumentReference docRef = await volleyballColl.add({
+        'academicYear': academicYear,
+        'matchLocation': matchLocation,
+        'matchType': matchType,
+        'matchTime': matchTime,
+        'matchDayDate': matchDayDate,
+        'teamAName': teamAName,
+        'teamBName': teamBName,
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamALogoUrl': teamALogoUrl,
+        'teamBLogoUrl': teamBLogoUrl,
+        'result': result,
+        'soft_delete': false,
+      });
+
+      // Update the document to include its ID as a field
+      await docRef.update({'id': docRef.id});
+
+      return "Volleyball Boys Match Recorded Successfully";
+    } catch (e) {
+      print("Error recording volleyball boys match: $e");
+      return "Failed to record volleyball boys match";
+    }
+  }
+
+  Future<String> recordVolleyballGirlsMatch({
+    required String academicYear,
+    required String matchLocation,
+    required String matchType,
+    required String matchTime,
+    required String matchDayDate,
+    required String teamAName,
+    required String teamBName,
+    required String teamAScore,
+    required String teamBScore,
+    required String teamALogoUrl,
+    required String teamBLogoUrl,
+  }) async {
+    try {
+      String result;
+      if (int.parse(teamAScore) > int.parse(teamBScore)) {
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+      } else {
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+      }
+
+      CollectionReference volleyballColl = FirebaseFirestore.instance
+          .collection('intercollege_sports')
+          .doc(academicYear)
+          .collection('volleyball_girls');
+
+      // Add the document and get the document reference
+      DocumentReference docRef = await volleyballColl.add({
+        'academicYear': academicYear,
+        'matchLocation': matchLocation,
+        'matchType': matchType,
+        'matchTime': matchTime,
+        'matchDayDate': matchDayDate,
+        'teamAName': teamAName,
+        'teamBName': teamBName,
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamALogoUrl': teamALogoUrl,
+        'teamBLogoUrl': teamBLogoUrl,
+        'result': result,
+        'soft_delete': false,
+      });
+
+      // Update the document to include its ID as a field
+      await docRef.update({'id': docRef.id});
+
+      return "Volleyball Girls Match Recorded Successfully";
+    } catch (e) {
+      print("Error recording volleyball girls match: $e");
+      return "Failed to record volleyball girls match";
+    }
+  }
+
+  Future<String> recordTugOfWarMatch({
+    required String academicYear,
+    required String matchLocation,
+    required String matchType,
+    required String matchTime,
+    required String matchDayDate,
+    required String teamAName,
+    required String teamBName,
+    required String teamAScore,
+    required String teamBScore,
+    required String teamALogoUrl,
+    required String teamBLogoUrl,
+  }) async {
+    try {
+      String result;
+      if (teamAScore.compareTo(teamBScore) > 0) {
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+      } else {
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+      }
+
+      CollectionReference tugOfWarColl = FirebaseFirestore.instance
+          .collection('intercollege_sports')
+          .doc(academicYear)
+          .collection('tug_of_war');
+
+      DocumentReference docRef = await tugOfWarColl.add({
+        'academicYear': academicYear,
+        'matchLocation': matchLocation,
+        'matchType': matchType,
+        'matchTime': matchTime,
+        'matchDayDate': matchDayDate,
+        'teamAName': teamAName,
+        'teamBName': teamBName,
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamALogoUrl': teamALogoUrl,
+        'teamBLogoUrl': teamBLogoUrl,
+        'result': result,
+        'soft_delete': false,
+      });
+
+      // Now include the document ID as a field in the document
+      await docRef.update({
+        'matchId': docRef.id, // Adding the document ID as matchId
+      });
+
+      return "Tug of War Match Recorded Successfully";
+    } catch (e) {
+      print("Error recording tug of war match: $e");
+      return "Failed to record tug of war match";
+    }
+  }
+
+  Future<List<InterCollegeVlleyballBoysMatch>> getAllVolleyballBoysMatches(
+      String currentAcademicYear) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("intercollege_sports")
+          .doc(currentAcademicYear)
+          .collection('volleyball_boys')
+          .where('soft_delete', isEqualTo: false)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => InterCollegeVlleyballBoysMatch.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print("Error in getting volleyball boys matches: $e");
+      return [];
+    }
+  }
+
+  Future<List<InterCollegeVlleyballGirlsMatch>> getAllVolleyballGirlsMatches(
+      String currentAcademicYear) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("intercollege_sports")
+          .doc(currentAcademicYear)
+          .collection('volleyball_girls')
+          .where('soft_delete', isEqualTo: false)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => InterCollegeVlleyballGirlsMatch.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print("Error in getting volleyball girls matches: $e");
+      return [];
+    }
+  }
+
+  Future<List<InterCollegeTugOfWarMatch>> getAllTugOfWarMatches(
+      String currentAcademicYear) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("intercollege_sports")
+          .doc(currentAcademicYear)
+          .collection('tug_of_war')
+          .where('soft_delete', isEqualTo: false)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => InterCollegeTugOfWarMatch.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print("Error in getting tug of war matches: $e");
       return [];
     }
   }

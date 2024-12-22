@@ -232,24 +232,23 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                       children: [
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/cricket_logo_intercollege.png"),
+                          sportsIcon: Icon(Icons.sports_cricket),
                           sportsName: "Cricket",
                           navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeCricketHome()),
+                              builder: (context) => InterCollegeCricketHome(
+                                    currentAcademicYear: '2024-2025',
+                                  )),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/football_icon_intercollege.jpg"),
+                          sportsIcon: Icon(Icons.sports_football),
                           sportsName: "Football",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeFootballHome()),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/volleyball_logo_intercollege.jpg"),
+                          sportsIcon: Icon(Icons.sports_volleyball),
                           sportsName: "Volleyball",
                           navigator: MaterialPageRoute(
                               builder: (context) =>
@@ -257,16 +256,14 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/kabaddi_logo_intercollege.svg"),
+                          sportsIcon: Icon(Icons.sports_kabaddi),
                           sportsName: "Kabaddi",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeKabaddiHome()),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/tugofwar_logo_intecollege.jpeg"),
+                          sportsIcon: Icon(Icons.sports_esports),
                           sportsName: "Tug of War",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeTugofWarHome()),
