@@ -285,6 +285,8 @@ class InterCollegeServices {
     required String matchDayDate, // Like Sun, 24 Dec 2024
     required String teamAName, // Team A name
     required String teamBName, // Team B name
+    required String teamALocation,
+    required String teamBLocation,
     required String teamAScore, // Like "3" or "3(5)"
     required String teamBScore, // Like "3" or "3(6)"
     required String teamATopGoalScorer, // Optional: Top scorer for Team A
@@ -364,6 +366,8 @@ class InterCollegeServices {
         'teamBName': teamBName,
         'teamAScore': teamAScore,
         'teamBScore': teamBScore,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
         'teamATopGoalScorer': teamATopGoalScorer,
         'teamBTopGoalScorer': teamBTopGoalScorer,
         'teamALogoUrl': teamALogoUrl,

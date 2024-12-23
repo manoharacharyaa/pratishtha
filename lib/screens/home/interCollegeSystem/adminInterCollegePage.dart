@@ -39,6 +39,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
 
   TextEditingController teamANameController = TextEditingController();
   TextEditingController teamBNameController = TextEditingController();
+  TextEditingController teamALocationController = TextEditingController();
+  TextEditingController teamBLocationController = TextEditingController();
   TextEditingController teamAScoreController = TextEditingController();
   TextEditingController teamBScoreController = TextEditingController();
   TextEditingController teamALogoUrlController = TextEditingController();
@@ -219,6 +221,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                       selectedCollege.id;
                                   teamALogoUrlController.text =
                                       selectedCollege.imageUrl;
+                                  teamALocationController.text = selectedCollege.collegeLocation;
                                   Navigator.pop(context);
                                   print(
                                       "${teamANameController.text} + ${teamADocIdController.text} + ${teamALogoUrlController.text}");
@@ -336,6 +339,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                       selectedCollege.collegeShortName;
                                   teamBDocIdController.text =
                                       selectedCollege.id;
+                                  teamBLocationController.text = selectedCollege.collegeLocation;
                                   teamBLogoUrlController.text =
                                       selectedCollege.imageUrl;
                                   Navigator.pop(context);
@@ -1519,6 +1523,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         matchLocation:
                                                             matchLocationController
                                                                 .text,
+                                                        teamBattingFirstLocation: teamALocationController.text,
+                                                        teamBattingSecondLocation: teamBLocationController.text,
                                                         matchType:
                                                             matchTypeController
                                                                 .text,
@@ -1608,6 +1614,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                                 .text,
                                                         matchType: matchTypeController
                                                             .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
                                                         matchTime: matchTimeController
                                                             .text,
                                                         matchDayDate:
@@ -1618,12 +1626,12 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         teamBName:
                                                             teamBNameController
                                                                 .text,
-                                                        teamAGoals: int.parse(
+                                                        teamAScore:
                                                             teamAScoreController
-                                                                .text),
-                                                        teamBGoals: int.parse(
+                                                                .text,
+                                                        teamBScore:
                                                             teamBScoreController
-                                                                .text),
+                                                                .text,
                                                         teamATopGoalScorer:
                                                             teamABestPlayer1Controller.text,
                                                         teamBTopGoalScorer: teamBBestPlayer1Controller.text,
@@ -1709,6 +1717,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         teamBName:
                                                             teamBNameController
                                                                 .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
                                                         teamAPoints:
                                                             teamAPoints,
                                                         teamBPoints:
