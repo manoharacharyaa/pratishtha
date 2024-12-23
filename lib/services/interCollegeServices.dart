@@ -244,7 +244,7 @@ class InterCollegeServices {
     }
   }
 
-  Future<String> recordFootballMatch({
+ Future<String> recordFootballMatch({
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Azad Maidan, CSMT
     required String matchType, // Like GroupStage, RO16, QF, SF, Final
@@ -252,36 +252,58 @@ class InterCollegeServices {
     required String matchDayDate, // Like Sun, 24 Dec 2024
     required String teamAName, // Team A name
     required String teamBName, // Team B name
-    required int teamAGoals, // Goals scored by Team A
-    required int teamBGoals, // Goals scored by Team B
-    String? teamATopGoalScorer, // Optional: Top scorer for Team A
-    String? teamBTopGoalScorer, // Optional: Top scorer for Team B
+    required String teamAScore, // Like "3" or "3(5)"
+    required String teamBScore, // Like "3" or "3(6)"
+    required String teamATopGoalScorer, // Optional: Top scorer for Team A
+    required String teamBTopGoalScorer, // Optional: Top scorer for Team B
     required String teamALogoUrl, // Firebase storage URL for Team A logo
     required String teamBLogoUrl, // Firebase storage URL for Team B logo
-    required String
-        teamAId, // Document ID for Team A in the colleges collection
-    required String
-        teamBId, // Document ID for Team B in the colleges collection
+    required String teamAId, // Document ID for Team A in the colleges collection
+    required String teamBId, // Document ID for Team B in the colleges collection
   }) async {
     try {
       String result;
       String winningTeamDcId = "";
 
+      // Function to parse scores with or without penalties
+      int extractScore(String score) {
+        if (score.contains("(")) {
+          return int.parse(score.split("(")[1].replaceAll(")", ""));
+        }
+        return int.parse(score);
+      }
+
+      // Extract main and penalty scores
+      int teamAMainScore = int.parse(teamAScore.split("(")[0]);
+      int teamBMainScore = int.parse(teamBScore.split("(")[0]);
+
+      int teamAPenaltyScore =
+      teamAScore.contains("(") ? extractScore(teamAScore) : 0;
+      int teamBPenaltyScore =
+      teamBScore.contains("(") ? extractScore(teamBScore) : 0;
+
       // Determine the result
-      if (teamAGoals > teamBGoals) {
-        result = "$teamAName won by ${teamAGoals - teamBGoals} goals";
+      if (teamAMainScore > teamBMainScore) {
+        result = "$teamAName won by ${teamAMainScore - teamBMainScore} goals";
         winningTeamDcId = teamAId;
-      } else if (teamBGoals > teamAGoals) {
-        result = "$teamBName won by ${teamBGoals - teamAGoals} goals";
+      } else if (teamBMainScore > teamAMainScore) {
+        result = "$teamBName won by ${teamBMainScore - teamAMainScore} goals";
+        winningTeamDcId = teamBId;
+      } else if (teamAPenaltyScore > teamBPenaltyScore) {
+        result =
+        "$teamAName won ${teamAPenaltyScore}-${teamBPenaltyScore} on penalties";
+        winningTeamDcId = teamAId;
+      } else if (teamBPenaltyScore > teamAPenaltyScore) {
+        result =
+        "$teamBName won ${teamBPenaltyScore}-${teamAPenaltyScore} on penalties";
         winningTeamDcId = teamBId;
       } else {
         result = "Match drawn";
       }
 
       if (winningTeamDcId.isNotEmpty) {
-        DocumentReference teamDocRef = FirebaseFirestore.instance
-            .collection('colleges')
-            .doc(winningTeamDcId);
+        DocumentReference teamDocRef =
+        FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
 
         DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -307,10 +329,10 @@ class InterCollegeServices {
       await footballColl.add({
         'teamAName': teamAName,
         'teamBName': teamBName,
-        'teamAGoals': teamAGoals,
-        'teamBGoals': teamBGoals,
-        'teamATopGoalScorer': teamATopGoalScorer ?? "None",
-        'teamBTopGoalScorer': teamBTopGoalScorer ?? "None",
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamATopGoalScorer': teamATopGoalScorer,
+        'teamBTopGoalScorer': teamBTopGoalScorer,
         'teamALogoUrl': teamALogoUrl,
         'teamBLogoUrl': teamBLogoUrl,
         'result': result,
