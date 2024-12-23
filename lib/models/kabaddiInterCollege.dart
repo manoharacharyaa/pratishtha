@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InterCollegeKabaddiMatch {
+  final String id;
   final String teamAName;
   final String teamBName;
+  final String teamALocation;
+  final String teamBLocation;
   final int teamAPoints;
   final int teamBPoints;
   final String? teamATopRaider;
@@ -20,8 +23,11 @@ class InterCollegeKabaddiMatch {
   final bool softDelete;
 
   InterCollegeKabaddiMatch({
+    required this.id,
     required this.teamAName,
     required this.teamBName,
+    required this.teamALocation,
+    required this.teamBLocation,
     required this.teamAPoints,
     required this.teamBPoints,
     this.teamATopRaider,
@@ -42,8 +48,11 @@ class InterCollegeKabaddiMatch {
   factory InterCollegeKabaddiMatch.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return InterCollegeKabaddiMatch(
+      id: doc.id,
       teamAName: data['teamAName'],
       teamBName: data['teamBName'],
+      teamALocation: data['teamALocation'] ?? 'Mumbai',
+      teamBLocation: data['teamBLocation'] ?? 'Mumbai',
       teamAPoints: data['teamAPoints'],
       teamBPoints: data['teamBPoints'],
       teamATopRaider: data['teamATopRaider'],

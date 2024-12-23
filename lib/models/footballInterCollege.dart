@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InterCollegeFootballMatch {
+  final String id;
   final String teamAName;
   final String teamBName;
   final int teamAGoals;
   final int teamBGoals;
+  final String teamALocation;
+  final String teamBLocation;
   final String? teamATopGoalScorer;
   final String? teamBTopGoalScorer;
   final String teamALogoUrl;
@@ -18,8 +21,11 @@ class InterCollegeFootballMatch {
   final bool softDelete;
 
   InterCollegeFootballMatch({
+    required this.id,
     required this.teamAName,
     required this.teamBName,
+    required this.teamALocation,
+    required this.teamBLocation,
     required this.teamAGoals,
     required this.teamBGoals,
     this.teamATopGoalScorer,
@@ -38,8 +44,11 @@ class InterCollegeFootballMatch {
   factory InterCollegeFootballMatch.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return InterCollegeFootballMatch(
+      id: doc.id,
       teamAName: data['teamAName'],
       teamBName: data['teamBName'],
+      teamALocation: data['teamALocation'] ?? 'Mumbai',
+      teamBLocation: data['teamBLocation'] ?? 'Mumbai',
       teamAGoals: data['teamAGoals'],
       teamBGoals: data['teamBGoals'],
       teamATopGoalScorer: data['teamATopGoalScorer'],

@@ -13,6 +13,7 @@ import 'package:pratishtha/models/kabaddiInterCollege.dart';
 import 'package:uuid/uuid.dart';
 
 class InterCollegeServices {
+
   Future<String> addCollegeForInter(
     String collegeName,
     String collegeShortName,
@@ -169,15 +170,15 @@ class InterCollegeServices {
     required String matchTime, // Like 1.30 PM
     required String matchDayDate, // Like Sun, 24 Dec 2024
     required String teamBattingFirst, // Team batting first
-    required String teamBattingSecond, // Team batting second
-    required String teamBattingFirstScore, // Format: "127/8"
-    required String teamBattingSecondScore, // Format: "120/7"
+    required String teamBattingSecond,
+    required String teamBattingFirstLocation, // Team batting first
+    required String teamBattingSecondLocation,// Team batting second
+    required String teamBattingFirstScore, // Format: "127/8 (20)"
+    required String teamBattingSecondScore, // Format: "120/7 (20)"
     required String teamBattingFirstTopBatter, // e.g., "PlayerName: 45(30)"
-    required String
-        teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
+    required String teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
     required String teamBattingSecondTopBatter, // e.g., "PlayerName: 50(40)"
-    required String
-        teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
+    required String teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
     required String teamBattingFirstLogoUrl, // Firebase storage URL
     required String teamBattingSecondLogoUrl, // Firebase storage URL
     required String teamBattingFirstId,
@@ -185,13 +186,23 @@ class InterCollegeServices {
   }) async {
     try {
       String winningTeamDcId;
-      int teamBattingFirstRuns = int.parse(teamBattingFirstScore.split('/')[0]);
-      int.parse(teamBattingFirstScore.split('/')[1]);
 
-      int teamBattingSecondRuns =
-          int.parse(teamBattingSecondScore.split('/')[0]);
-      int teamBattingSecondWickets =
-          int.parse(teamBattingSecondScore.split('/')[1]);
+      // Parse scores and overs
+      RegExp scorePattern = RegExp(r"(\d+)/(\d+)\s*\((\d+)\)");
+      var teamBattingFirstMatch = scorePattern.firstMatch(teamBattingFirstScore);
+      var teamBattingSecondMatch = scorePattern.firstMatch(teamBattingSecondScore);
+
+      if (teamBattingFirstMatch == null || teamBattingSecondMatch == null) {
+        throw Exception("Invalid score format");
+      }
+
+      int teamBattingFirstRuns = int.parse(teamBattingFirstMatch.group(1)!);
+      int teamBattingFirstWickets = int.parse(teamBattingFirstMatch.group(2)!);
+      int teamBattingFirstOvers = int.parse(teamBattingFirstMatch.group(3)!);
+
+      int teamBattingSecondRuns = int.parse(teamBattingSecondMatch.group(1)!);
+      int teamBattingSecondWickets = int.parse(teamBattingSecondMatch.group(2)!);
+      int teamBattingSecondOvers = int.parse(teamBattingSecondMatch.group(3)!);
 
       // Determine the result
       String result;
@@ -231,17 +242,17 @@ class InterCollegeServices {
           .collection('cricket'); // Cricket matches collection
 
       // Add a new document for the match
-      await cricketColl.add({
+      DocumentReference docRef = await cricketColl.add({
         'teamBattingFirst': teamBattingFirst,
         'teamBattingSecond': teamBattingSecond,
-        'teamBattingFirstScore': teamBattingFirstScore,
-        'teamBattingSecondScore': teamBattingSecondScore,
+        'teamBattingFirstScore': teamBattingFirstScore, // Full score with overs
+        'teamBattingSecondScore': teamBattingSecondScore, // Full score with overs
+        'teamBattingFirstLocation': teamBattingFirstLocation,
+        'teamBattingSecondLocation': teamBattingSecondLocation,
         'teamBattingFirstTopBatter': teamBattingFirstTopBatter,
-        'teamBattingFirstTopBowlerPerformance':
-            teamBattingFirstTopBowlerPerformance,
+        'teamBattingFirstTopBowlerPerformance': teamBattingFirstTopBowlerPerformance,
         'teamBattingSecondTopBatter': teamBattingSecondTopBatter,
-        'teamBattingSecondTopBowlerPerformance':
-            teamBattingSecondTopBowlerPerformance,
+        'teamBattingSecondTopBowlerPerformance': teamBattingSecondTopBowlerPerformance,
         'teamBattingFirstLogoUrl': teamBattingFirstLogoUrl,
         'teamBattingSecondLogoUrl': teamBattingSecondLogoUrl,
         'result': result, // Store the calculated result
@@ -249,9 +260,13 @@ class InterCollegeServices {
         'matchTime': matchTime,
         'matchDayDate': matchDayDate,
         'matchType': matchType,
-        'timestamp':
-            FieldValue.serverTimestamp(), // Record the match date and time
+        'timestamp': FieldValue.serverTimestamp(), // Record the match date and time
         'soft_delete': false,
+      });
+
+      // Now include the document ID as a field in the document
+      await docRef.update({
+        'matchId': docRef.id, // Adding the document ID as matchId
       });
 
       return "Cricket Match Record Added Successfully";
@@ -261,6 +276,7 @@ class InterCollegeServices {
     }
   }
 
+
   Future<String> recordFootballMatch({
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Azad Maidan, CSMT
@@ -269,36 +285,58 @@ class InterCollegeServices {
     required String matchDayDate, // Like Sun, 24 Dec 2024
     required String teamAName, // Team A name
     required String teamBName, // Team B name
-    required int teamAGoals, // Goals scored by Team A
-    required int teamBGoals, // Goals scored by Team B
-    String? teamATopGoalScorer, // Optional: Top scorer for Team A
-    String? teamBTopGoalScorer, // Optional: Top scorer for Team B
+    required String teamAScore, // Like "3" or "3(5)"
+    required String teamBScore, // Like "3" or "3(6)"
+    required String teamATopGoalScorer, // Optional: Top scorer for Team A
+    required String teamBTopGoalScorer, // Optional: Top scorer for Team B
     required String teamALogoUrl, // Firebase storage URL for Team A logo
     required String teamBLogoUrl, // Firebase storage URL for Team B logo
-    required String
-        teamAId, // Document ID for Team A in the colleges collection
-    required String
-        teamBId, // Document ID for Team B in the colleges collection
+    required String teamAId, // Document ID for Team A in the colleges collection
+    required String teamBId, // Document ID for Team B in the colleges collection
   }) async {
     try {
       String result;
       String winningTeamDcId = "";
 
+      // Function to parse scores with or without penalties
+      int extractScore(String score) {
+        if (score.contains("(")) {
+          return int.parse(score.split("(")[1].replaceAll(")", ""));
+        }
+        return int.parse(score);
+      }
+
+      // Extract main and penalty scores
+      int teamAMainScore = int.parse(teamAScore.split("(")[0]);
+      int teamBMainScore = int.parse(teamBScore.split("(")[0]);
+
+      int teamAPenaltyScore =
+      teamAScore.contains("(") ? extractScore(teamAScore) : 0;
+      int teamBPenaltyScore =
+      teamBScore.contains("(") ? extractScore(teamBScore) : 0;
+
       // Determine the result
-      if (teamAGoals > teamBGoals) {
-        result = "$teamAName won by ${teamAGoals - teamBGoals} goals";
+      if (teamAMainScore > teamBMainScore) {
+        result = "$teamAName won by ${teamAMainScore - teamBMainScore} goals";
         winningTeamDcId = teamAId;
-      } else if (teamBGoals > teamAGoals) {
-        result = "$teamBName won by ${teamBGoals - teamAGoals} goals";
+      } else if (teamBMainScore > teamAMainScore) {
+        result = "$teamBName won by ${teamBMainScore - teamAMainScore} goals";
+        winningTeamDcId = teamBId;
+      } else if (teamAPenaltyScore > teamBPenaltyScore) {
+        result =
+        "$teamAName won ${teamAPenaltyScore}-${teamBPenaltyScore} on penalties";
+        winningTeamDcId = teamAId;
+      } else if (teamBPenaltyScore > teamAPenaltyScore) {
+        result =
+        "$teamBName won ${teamBPenaltyScore}-${teamAPenaltyScore} on penalties";
         winningTeamDcId = teamBId;
       } else {
         result = "Match drawn";
       }
 
       if (winningTeamDcId.isNotEmpty) {
-        DocumentReference teamDocRef = FirebaseFirestore.instance
-            .collection('colleges')
-            .doc(winningTeamDcId);
+        DocumentReference teamDocRef =
+        FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
 
         DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -324,10 +362,10 @@ class InterCollegeServices {
       await footballColl.add({
         'teamAName': teamAName,
         'teamBName': teamBName,
-        'teamAGoals': teamAGoals,
-        'teamBGoals': teamBGoals,
-        'teamATopGoalScorer': teamATopGoalScorer ?? "None",
-        'teamBTopGoalScorer': teamBTopGoalScorer ?? "None",
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamATopGoalScorer': teamATopGoalScorer,
+        'teamBTopGoalScorer': teamBTopGoalScorer,
         'teamALogoUrl': teamALogoUrl,
         'teamBLogoUrl': teamBLogoUrl,
         'result': result,
@@ -346,6 +384,7 @@ class InterCollegeServices {
     }
   }
 
+
   // Record Kabaddi Match
   Future<String> recordKabaddiMatch({
     required String academicYear, // e.g., "2024-2025"
@@ -355,6 +394,8 @@ class InterCollegeServices {
     required String matchDayDate, // Like Sun, 24 Dec 2024
     required String teamAName, // Team A name
     required String teamBName, // Team B name
+    required String teamALocation, // Team A name
+    required String teamBLocation, // Team B name
     required int teamAPoints, // Points scored by Team A
     required int teamBPoints, // Points scored by Team B
     String? teamATopRaider, // Optional: Top raider for Team A
@@ -409,11 +450,13 @@ class InterCollegeServices {
           .collection('kabaddi');
 
       // Add a new document for the match
-      await kabaddiColl.add({
+      DocumentReference docRef = await kabaddiColl.add({
         'teamAName': teamAName,
         'teamBName': teamBName,
         'teamAPoints': teamAPoints,
         'teamBPoints': teamBPoints,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
         'teamATopRaider': teamATopRaider ?? "None",
         'teamATopDefender': teamATopDefender ?? "None",
         'teamBTopRaider': teamBTopRaider ?? "None",
@@ -427,6 +470,11 @@ class InterCollegeServices {
         'matchType': matchType,
         'timestamp': FieldValue.serverTimestamp(),
         'soft_delete': false,
+      });
+
+      // Now include the document ID as a field in the document
+      await docRef.update({
+        'matchId': docRef.id, // Adding the document ID as matchId
       });
 
       return "Kabaddi Match Record Added Successfully";
@@ -504,6 +552,8 @@ class InterCollegeServices {
     required String matchDayDate,
     required String teamAName,
     required String teamBName,
+    required String teamALocation, // Team A name
+    required String teamBLocation, // Team B name
     required String teamAScore,
     required String teamBScore,
     required String teamALogoUrl,
@@ -533,6 +583,8 @@ class InterCollegeServices {
         'matchDayDate': matchDayDate,
         'teamAName': teamAName,
         'teamBName': teamBName,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
         'teamAScore': teamAScore,
         'teamBScore': teamBScore,
         'teamALogoUrl': teamALogoUrl,
@@ -542,7 +594,7 @@ class InterCollegeServices {
       });
 
       // Update the document to include its ID as a field
-      await docRef.update({'id': docRef.id});
+      await docRef.update({'matchId': docRef.id});
 
       return "Volleyball Boys Match Recorded Successfully";
     } catch (e) {
@@ -559,6 +611,8 @@ class InterCollegeServices {
     required String matchDayDate,
     required String teamAName,
     required String teamBName,
+    required String teamALocation, // Team A name
+    required String teamBLocation, // Team B name
     required String teamAScore,
     required String teamBScore,
     required String teamALogoUrl,
@@ -588,6 +642,8 @@ class InterCollegeServices {
         'matchDayDate': matchDayDate,
         'teamAName': teamAName,
         'teamBName': teamBName,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
         'teamAScore': teamAScore,
         'teamBScore': teamBScore,
         'teamALogoUrl': teamALogoUrl,
@@ -597,7 +653,7 @@ class InterCollegeServices {
       });
 
       // Update the document to include its ID as a field
-      await docRef.update({'id': docRef.id});
+      await docRef.update({'matchId': docRef.id});
 
       return "Volleyball Girls Match Recorded Successfully";
     } catch (e) {
@@ -614,6 +670,8 @@ class InterCollegeServices {
     required String matchDayDate,
     required String teamAName,
     required String teamBName,
+    required String teamALocation, // Team A name
+    required String teamBLocation, // Team B name
     required String teamAScore,
     required String teamBScore,
     required String teamALogoUrl,
@@ -642,6 +700,8 @@ class InterCollegeServices {
         'matchDayDate': matchDayDate,
         'teamAName': teamAName,
         'teamBName': teamBName,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
         'teamAScore': teamAScore,
         'teamBScore': teamBScore,
         'teamALogoUrl': teamALogoUrl,

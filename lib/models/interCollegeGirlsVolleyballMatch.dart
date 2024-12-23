@@ -9,6 +9,8 @@ class InterCollegeVlleyballGirlsMatch {
   final String matchDayDate;
   final String teamAName;
   final String teamBName;
+  final String teamALocation;
+  final String teamBLocation;
   final String teamAScore;
   final String teamBScore;
   final String result;
@@ -25,6 +27,8 @@ class InterCollegeVlleyballGirlsMatch {
     required this.matchDayDate,
     required this.teamAName,
     required this.teamBName,
+    required this.teamALocation,
+    required this.teamBLocation,
     required this.teamAScore,
     required this.teamBScore,
     required this.result,
@@ -44,6 +48,8 @@ class InterCollegeVlleyballGirlsMatch {
       matchDayDate: data['matchDayDate'] ?? '',
       teamAName: data['teamAName'] ?? '',
       teamBName: data['teamBName'] ?? '',
+      teamALocation: data['teamALocation'] ?? 'Mumbai',
+      teamBLocation: data['teamBLocation'] ?? 'Mumbai',
       teamAScore: data['teamAScore'] ?? '',
       teamBScore: data['teamBScore'] ?? '',
       result: data['result'] ?? '',

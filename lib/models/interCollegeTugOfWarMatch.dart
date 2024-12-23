@@ -9,6 +9,8 @@ class InterCollegeTugOfWarMatch {
   final String matchDayDate;
   final String teamAName;
   final String teamBName;
+  final String teamALocation;
+  final String teamBLocation;
   final String teamAScore;
   final String teamBScore;
   final String teamALogoUrl;
@@ -24,6 +26,8 @@ class InterCollegeTugOfWarMatch {
     required this.matchDayDate,
     required this.teamAName,
     required this.teamBName,
+    required this.teamALocation,
+    required this.teamBLocation,
     required this.teamAScore,
     required this.teamBScore,
     required this.teamALogoUrl,
@@ -44,6 +48,8 @@ class InterCollegeTugOfWarMatch {
       matchDayDate: data['matchDayDate'] ?? '',
       teamAName: data['teamAName'] ?? '',
       teamBName: data['teamBName'] ?? '',
+      teamALocation: data['teamALocation'] ?? 'Mumbai',
+      teamBLocation: data['teamBLocation'] ?? 'Mumbai',
       teamAScore: data['teamAScore'] ?? '',
       teamBScore: data['teamBScore'] ?? '',
       teamALogoUrl: data['teamALogoUrl'] ?? '',
