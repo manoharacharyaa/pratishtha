@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:gif/gif.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/leaderBoard.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/adminInterCollegePage.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeCricketHome.dart';
@@ -24,14 +24,43 @@ class InterCollegeHome extends StatefulWidget {
   State<InterCollegeHome> createState() => _InterCollegeHomeState();
 }
 
-class _InterCollegeHomeState extends State<InterCollegeHome> {
+class _InterCollegeHomeState extends State<InterCollegeHome>
+    with TickerProviderStateMixin {
+  late final GifController _gifController;
+  bool _controllerInitialized = false;
+  bool _imagePrecached = false;
   final List<String> carouselImages = [];
-  int _currentCarouselIndex = 0; // Add this line to track current index
+  int _currentCarouselIndex = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_imagePrecached) {
+      precacheImage(
+        AssetImage('assets/gifs/leaderboard_intercollege.gif'),
+        context,
+      ).then((_) {
+        setState(() {
+          _imagePrecached = true;
+        });
+      });
+    }
+    if (!_controllerInitialized) {
+      _gifController = GifController(vsync: this);
+      _controllerInitialized = true;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchImages();
+  }
+
+  @override
+  void dispose() {
+    _gifController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchImages() async {
@@ -41,7 +70,6 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
       setState(() {
         carouselImages.addAll(urls);
       });
-      print(carouselImages);
     } catch (error) {
       print("Error fetching images: $error");
     }
@@ -49,6 +77,10 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_imagePrecached) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -65,20 +97,6 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
           ),
         ),
         actions: [
-          if (widget.userRole == 8)
-            CircleAvatar(
-              backgroundColor: secondaryColor,
-              child: IconButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => AdminInterCollegePage()));
-                },
-              ),
-            ),
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -87,16 +105,28 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
               );
             },
             child: Container(
-              padding: EdgeInsets.only(right: 15),
-              child: Image.asset(
-                'assets/gifs/leaderboard_intercollege.gif',
-                height: 50,
-                fit: BoxFit.contain,
-              ),
-            ),
+                padding: EdgeInsets.only(right: 30),
+                child: Gif(
+                  controller: _gifController,
+                  image: AssetImage('assets/gifs/leaderboard_intercollege.gif'),
+                  height: 50,
+                  fit: BoxFit.contain,
+                )),
           ),
         ],
       ),
+      floatingActionButton: widget.userRole == 8
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AdminInterCollegePage()));
+              },
+              child: Icon(
+                Icons.add,
+                size: 40,
+              ),
+            )
+          : null,
       body: Stack(
         alignment: Alignment.center,
         children: [
@@ -105,55 +135,50 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
             color: Color.fromRGBO(120, 78, 209, 1),
             child: Column(
               children: [
-                CarouselSlider(
-                  options: CarouselOptions(
-                    height: 180,
-                    viewportFraction: 0.8,
-                    initialPage: 0,
-                    enableInfiniteScroll: true,
-                    reverse: false,
-                    autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 5),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: true,
-                    scrollDirection: Axis.horizontal,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentCarouselIndex = index;
-                      });
-                    },
-                  ),
-                  items: carouselImages.map((img) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: 300,
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-                          padding: EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.grey.withOpacity(0.5),
-                            //     spreadRadius: 1,
-                            //     blurRadius: 3,
-                            //     offset: Offset(0, 3),
-                            //   ),
-                            // ],
-                          ),
-                          child: ClipRRect(
-                            child: CachedNetworkImage(
-                              imageUrl: img,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        );
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: 180,
+                      viewportFraction: 1.5,
+                      initialPage: 0,
+                      enableInfiniteScroll: true,
+                      reverse: false,
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 5),
+                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enlargeCenterPage: true,
+                      scrollDirection: Axis.horizontal,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentCarouselIndex = index;
+                        });
                       },
-                    );
-                  }).toList(),
+                    ),
+                    items: carouselImages.map((img) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width - 100,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 5),
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: ClipRRect(
+                              child: CachedNetworkImage(
+                                imageUrl: img,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
                 ),
                 SizedBox(height: 10),
                 Container(
@@ -184,7 +209,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.3,
+            top: MediaQuery.of(context).size.height * 0.25,
             left: 0,
             right: 0,
             bottom: 0,
@@ -207,24 +232,23 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
                       children: [
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/cricket_logo_intercollege.png"),
+                          sportsIcon: Icon(Icons.sports_cricket),
                           sportsName: "Cricket",
                           navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeCricketHome()),
+                              builder: (context) => InterCollegeCricketHome(
+                                    currentAcademicYear: '2024-2025',
+                                  )),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/football_icon_intercollege.jpg"),
+                          sportsIcon: Icon(Icons.sports_football),
                           sportsName: "Football",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeFootballHome()),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/volleyball_logo_intercollege.jpg"),
+                          sportsIcon: Icon(Icons.sports_volleyball),
                           sportsName: "Volleyball",
                           navigator: MaterialPageRoute(
                               builder: (context) =>
@@ -232,16 +256,14 @@ class _InterCollegeHomeState extends State<InterCollegeHome> {
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/kabaddi_logo_intercollege.svg"),
+                          sportsIcon: Icon(Icons.sports_kabaddi),
                           sportsName: "Kabaddi",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeKabaddiHome()),
                         ),
                         InterCollegeSportsButton(
                           context: context,
-                          sportsIcon: Image.asset(
-                              "assets/images/InterCollegeSports/tugofwar_logo_intecollege.jpeg"),
+                          sportsIcon: Icon(Icons.sports_esports),
                           sportsName: "Tug of War",
                           navigator: MaterialPageRoute(
                               builder: (context) => InterCollegeTugofWarHome()),

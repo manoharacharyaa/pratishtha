@@ -3,7 +3,7 @@ import 'package:pratishtha/constants/colors.dart';
 
 Widget InterCollegeSportsButton({
   required BuildContext context,
-  required Image sportsIcon,
+  required Icon sportsIcon,
   required String sportsName,
   required MaterialPageRoute navigator,
 }) {

@@ -150,18 +150,12 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                             entry.key.month == day.month &&
                             entry.key.day == day.day);
 
-                        bool isAbsent = attendanceData.entries.any((entry) =>
-                            entry.value == false &&
-                            entry.key.year == day.year &&
-                            entry.key.month == day.month &&
-                            entry.key.day == day.day);
-
                         if (isPresent) {
                           // If the volunteer is present on this day
                           return Center(
                             child: Container(
-                              width: 40,
-                              height: 40,
+                              width: 40, // Adjust the size as needed
+                              height: 40, // Adjust the size as needed
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: const Color(0xFF00C411), // Green color
@@ -178,38 +172,20 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                               ),
                             ),
                           );
-                        } else if (isAbsent) {
-                          // If the volunteer is absent on this day
-                          return Center(
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.red, // Red color for absent days
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
                         } else {
                           // For all other days
+                          bool isWeekend = day.weekday == 6 || day.weekday == 7;
+                          Color textColor = isWeekend
+                              ? const Color(0xFFB2B2B2)
+                              : const Color(0xFF2E8CED);
+
                           return Center(
                             child: Text(
                               '${day.day}',
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: const Color(
-                                    0xFFB2B2B2), // Grey color for holidays/non-marked days
+                                color: textColor,
                               ),
                             ),
                           );
@@ -236,9 +212,9 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
         children: [
           _buildLegendItem(const Color(0xFFB2B2B2), 'Holiday'),
           Spacer(),
-          _buildLegendItem(const Color(0xFF00C411), 'Present'),
+          _buildLegendItem(const Color(0xFF2E8CED), 'Working Day'),
           Spacer(),
-          _buildLegendItem(Colors.red, 'Absent'),
+          _buildLegendItem(const Color(0xFF00C411), 'Present'),
         ],
       ),
     );

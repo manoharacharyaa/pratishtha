@@ -1,13 +1,13 @@
 class InterCollege {
-  String id;
-  String collegeName;
-  String collegeShortName;
-  String collegeLocation;
-  int score;
-  String imageUrl;
-  String academicYear;
-  bool softDelete;
-  List<Map<String, int>>? matchesWon;
+  final String id;
+  final String collegeName;
+  final String collegeShortName;
+  final String collegeLocation;
+  final int score;
+  final String imageUrl;
+  final String academicYear;
+  final bool softDelete;
+  final Map<String, dynamic>? matchesWon;
 
   InterCollege({
     required this.id,
@@ -18,7 +18,7 @@ class InterCollege {
     required this.imageUrl,
     required this.academicYear,
     required this.softDelete,
-    this.matchesWon,
+    required this.matchesWon,
   });
 
   factory InterCollege.fromMap(Map<String, dynamic> data, String id) {
@@ -31,9 +31,7 @@ class InterCollege {
       imageUrl: data['imageUrl'] ?? '',
       academicYear: data['academicYear'] ?? '',
       softDelete: data['soft_delete'] ?? false,
-      matchesWon: (data['matchesWon'] as List<dynamic>?)
-          ?.map((item) => Map<String, int>.from(item))
-          .toList(),
+      matchesWon: Map<String, dynamic>.from(data['matchesWon'] ?? {}),
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InterCollegeCricketMatch {
@@ -9,6 +7,8 @@ class InterCollegeCricketMatch {
   final String teamBattingFirstScore;
   final String teamBattingSecondScore;
   final String teamBattingFirstTopBatter;
+  final String teamBattingFirstLocation;
+  final String teamBattingSecondLocation;
   final String teamBattingFirstTopBowlerPerformance;
   final String teamBattingSecondTopBatter;
   final String teamBattingSecondTopBowlerPerformance;
@@ -17,7 +17,7 @@ class InterCollegeCricketMatch {
   final String matchTime;
   final String matchDayDate;
   final String matchType;
-  final Bool softDelete;
+  final bool softDelete;
 
   InterCollegeCricketMatch({
     required this.docId,
@@ -26,6 +26,8 @@ class InterCollegeCricketMatch {
     required this.teamBattingFirstScore,
     required this.teamBattingSecondScore,
     required this.teamBattingFirstTopBatter,
+    required this.teamBattingFirstLocation,
+    required this.teamBattingSecondLocation,
     required this.teamBattingFirstTopBowlerPerformance,
     required this.teamBattingSecondTopBatter,
     required this.teamBattingSecondTopBowlerPerformance,
@@ -45,12 +47,14 @@ class InterCollegeCricketMatch {
       teamBattingSecond: data['teamBattingSecond'] ?? '',
       teamBattingFirstScore: data['teamBattingFirstScore'] ?? '',
       teamBattingSecondScore: data['teamBattingSecondScore'] ?? '',
+      teamBattingFirstLocation: data['teamBattingFirstLocation'] ?? 'Mumbai',
+      teamBattingSecondLocation: data['teamBattingSecondLocation'] ?? 'Mumbai',
       teamBattingFirstTopBatter: data['teamBattingFirstTopBatter'] ?? '',
       teamBattingFirstTopBowlerPerformance:
-      data['teamBattingFirstTopBowlerPerformance'] ?? '',
+          data['teamBattingFirstTopBowlerPerformance'] ?? '',
       teamBattingSecondTopBatter: data['teamBattingSecondTopBatter'] ?? '',
       teamBattingSecondTopBowlerPerformance:
-      data['teamBattingSecondTopBowlerPerformance'] ?? '',
+          data['teamBattingSecondTopBowlerPerformance'] ?? '',
       result: data['result'] ?? '',
       matchLocation: data['matchLocation'] ?? '',
       matchTime: data['matchTime'] ?? '',
