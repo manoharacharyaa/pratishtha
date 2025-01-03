@@ -69,13 +69,15 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
       AttendaceServices()
           .getVolunteerList(widget.currentAcademicYear, widget.teamId),
       AttendaceServices()
-          .checkTodayAttendanceEntry(widget.currentAcademicYear, widget.teamId)
+          .checkTodayAttendanceEntry(widget.currentAcademicYear, widget.teamId),
+      AttendaceServices()
+          .getTodayAttendanceStatus(widget.currentAcademicYear, widget.teamId),
     ]).then((results) {
       setState(() {
-        // Cast to the correct types
         userList = results[0] as List<User>;
         volunteerList = results[1] as List<Map<String, String>>;
         isTodayAttendanceMarked = results[2] as String;
+        attendanceStatus = results[3] as Map<String, bool>; // Add this line
         log(isTodayAttendanceMarked);
       });
     });
@@ -312,6 +314,19 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Attendance Page'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AttendanceChildrenModule(
+                            widget.user,
+                            widget.currentAcademicYear,
+                            widget.teamId)));
+              },
+              icon: Icon(Icons.replay_outlined))
+        ],
       ),
       body: Column(
         children: [
@@ -487,6 +502,7 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                                     ),
                                     onPressed: () async {
                                       try {
+                                        log("Volunteer addition process started");
                                         if (addkey.currentState!.validate()) {
                                           String result =
                                               await AttendaceServices()
@@ -514,7 +530,22 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                                             widget.teamId,
                                           );
 
-                                          if (result == 'Success') {
+                                          log("Level 1 completed");
+
+                                          if (result == 'success') {
+                                            Navigator.of(context).pop();
+                                            volunteerFirstNameController
+                                                .clear();
+                                            volunteerLastNameController.clear();
+                                            volunteerFullNameController.clear();
+                                            volunteerClassDivController.clear();
+                                            volunteerRollNoController.clear();
+                                            volunteerBranchController.clear();
+                                            volunteerPRNController.clear();
+                                            volunteerSakecmailController
+                                                .clear();
+                                            departmentPersonUUidController
+                                                .clear();
                                             Fluttertoast.showToast(
                                               msg:
                                                   "Volunteer added successfully",
@@ -524,8 +555,28 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                                                   Colors.green[700],
                                               textColor: Colors.white,
                                             );
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AttendanceChildrenModule(
+                                                            widget.user,
+                                                            widget
+                                                                .currentAcademicYear,
+                                                            widget.teamId)));
                                           }
                                         } else {
+                                          Navigator.of(context).pop();
+                                          volunteerFirstNameController.clear();
+                                          volunteerLastNameController.clear();
+                                          volunteerFullNameController.clear();
+                                          volunteerClassDivController.clear();
+                                          volunteerRollNoController.clear();
+                                          volunteerBranchController.clear();
+                                          volunteerPRNController.clear();
+                                          volunteerSakecmailController.clear();
+                                          departmentPersonUUidController
+                                              .clear();
                                           Fluttertoast.showToast(
                                             msg: "Failed to add member(s)",
                                             toastLength: Toast.LENGTH_LONG,
@@ -533,9 +584,27 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                                             backgroundColor: Colors.red[700],
                                             textColor: Colors.white,
                                           );
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AttendanceChildrenModule(
+                                                          widget.user,
+                                                          widget
+                                                              .currentAcademicYear,
+                                                          widget.teamId)));
                                         }
-                                        Navigator.of(context).pop();
                                       } catch (e) {
+                                        Navigator.of(context).pop();
+                                        volunteerFirstNameController.clear();
+                                        volunteerLastNameController.clear();
+                                        volunteerFullNameController.clear();
+                                        volunteerClassDivController.clear();
+                                        volunteerRollNoController.clear();
+                                        volunteerBranchController.clear();
+                                        volunteerPRNController.clear();
+                                        volunteerSakecmailController.clear();
+                                        departmentPersonUUidController.clear();
                                         Fluttertoast.showToast(
                                           msg: "An error occurred : $e",
                                           toastLength: Toast.LENGTH_LONG,
@@ -543,8 +612,16 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                                           backgroundColor: Colors.red[700],
                                           textColor: Colors.white,
                                         );
-                                        Navigator.of(context).pop();
                                         print('Error: $e');
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AttendanceChildrenModule(
+                                                        widget.user,
+                                                        widget
+                                                            .currentAcademicYear,
+                                                        widget.teamId)));
                                       }
                                     },
                                     child: Text(

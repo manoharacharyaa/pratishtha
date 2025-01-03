@@ -337,4 +337,42 @@ class AttendaceServices {
       return [];
     }
   }
+
+  Future<Map<String, bool>> getTodayAttendanceStatus(
+    String currentAcademicYear,
+    String teamId,
+  ) async {
+    try {
+      final collectionPath = FirebaseFirestore.instance
+          .collection('attendance')
+          .doc(currentAcademicYear)
+          .collection('departments')
+          .doc(teamId)
+          .collection('volunteers');
+
+      String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      Map<String, bool> todayAttendance = {};
+
+      // Fetch all volunteers
+      final QuerySnapshot volunteersSnapshot = await collectionPath.get();
+
+      for (var doc in volunteersSnapshot.docs) {
+        List<dynamic> attendanceStatus =
+            (doc.data() as Map<String, dynamic>)['attendanceStatus'] ?? [];
+
+        // Look for today's attendance
+        for (var entry in attendanceStatus) {
+          if (entry is Map<String, dynamic> && entry.containsKey(todayDate)) {
+            todayAttendance[doc.id] = entry[todayDate];
+            break;
+          }
+        }
+      }
+
+      return todayAttendance;
+    } catch (e) {
+      print('Error fetching today\'s attendance: $e');
+      return {};
+    }
+  }
 }

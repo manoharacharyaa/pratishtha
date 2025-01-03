@@ -71,7 +71,7 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFF4B80),
+        backgroundColor: volunteerColor,
         title: Text(
           'ATTENDANCE',
           style: GoogleFonts.poppins(
@@ -93,7 +93,7 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: Color(0xFFFFF7FA),
+                    color: Colors.blue[50],
                   ),
                   child: TableCalendar(
                     firstDay: firstDay,
@@ -150,6 +150,12 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                             entry.key.month == day.month &&
                             entry.key.day == day.day);
 
+                        bool isAbsent = attendanceData.entries.any((entry) =>
+                            entry.value == false &&
+                            entry.key.year == day.year &&
+                            entry.key.month == day.month &&
+                            entry.key.day == day.day);
+
                         if (isPresent) {
                           // If the volunteer is present on this day
                           return Center(
@@ -172,12 +178,32 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                               ),
                             ),
                           );
+                        } else if (isAbsent) {
+                          return Center(
+                            child: Container(
+                              width: 40, // Adjust the size as needed
+                              height: 40, // Adjust the size as needed
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red // Green color
+                                  ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
                         } else {
                           // For all other days
                           bool isWeekend = day.weekday == 6 || day.weekday == 7;
-                          Color textColor = isWeekend
-                              ? const Color(0xFFB2B2B2)
-                              : const Color(0xFF2E8CED);
+                          Color textColor =
+                              isWeekend ? Colors.grey : const Color(0xFF2E8CED);
 
                           return Center(
                             child: Text(
@@ -205,17 +231,30 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   }
 
   Widget _buildLegend() {
-    return Container(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildLegendItem(const Color(0xFFB2B2B2), 'Holiday'),
-          Spacer(),
-          _buildLegendItem(const Color(0xFF2E8CED), 'Working Day'),
-          Spacer(),
-          _buildLegendItem(const Color(0xFF00C411), 'Present'),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Container(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLegendItem(Colors.grey, 'Holiday'),
+                _buildLegendItem(const Color(0xFF2E8CED), 'Working Day'),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildLegendItem(const Color(0xFF00C411), 'Present'),
+                _buildLegendItem(Colors.red, 'Absent'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -231,7 +270,7 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 4.0),
+        const SizedBox(width: 8.0),
         Text(
           text,
           style: GoogleFonts.poppins(

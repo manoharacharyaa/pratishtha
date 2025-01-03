@@ -200,7 +200,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: widget.user!.role == 8
+                color: widget.user!.role == 8 || widget.user!.role == 5
                     ? primaryColor
                     : primaryColor.withOpacity(0.4),
               ),
@@ -213,7 +213,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                     color: Colors.white),
               ),
             ),
-            onTap: widget.user!.role == 8
+            onTap: widget.user!.role == 8 || widget.user!.role == 5
                 ? () {
                     setState(() {
                       showTextBoxes = !showTextBoxes;
@@ -325,11 +325,12 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       deptHeadorCoheadNameController.text,
                       departmentPersonUUidController.text,
                     );
-
-                    if (result == "Member Added" ||
-                        result == "Member Updated") {
+                    if (result == "Member Added/Updated Successfully") {
+                      departmentNameController.clear();
+                      deptHeadorCoheadNameController.clear();
+                      departmentPersonUUidController.clear();
                       Fluttertoast.showToast(
-                        msg: "Event Added Successfully",
+                        msg: "Head/Co-head Added Successfully",
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
@@ -338,6 +339,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                         fontSize: 16.0,
                       );
                     } else {
+                      departmentNameController.clear();
+                      deptHeadorCoheadNameController.clear();
+                      departmentPersonUUidController.clear();
                       Fluttertoast.showToast(
                         msg: "Failed to add Details",
                         toastLength: Toast.LENGTH_LONG,
@@ -350,6 +354,9 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                     }
                   }
                 } catch (e) {
+                  departmentNameController.clear();
+                  deptHeadorCoheadNameController.clear();
+                  departmentPersonUUidController.clear();
                   // Log or show a toast with the error message
                   Fluttertoast.showToast(
                     msg: "An error occurred: $e",

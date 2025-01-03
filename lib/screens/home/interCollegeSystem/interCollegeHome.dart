@@ -12,6 +12,7 @@ import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeTugofWarH
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeVolleyballHome.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/interCollegeSportsButton.dart';
+import 'package:pratishtha/widgets/loadingWidget.dart';
 
 class InterCollegeHome extends StatefulWidget {
   final int userRole;
@@ -78,7 +79,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
   @override
   Widget build(BuildContext context) {
     if (!_imagePrecached) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: loadingWidget());
     }
 
     return Scaffold(
@@ -111,6 +112,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                   image: AssetImage('assets/gifs/leaderboard_intercollege.gif'),
                   height: 50,
                   fit: BoxFit.contain,
+                  autostart: Autostart.loop,
                 )),
           ),
         ],

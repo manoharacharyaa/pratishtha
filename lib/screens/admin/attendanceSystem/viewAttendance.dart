@@ -141,7 +141,11 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
     ];
     print("Calling Ordered Groups");
     print(orderedGroups);
-    return isAscending ? orderedGroups : orderedGroups.reversed.toList();
+    return orderedGroups.isEmpty
+        ? List.empty()
+        : isAscending
+            ? orderedGroups
+            : orderedGroups.reversed.toList();
   }
 
   @override
@@ -161,7 +165,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
               },
               icon: Icon(Icons.refresh))
         ],
-        backgroundColor: Colors.pink,
+        backgroundColor: volunteerColor,
         title: Text(
           'ATTENDANCE',
           style: GoogleFonts.poppins(
@@ -179,7 +183,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
           Container(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             height: MediaQuery.of(context).size.height / 14,
-            color: Colors.pink,
+            color: volunteerColor,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -354,9 +358,24 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: ListView(
-                children: _buildOrderedGroups(),
-              ),
+              child: feVolunteers.isEmpty &&
+                      seVolunteers.isEmpty &&
+                      teVolunteers.isEmpty &&
+                      beVolunteers.isEmpty &&
+                      others.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No Students Found',
+                        style: GoogleFonts.poppins(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  : ListView(
+                      children: _buildOrderedGroups(),
+                    ),
             ),
           ),
         ],
@@ -417,8 +436,8 @@ Widget _buildVolunteerCard(
     shadowColor: Color.fromRGBO(255, 152, 148, 1),
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(width: 2, color: Color.fromRGBO(252, 218, 217, 1.0))),
-    elevation: 5,
+        side: BorderSide(width: 1, color: volunteerColor)),
+    elevation: 7,
     margin: const EdgeInsets.symmetric(vertical: 8.0),
     child: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -438,7 +457,7 @@ Widget _buildVolunteerCard(
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.pink,
+                    color: Colors.grey[900],
                   ),
                 ),
                 SizedBox(height: 8),
@@ -447,7 +466,7 @@ Widget _buildVolunteerCard(
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Color.fromARGB(255, 234, 136, 137),
+                    color: Colors.grey[900],
                   ),
                 ),
               ],
@@ -466,16 +485,17 @@ Widget _buildVolunteerCard(
                     Text(
                       volunteer['class']?.toString() ?? 'N/A',
                       style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[900],
+                      ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'CLASS',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(255, 234, 136, 137),
+                        color: Colors.grey[900],
                       ),
                     ),
                   ],
@@ -489,7 +509,7 @@ Widget _buildVolunteerCard(
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink,
+                        color: Colors.grey[900],
                       ),
                     ),
                     SizedBox(height: 4),
@@ -497,7 +517,7 @@ Widget _buildVolunteerCard(
                       'ROLL NO.',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(255, 234, 136, 137),
+                        color: Colors.grey[900],
                       ),
                     ),
                   ],
@@ -510,7 +530,7 @@ Widget _buildVolunteerCard(
             width: 40, // Smaller size for the arrow icon
             child: IconButton(
               icon: CircleAvatar(
-                  backgroundColor: Colors.grey,
+                  backgroundColor: volunteerColor,
                   child: Icon(
                     Icons.arrow_forward_ios,
                     size: 10,

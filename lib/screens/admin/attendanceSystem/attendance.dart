@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendaceChildrenModule.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendanceMasterModule.dart';
+import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
@@ -111,9 +112,11 @@ class _AttendancePageState extends State<AttendancePage> {
       body: teamId.isNotEmpty
           ? AttendanceChildrenModule(
               user!, currentAcademicYear, teamId) // Pass all loaded data
-          : user!.role == 8 || user!.role == 9
+          : user!.role == 8 || user!.role == 5
               ? AttendanceMasterModule(user!, currentAcademicYear)
-              : Container(),
+              : user!.role == 9
+                  ? ViewAttendanceAsTeacher(currentAcademicYear)
+                  : Container(),
     );
   }
 }
