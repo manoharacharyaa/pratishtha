@@ -512,7 +512,7 @@ class InterCollegeServices {
     }
   }
 
-  Future<List<InterCollegeFootballMatch>> getAllInterCollegeFootballMatches(
+  Future<List<InterCollegeFootballMatch>>   getAllInterCollegeFootballMatches(
       String currentAcademicYear) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -521,9 +521,12 @@ class InterCollegeServices {
           .collection('football')
           .where('soft_delete', isEqualTo: false)
           .get();
+          
       return querySnapshot.docs
           .map((doc) => InterCollegeFootballMatch.fromFirestore(doc))
           .toList();
+          
+          
     } catch (e) {
       print("Error in getting football matches: $e");
       return [];
@@ -665,6 +668,67 @@ class InterCollegeServices {
       return "Failed to record volleyball girls match";
     }
   }
+ 
+
+  Future<String> recordBasketBsallMatch({
+    required String academicYear,
+    required String matchLocation,
+    required String matchType,
+    required String matchTime,
+    required String matchDayDate,
+    required String teamAName,
+    required String teamBName,
+    required String teamALocation, // Team A name
+    required String teamBLocation, // Team B name
+    required String teamAScore,
+    required String teamBScore,
+    required String teamALogoUrl,
+    required String teamBLogoUrl,
+  }) async {
+    try {
+      String result;
+      if (int.parse(teamAScore) > int.parse(teamBScore)) {
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+      } else {
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+      }
+
+      CollectionReference BasketBallfbcall = FirebaseFirestore.instance
+          .collection('intercollege_sports')
+          .doc(academicYear)
+          .collection('basketball');
+
+      // Add the document and get the document reference
+      DocumentReference docRef = await BasketBallfbcall.add({
+        'academicYear': academicYear,
+        'matchLocation': matchLocation,
+        'matchType': matchType,
+        'matchTime': matchTime,
+        'matchDayDate': matchDayDate,
+        'teamAName': teamAName,
+        'teamBName': teamBName,
+        'teamALocation': teamALocation,
+        'teamBLocation': teamBLocation,
+        'teamAScore': teamAScore,
+        'teamBScore': teamBScore,
+        'teamALogoUrl': teamALogoUrl,
+        'teamBLogoUrl': teamBLogoUrl,
+        'result': result,
+        'soft_delete': false,
+      });
+
+      // Update the document to include its ID as a field
+      await docRef.update({'matchId': docRef.id});
+
+      return "BasketBall Match Recorded Successfully";
+    } catch (e) {
+      print("Error recording BasketBall match: $e");
+      return "Failed to record BasketBall match";
+    }
+  }
+
 
   Future<String> recordTugOfWarMatch({
     required String academicYear,

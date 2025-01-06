@@ -12,6 +12,7 @@ import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeTugofWarH
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeVolleyballHome.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/interCollegeSportsButton.dart';
+import 'package:pratishtha/widgets/loadingWidget.dart';
 
 class InterCollegeHome extends StatefulWidget {
   final int userRole;
@@ -78,7 +79,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
   @override
   Widget build(BuildContext context) {
     if (!_imagePrecached) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: loadingWidget());
     }
 
     return Scaffold(
@@ -111,6 +112,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                   image: AssetImage('assets/gifs/leaderboard_intercollege.gif'),
                   height: 50,
                   fit: BoxFit.contain,
+                  autostart: Autostart.loop,
                 )),
           ),
         ],
@@ -244,7 +246,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                           sportsIcon: Icon(Icons.sports_football),
                           sportsName: "Football",
                           navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeFootballHome()),
+                              builder: (context) => InterCollegeFootballHome(currentAcademicYear: '2024-2025',)),
                         ),
                         InterCollegeSportsButton(
                           context: context,
@@ -259,14 +261,14 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                           sportsIcon: Icon(Icons.sports_kabaddi),
                           sportsName: "Kabaddi",
                           navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeKabaddiHome()),
+                              builder: (context) => InterCollegeKabaddiHome(currentAcademicYear: '2024-2025',)),
                         ),
                         InterCollegeSportsButton(
                           context: context,
                           sportsIcon: Icon(Icons.sports_esports),
                           sportsName: "Tug of War",
                           navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeTugofWarHome()),
+                              builder: (context) => InterCollegeTugOfWarHome(currentAcademicYear: '2024-2025',)),
                         ),
                       ],
                     ),

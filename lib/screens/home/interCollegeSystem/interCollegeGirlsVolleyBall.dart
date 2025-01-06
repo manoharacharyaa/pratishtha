@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pratishtha/models/cricketInterCollege.dart';
+
+import 'package:pratishtha/models/interCollegeGirlsVolleyballMatch.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
 
-class InterCollegeCricketHome extends StatefulWidget {
+class InterCollegeVolleyBallGirlsHome extends StatefulWidget {
   final String currentAcademicYear;
-  const InterCollegeCricketHome({required this.currentAcademicYear, super.key});
+  const InterCollegeVolleyBallGirlsHome({required this.currentAcademicYear, super.key});
 
   @override
-  State<InterCollegeCricketHome> createState() =>
-      _InterCollegeCricketHomeState();
+  State<InterCollegeVolleyBallGirlsHome> createState() =>
+      _InterCollegeVolleyBallGirlsHomeState();
 }
 
-class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
-  late Future<List<InterCollegeCricketMatch>> allCricketMatches;
+class _InterCollegeVolleyBallGirlsHomeState extends State<InterCollegeVolleyBallGirlsHome> {
+  late Future<List<InterCollegeVlleyballGirlsMatch>> allVolleyBallGirlsMatches;
   bool isExtended = false;
 
   @override
   void initState() {
     super.initState();
-    allCricketMatches = InterCollegeServices()
-        .getAllInterCollegeCricketMatches(widget.currentAcademicYear);
-    print(allCricketMatches);
+    allVolleyBallGirlsMatches = InterCollegeServices()
+        .getAllVolleyballGirlsMatches(widget.currentAcademicYear);
+    print(allVolleyBallGirlsMatches);
   }
 
   List<String> splitScore(String score) {
@@ -36,12 +37,12 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
+    return Container(
+      
+      child:Column(
         children: [
-          FutureBuilder<List<InterCollegeCricketMatch>>(
-            future: allCricketMatches,
+          FutureBuilder<List<InterCollegeVlleyballGirlsMatch>>(
+            future: allVolleyBallGirlsMatches,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: loadingWidget());
@@ -51,24 +52,23 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                 print("Error: ${snapshot.error}");
                 return Center(
                     child: Text(
-                        'Error in loading cricket Matches, Try after some time'));
+                        'Error in loading VolleyBallGirls Matches, Try after some time'));
               }
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                print("No Cricket Matches Available");
-                return Center(child: Text('No Cricket Matches Available'));
+                print("No VolleyBallGirls Matches Available");
+                return Center(child: Text('No VolleyBallGirls Matches Available'));
               }
 
-              List<InterCollegeCricketMatch> matches = snapshot.data!;
+              List<InterCollegeVlleyballGirlsMatch> matches = snapshot.data!;
 
               return Expanded(
                 child: ListView.builder(
                   itemCount: matches.length,
                   itemBuilder: (context, index) {
-                    InterCollegeCricketMatch match = matches[index];
+                    InterCollegeVlleyballGirlsMatch match = matches[index];
 
-                    final parts = splitScore(match.teamBattingFirstScore);
-                    final parts2 = splitScore(match.teamBattingSecondScore);
+                
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -149,10 +149,10 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                                       radius:
                                           MediaQuery.of(context).size.width /
                                               15,
-                                      child: Icon(Icons.sports_cricket),
+                                      child: Icon(Icons.sports_volleyball),
                                     ),
                                     SizedBox(height: 8),
-                                    Text(match.teamBattingFirst,
+                                    Text(match.teamAName,
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold)),
                                   ],
@@ -164,18 +164,11 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          parts[0],
+                                          match.teamAScore.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w700,
                                               fontSize: 15),
                                         ),
-                                        if (parts[1].isNotEmpty)
-                                          Text(
-                                            parts[1],
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: Color(0xFF859185)),
-                                          ),
                                       ],
                                     ),
                                     SizedBox(width: 10),
@@ -202,18 +195,12 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          parts2[0],
+                                        match.teamBScore.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w700,
                                               fontSize: 15),
                                         ),
-                                        if (parts2[1].isNotEmpty)
-                                          Text(
-                                            parts2[1],
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: Color(0xFF859185)),
-                                          ),
+                                        
                                       ],
                                     ),
                                   ],
@@ -225,10 +212,10 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                                       radius:
                                           MediaQuery.of(context).size.width /
                                               15,
-                                      child: Icon(Icons.sports_kabaddi),
+                                      child: Icon(Icons.sports_volleyball),
                                     ),
                                     SizedBox(height: 8),
-                                    Text(match.teamBattingSecond,
+                                    Text(match.teamBName,
                                         style: GoogleFonts.poppins(
                                             fontWeight: FontWeight.bold)),
                                   ],
@@ -260,56 +247,57 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
                                 ),
                               ],
                             ),
-                            if (isExtended)
-                              Column(
-                                children: [
-                                  Text("Top Performances",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17)),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(match.teamBattingFirstTopBatter,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                          SizedBox(height: 4),
-                                          Text(
-                                              match
-                                                  .teamBattingFirstTopBowlerPerformance,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(match.teamBattingSecondTopBatter,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                          SizedBox(height: 4),
-                                          Text(
-                                              match
-                                                  .teamBattingSecondTopBowlerPerformance,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                            // if (isExtended)
+                            //   Column(
+                            //     children: [
+                            //       Text("Top Performances",
+                            //           style: GoogleFonts.poppins(
+                            //               fontWeight: FontWeight.bold,
+                            //               fontSize: 17)),
+                            //       SizedBox(height: 10),
+                            //       Row(
+                            //         mainAxisAlignment:
+                            //             MainAxisAlignment.spaceBetween,
+                            //         children: [
+                            //           Column(
+                            //             crossAxisAlignment:
+                            //                 CrossAxisAlignment.start,
+                            //             children: [
+                            //               Text(match.teamATopRaider!,
+                            //                   style: GoogleFonts.poppins(
+                            //                       fontWeight:
+                            //                           FontWeight.normal)),
+                            //               SizedBox(height: 4),
+                            //                     Text(
+                            //                   match
+                            //                       .teamATopDefender.toString(),
+                            //                   style: GoogleFonts.poppins(
+                            //                       fontWeight:
+                            //                           FontWeight.normal)),
+                            
+                            //             ],
+                            //           ),
+                            //           Column(
+                            //             crossAxisAlignment:
+                            //                 CrossAxisAlignment.end,
+                            //             children: [
+                            //               Text(match.teamBTopRaider.toString(),
+                            //                   style: GoogleFonts.poppins(
+                            //                       fontWeight:
+                            //                           FontWeight.normal)),
+                            //               SizedBox(height: 4),
+                            //               Text(match.teamBTopDefender
+                            //               .toString(),
+                            //                   style: GoogleFonts.poppins(
+                            //                       fontWeight:
+                            //                           FontWeight.normal)),
+                                         
+                            //             ],
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ],
+                            //   ),
                           ],
                         ),
                       ),

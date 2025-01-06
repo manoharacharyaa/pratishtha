@@ -4,8 +4,8 @@ class InterCollegeFootballMatch {
   final String id;
   final String teamAName;
   final String teamBName;
-  final int teamAGoals;
-  final int teamBGoals;
+  final String teamAScore;
+  final String teamBScore;
   final String teamALocation;
   final String teamBLocation;
   final String? teamATopGoalScorer;
@@ -26,8 +26,8 @@ class InterCollegeFootballMatch {
     required this.teamBName,
     required this.teamALocation,
     required this.teamBLocation,
-    required this.teamAGoals,
-    required this.teamBGoals,
+    required this.teamAScore,
+    required this.teamBScore,
     this.teamATopGoalScorer,
     this.teamBTopGoalScorer,
     required this.teamALogoUrl,
@@ -49,8 +49,8 @@ class InterCollegeFootballMatch {
       teamBName: data['teamBName'],
       teamALocation: data['teamALocation'] ?? 'Mumbai',
       teamBLocation: data['teamBLocation'] ?? 'Mumbai',
-      teamAGoals: data['teamAGoals'],
-      teamBGoals: data['teamBGoals'],
+      teamAScore: data['teamAScore'],
+      teamBScore: data['teamBScore'],
       teamATopGoalScorer: data['teamATopGoalScorer'],
       teamBTopGoalScorer: data['teamBTopGoalScorer'],
       teamALogoUrl: data['teamALogoUrl'],

@@ -65,7 +65,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
     'Kabaddi',
     'Volleyball(Girls)',
     'Volleyball(Boys)',
-    'BasketBall'
+    'BasketBall',
+    'Tug of War'
   ];
   GlobalKey<FormState> addMatchKey = GlobalKey();
 
@@ -1758,7 +1759,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                   } else {
                                                     Fluttertoast.showToast(
                                                       msg:
-                                                          "Failed to add Football Match)",
+                                                          "Failed to add Kabaddi Match)",
                                                       toastLength:
                                                           Toast.LENGTH_LONG,
                                                       gravity:
@@ -1784,7 +1785,355 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                   Navigator.of(context).pop();
                                                   print('Error: $e');
                                                 }
-                                              } else {
+                                              } else if (selectedSport ==
+                                                  'Volleyball(Girls)') {
+                                                try {
+                                                  int teamAPoints = int.tryParse(
+                                                          teamAScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  int teamBPoints = int.tryParse(
+                                                          teamBScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordVolleyballGirlsMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
+                                                        teamAScore:
+                                                            teamAPoints.toString(),
+                                                        teamBScore:
+                                                            teamBPoints.toString(),                                                        teamALogoUrl:
+                                                            teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    );
+
+                                                    if (result ==
+                                                        'Volleyball(Girls) Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Volleyball(Girls) Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add Volleyball(Girls) Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else if (selectedSport ==
+                                                  'Volleyball(Boys)') {
+                                                try {
+                                                  int teamAPoints = int.tryParse(
+                                                          teamAScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  int teamBPoints = int.tryParse(
+                                                          teamBScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordVolleyballBoysMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
+                                                        teamAScore:
+                                                            teamAPoints.toString(),
+                                                        teamBScore:
+                                                            teamBPoints.toString(),                                                        teamALogoUrl:
+                                                            teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    );
+
+                                                    if (result ==
+                                                        'Volleyball(Boys) Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Volleyball(Boys) Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add Volleyball(Boys) Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else if (selectedSport ==
+                                                  'Tug of War') {
+                                                try {
+                                                  int teamAPoints = int.tryParse(
+                                                          teamAScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  int teamBPoints = int.tryParse(
+                                                          teamBScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordTugOfWarMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
+                                                        teamAScore:
+                                                            teamAPoints.toString(),
+                                                        teamBScore:
+                                                            teamBPoints.toString(),                                                        teamALogoUrl:
+                                                            teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    );
+
+                                                    if (result ==
+                                                        'TugOfWar Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "TugOfWar Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  }  else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add TugOfWar Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else if (selectedSport ==
+                                                  'BasketBall') {
+                                                try {
+                                                  int teamAPoints = int.tryParse(
+                                                          teamAScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  int teamBPoints = int.tryParse(
+                                                          teamBScoreController
+                                                              .text) ??
+                                                      0; // Default to 0 if parsing fails
+                                                  if (addMatchKey.currentState!
+                                                      .validate()) {
+                                                    String result = await InterCollegeServices().recordBasketBsallMatch(
+                                                        academicYear:
+                                                            "2024-2025",
+                                                        matchLocation:
+                                                            matchLocationController
+                                                                .text,
+                                                        matchType:
+                                                            matchTypeController
+                                                                .text,
+                                                        matchTime:
+                                                            matchTimeController
+                                                                .text,
+                                                        matchDayDate:
+                                                            matchDayDateController
+                                                                .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
+                                                        teamBName:
+                                                            teamBNameController
+                                                                .text,
+                                                        teamALocation: teamALocationController.text,
+                                                        teamBLocation: teamBLocationController.text,
+                                                        teamAScore:
+                                                            teamAPoints.toString(),
+                                                        teamBScore:
+                                                            teamBPoints.toString(),                                                        teamALogoUrl:
+                                                            teamALogoUrlController.text,
+                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    );
+
+                                                    if (result ==
+                                                        'BasketBall Match Record Added Successfully') {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "BasketBall Match Added Successfully",
+                                                        toastLength:
+                                                            Toast.LENGTH_LONG,
+                                                        gravity:
+                                                            ToastGravity.BOTTOM,
+                                                        backgroundColor:
+                                                            Colors.green[700],
+                                                        textColor: Colors.white,
+                                                      );
+                                                    }
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Failed to add BasketBall Match)",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
+                                                      backgroundColor:
+                                                          Colors.red[700],
+                                                      textColor: Colors.white,
+                                                    );
+                                                  }
+                                                  Navigator.of(context).pop();
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "An error occurred: $e",
+                                                    toastLength:
+                                                        Toast.LENGTH_LONG,
+                                                    gravity:
+                                                        ToastGravity.BOTTOM,
+                                                    backgroundColor:
+                                                        Colors.red[700],
+                                                    textColor: Colors.white,
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                  print('Error: $e');
+                                                }
+                                              } else  {
                                                 Fluttertoast.showToast(
                                                   msg:
                                                       "Method Still Not Defined for $selectedSport",
