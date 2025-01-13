@@ -8,7 +8,8 @@ import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/models/userModel.dart' as user;
 import 'package:pratishtha/screens/home/editProfile.dart';
-import 'package:pratishtha/screens/home/host_leaderboard_page.dart';
+import 'package:pratishtha/screens/home/event_matches_page.dart';
+import 'package:pratishtha/screens/home/aproval_page.dart';
 import 'package:pratishtha/screens/home/pointsPage.dart';
 import 'package:pratishtha/screens/home/walletPage.dart';
 import 'package:pratishtha/services/databaseServices.dart';
@@ -69,6 +70,29 @@ class _ProfilePageState extends State<ProfilePage> {
     }).toList();
 
     return currentUserEvents;
+  }
+
+  List<Event> eventByCouncilMember = [];
+
+  Future<List<Event>> getEventCreatedByCouncilMember() async {
+    final currentuuid = FirebaseAuth.instance.currentUser!.uid;
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('events')
+        .where('created_by', isEqualTo: currentuuid)
+        .get();
+
+    eventByCouncilMember = snapshot.docs
+        .map((doc) => eventFromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+
+    return eventByCouncilMember;
+  }
+
+  @override
+  void initState() {
+    getEventCreatedByCouncilMember();
+    print(getEventCreatedByCouncilMember());
+    super.initState();
   }
 
   @override
@@ -255,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     : Row(
                                         children: [
                                           Icon(
-                                            FontAwesomeIcons.mailBulk,
+                                            FontAwesomeIcons.envelopesBulk,
                                             size: 30,
                                             color: cardBackgroundColor,
                                           ),
@@ -298,7 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     : Row(
                                         children: [
                                           Icon(
-                                            FontAwesomeIcons.phoneAlt,
+                                            FontAwesomeIcons.phoneFlip,
                                             size: 30,
                                             color: cardBackgroundColor,
                                           ),
@@ -378,7 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   children: [
                                     Icon(
-                                      FontAwesomeIcons.university,
+                                      FontAwesomeIcons.buildingColumns,
                                       size: 30,
                                       color: cardBackgroundColor,
                                     ),
@@ -535,7 +559,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             SizedBox(
                               height: 15.0,
                             ),
-                            this.widget.selectedUser!.role == 3
+                            this.widget.selectedUser!.role == 2 ||
+                                    this.widget.selectedUser!.role == 3
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
@@ -546,8 +571,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                         height: 300,
                                         width: double.infinity,
                                         child: ListView.builder(
-                                          itemCount: 10,
+                                          itemCount:
+                                              eventByCouncilMember.length,
                                           itemBuilder: (context, index) {
+                                            final event =
+                                                eventByCouncilMember[index];
                                             return Padding(
                                               padding: const EdgeInsets.all(6),
                                               child: SizedBox(
@@ -558,7 +586,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                            HostLeaderBoardPage(),
+                                                            EventMatchesPage(
+                                                          event: event,
+                                                        ),
                                                       ),
                                                     );
                                                   },
@@ -581,14 +611,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                 BorderRadius
                                                                     .circular(
                                                                         15),
-                                                            child: Image.asset(
-                                                              'assets/images/pageNotFound1.png',
-                                                              fit: BoxFit.cover,
-                                                            ),
+                                                            child: event.bannerUrl ==
+                                                                    ""
+                                                                ? Image.asset(
+                                                                    'assets/images/pageNotFound1.png')
+                                                                : Image.network(
+                                                                    event
+                                                                        .bannerUrl),
                                                           ),
                                                         ),
                                                         Text(
-                                                          'Boxing',
+                                                          event.name!,
                                                           style: TextStyle(
                                                             fontSize: 20,
                                                           ),

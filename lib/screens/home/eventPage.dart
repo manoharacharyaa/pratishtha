@@ -13,6 +13,7 @@ import 'package:pratishtha/screens/home/addMatchFormPage.dart';
 import 'package:pratishtha/screens/home/addTeams.dart';
 import 'package:pratishtha/screens/home/eventPointsCard.dart';
 import 'package:pratishtha/screens/home/matches_details_page.dart';
+import 'package:pratishtha/screens/home/registration_page.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
@@ -182,7 +183,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                             event: this.widget.event)));
                               },
                               label: Text("Edit Event"),
-                              icon: Icon(FontAwesomeIcons.edit),
+                              icon: Icon(FontAwesomeIcons.penToSquare),
                             )
                           : Container(),
                       enableMatchManage()
@@ -229,13 +230,22 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                           : Container(),
                       ElevatedButton(
                         onPressed: () async {
-                          final url = widget.event.registrationUrl;
+                          //URL Redirecting to browser
+                          // final url = widget.event.registrationUrl;
+                          // if (await canLaunch(url)) {
+                          //   await launch(url);
+                          // } else {
+                          //   throw 'Could not launch $url';
+                          // }
 
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (contexr) => RegistrationPage(
+                                event: widget.event,
+                              ),
+                            ),
+                          );
                         },
                         style: ButtonStyle(
                           fixedSize: WidgetStateProperty.all(Size.infinite),
@@ -1586,6 +1596,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                     itemCount: matchesList.length,
                     addAutomaticKeepAlives: true,
                     itemBuilder: (BuildContext context, int index) {
+                      final match = matchesList[index];
                       return Padding(
                         padding: const EdgeInsets.all(16),
                         child: Material(
@@ -1601,7 +1612,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => MatchesDetailsPage(
-                                        matchIndex: index,
+                                        match: match,
                                         eventId: widget.event.id!,
                                       ),
                                     ),
@@ -1628,6 +1639,9 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                         height: 100,
                                         width: 100,
                                         color: Colors.black,
+                                        child: Image.asset(
+                                          'assets/images/codesandbx_transparent.png',
+                                        ),
                                       ),
                                       Text(
                                         '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
@@ -1639,6 +1653,9 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                         height: 100,
                                         width: 100,
                                         color: Colors.black,
+                                        child: Image.asset(
+                                          'assets/images/globe_transparent.png',
+                                        ),
                                       ),
                                     ],
                                   ),

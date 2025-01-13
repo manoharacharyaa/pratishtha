@@ -6,7 +6,7 @@ class AttendaceServices {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<String> addHeadorCohead(String currentAcademicYear, String deptName,
-      String deptHeadorCoheadName, String departmentPersonUUid) async {
+      String deptHeadorCoheadName) async {
     try {
       // Reference to the Tech document in the attendance collection
       final DocumentReference docRef = firestore
@@ -23,10 +23,6 @@ class AttendaceServices {
         await docRef.set({
           'member1': deptHeadorCoheadName,
         });
-
-        DocumentReference docref2 = firestore.collection("users").doc(departmentPersonUUid);
-        await docref2.update({'isDeptHead2024_25': true});
-
         print('Document created with member1: $deptHeadorCoheadName');
         return "Member Added";
       } else {
