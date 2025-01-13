@@ -23,22 +23,23 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MultiProvider(
-        providers: [
-          Provider<AuthenticationService>(
-            create: (context) => AuthenticationService(FirebaseAuth.instance),
-          ),
-          StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationService>().authStateChanged,
-            initialData: null,
-          ),
-        ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Prathistha',
-          supportedLocales: [Locale('en', 'US')],
-          theme: mainTheme,
-          home: splashScreen(),
-        ));
+      providers: [
+        Provider<AuthenticationService>(
+          create: (context) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanged,
+          initialData: null,
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Prathistha',
+        supportedLocales: [Locale('en', 'US')],
+        theme: mainTheme,
+        home: splashScreen(),
+      ),
+    );
   }
 }

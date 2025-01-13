@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/screens/home/aproval_page.dart';
+import 'package:pratishtha/utils/fonts.dart';
 
 class EventMatchesPage extends StatefulWidget {
   const EventMatchesPage({
@@ -53,7 +54,10 @@ class _EventMatchesPageState extends State<EventMatchesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Matches'),
+        title: Text(
+          'Matches',
+          style: AppFonts.poppins(color: Colors.black),
+        ),
       ),
       body: isLoading
           ? Center(
@@ -63,10 +67,7 @@ class _EventMatchesPageState extends State<EventMatchesPage> {
               ? Center(
                   child: Text(
                     'No Matches Found',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppFonts.poppins(),
                   ),
                 )
               : ListView.builder(
@@ -81,6 +82,7 @@ class _EventMatchesPageState extends State<EventMatchesPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AprovalPage(
+                                index: index,
                                 event: widget.event,
                                 matchId: match.matchId!,
                               ),
@@ -99,24 +101,15 @@ class _EventMatchesPageState extends State<EventMatchesPage> {
                             children: [
                               Text(
                                 match.team01!,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: AppFonts.poppins(),
                               ),
                               Text(
                                 'VS',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: AppFonts.poppins(),
                               ),
                               Text(
                                 match.team02!,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: AppFonts.poppins(),
                               ),
                             ],
                           ),

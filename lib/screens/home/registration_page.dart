@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/models/userModel.dart' as user;
+import 'package:pratishtha/utils/fonts.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key, required this.event});
@@ -44,16 +45,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   void uploadRegrestration() {
-    Map<String, dynamic> regrestration = {
-      "uid": currentUser!.uid,
-    };
+    // Map<String, dynamic> regrestration = {
+    //   "uid": currentUser!.uid,
+    // };
+
+    List<String> registration = [
+      currentUser?.uid ?? '',
+    ];
 
     try {
       FirebaseFirestore.instance
           .collection('events')
           .doc(widget.event.id)
           .update({
-        'registered_users': FieldValue.arrayUnion([regrestration])
+        'registered_users': registration,
       }).then(
         (_) => Fluttertoast.showToast(msg: 'Registration Successful'),
       );
@@ -62,19 +67,64 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
   }
 
+  // Future<void> uploadRegistration() async {
+  //   Map<String, dynamic> registration = {
+  //     "uid": currentUser?.uid ?? '',
+  //   };
+
+  //   try {
+  //     final batch = FirebaseFirestore.instance.batch();
+
+  //     final eventRef =
+  //         FirebaseFirestore.instance.collection('events').doc(widget.event.id);
+
+  //     final userRef =
+  //         FirebaseFirestore.instance.collection('users').doc(currentUser!.uid);
+
+  //     batch.update(eventRef, {
+  //       'registered_users': FieldValue.arrayUnion([registration])
+  //     });
+
+  //     batch.update(userRef, {
+  //       'registered_events': FieldValue.arrayUnion([widget.event.id])
+  //     });
+
+  //     await batch.commit();
+
+  //     Fluttertoast.showToast(msg: 'Registration Successful');
+  //   } catch (e) {
+  //     Fluttertoast.showToast(msg: 'Registration Failed: $e');
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Regristration Page'),
+        titleTextStyle: AppFonts.poppins(color: Colors.black),
+        title: Text(
+          'Regristration Page',
+        ),
       ),
       body: Container(
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(widget.event.name!),
-            Text(currentUser!.firstName!),
+            Text(
+              widget.event.name ?? '',
+              style: AppFonts.poppins(
+                color: Colors.black,
+                size: 20,
+              ),
+            ),
+            Text(
+              currentUser?.firstName ?? '',
+              style: AppFonts.poppins(
+                color: Colors.black,
+                size: 20,
+              ),
+            ),
             TextButton(
               onPressed: uploadRegrestration,
               child: Text('Confirm Registration'),
