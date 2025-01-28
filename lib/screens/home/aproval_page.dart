@@ -55,9 +55,11 @@ class _AprovalPageState extends State<AprovalPage> {
         return;
       }
 
-      final registeredUsersArray = eventSnapshot['registered_users'] as List;
-      final registeredUserIds =
-          registeredUsersArray.map((user) => user['uid'] as String).toList();
+      // final registeredUsersArray = eventSnapshot['registered_users'] as List;
+      // final registeredUserIds =
+      //     registeredUsersArray.map((user) => user['uid'] as String).toList();
+
+      final registeredUserIds = eventSnapshot['registered_users'] as List;
 
       if (registeredUserIds.isEmpty) return;
 

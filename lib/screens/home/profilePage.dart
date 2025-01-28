@@ -100,10 +100,15 @@ class _ProfilePageState extends State<ProfilePage> {
         isLoading = true;
       });
 
+      // final eventsSnapshot = await FirebaseFirestore.instance
+      //     .collection('events')
+      //     .where('registered_users',
+      //         arrayContains: {'uid': currentUser!.uid}).get();
+
       final eventsSnapshot = await FirebaseFirestore.instance
           .collection('events')
-          .where('registered_users',
-              arrayContains: {'uid': currentUser!.uid}).get();
+          .where('registered_users', arrayContains: currentUser!.uid)
+          .get();
 
       if (mounted) {
         // Add mounted check
@@ -726,8 +731,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ],
                                     )
                                   : SizedBox(),
-                              this.widget.selectedUser!.role == 2 ||
-                                      this.widget.selectedUser!.role == 3
+                              this.widget.selectedUser!.role == 0
                                   ? Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
