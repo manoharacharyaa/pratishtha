@@ -1,41 +1,53 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:pratishtha/constants/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Widget InterCollegeSportsButton({
   required BuildContext context,
-  required Icon sportsIcon,
+  required Image sportsIcon,
   required String sportsName,
   required MaterialPageRoute navigator,
 }) {
-  return Container(
-    child: Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(navigator);
-          },
-          child: Container(
-            // color: Theme.of(context).primaryColor,
-            width: 50,
-            height: 50,
-            // child: FaIcon(FaIconMapping['robot']),
-            child: sportsIcon,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: primaryColor,
+  return GestureDetector(
+    
+    child: Container(
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Color(0xFF222232),
+             radius: MediaQuery.of(context).size.width * 0.09,
+            
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: MediaQuery.of(context).size.width * 0.05,
+                backgroundImage: sportsIcon.image,  
+                  backgroundColor: Color(0xFF222232),
+                 
+                
+                ),
+               
+              
+              ],
             ),
           ),
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        Text(
-          sportsName,
-          style: TextStyle(
-            fontSize: 15.0,
-          ),
-        )
-      ],
+          SizedBox(height: 5),
+            AutoSizeText(
+              sportsName,
+              maxLines: 1,
+              minFontSize: 10,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.sourceSans3(
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+        ],
+        
+      ),
     ),
   );
 }

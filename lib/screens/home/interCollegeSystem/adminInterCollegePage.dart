@@ -66,7 +66,11 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
     'Volleyball(Girls)',
     'Volleyball(Boys)',
     'BasketBall',
-    'Tug of War'
+    'Tug of War',
+    'chess',
+    'Carrom',
+    'Table Tennis',
+    'powerLifting',
   ];
   GlobalKey<FormState> addMatchKey = GlobalKey();
 
@@ -91,36 +95,58 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
     });
   }
 
-  Widget _buildAnimatedTextField({
+  Widget _buildAnimatedTextFieldWithSuggestions({
     required TextEditingController controller,
     required String labelText,
+    required List<String> suggestions, // Use a list of suggestions
     bool readOnly = false,
     VoidCallback? onTap,
     TextInputType? keyboardType,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        onTap: onTap,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: labelText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.deepPurple.shade200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.deepPurple.shade200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.teal.shade700, width: 2),
-          ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        ),
+      child: Autocomplete<String>(
+        optionsBuilder: (TextEditingValue textEditingValue) {
+          // Return suggestions that include the input text
+          if (textEditingValue.text.isEmpty) {
+            return const Iterable<String>.empty();
+          }
+          return suggestions.where((suggestion) => suggestion
+              .toLowerCase()
+              .contains(textEditingValue.text.toLowerCase()));
+        },
+        fieldViewBuilder: (BuildContext context,
+            TextEditingController textEditingController,
+            FocusNode focusNode,
+            VoidCallback onFieldSubmitted) {
+          return TextField(
+            controller: textEditingController,
+            focusNode: focusNode,
+            readOnly: readOnly,
+            onTap: onTap,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              labelText: labelText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.deepPurple.shade200),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.deepPurple.shade200),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Colors.teal.shade700, width: 2),
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            ),
+          );
+        },
+        onSelected: (String selectedSuggestion) {
+          controller.text = selectedSuggestion;
+        },
       ),
     );
   }
@@ -222,7 +248,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                       selectedCollege.id;
                                   teamALogoUrlController.text =
                                       selectedCollege.imageUrl;
-                                  teamALocationController.text = selectedCollege.collegeLocation;
+                                  teamALocationController.text =
+                                      selectedCollege.collegeLocation;
                                   Navigator.pop(context);
                                   print(
                                       "${teamANameController.text} + ${teamADocIdController.text} + ${teamALogoUrlController.text}");
@@ -340,7 +367,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                       selectedCollege.collegeShortName;
                                   teamBDocIdController.text =
                                       selectedCollege.id;
-                                  teamBLocationController.text = selectedCollege.collegeLocation;
+                                  teamBLocationController.text =
+                                      selectedCollege.collegeLocation;
                                   teamBLogoUrlController.text =
                                       selectedCollege.imageUrl;
                                   Navigator.pop(context);
@@ -387,6 +415,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
       );
     }
   }
+
+  final List<String> suggestions = ['semi-final', 'final', 'quarter final','Group Stage - M(num)'];
 
   @override
   Widget build(BuildContext context) {
@@ -1335,13 +1365,11 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                   // Match Type, Location, DayDate, Time
                                                   Row(
                                                     children: [
-                                                      Expanded(
-                                                        child:
-                                                            _buildAnimatedTextField(
-                                                          controller:
-                                                              matchTypeController,
-                                                          labelText:
-                                                              'Enter Match Type (Group Stage - M(num), QF, SF, Final',
+                                                        Expanded(
+                                                        child: _buildAnimatedTextFieldWithSuggestions(
+                                                          controller: matchTypeController,
+                                                          labelText: 'Enter Match Type (Group Stage - M(num), QF, SF, Final)',
+                                                          suggestions: suggestions,
                                                         ),
                                                       ),
                                                       SizedBox(width: 10),
@@ -1524,8 +1552,12 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         matchLocation:
                                                             matchLocationController
                                                                 .text,
-                                                        teamBattingFirstLocation: teamALocationController.text,
-                                                        teamBattingSecondLocation: teamBLocationController.text,
+                                                        teamBattingFirstLocation:
+                                                            teamALocationController
+                                                                .text,
+                                                        teamBattingSecondLocation:
+                                                            teamBLocationController
+                                                                .text,
                                                         matchType:
                                                             matchTypeController
                                                                 .text,
@@ -1545,13 +1577,9 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                             teamAScoreController
                                                                 .text,
                                                         teamBattingSecondScore:
-                                                            teamBScoreController
-                                                                .text,
-                                                        teamBattingFirstTopBatter:
-                                                            teamABestPlayer1Controller
-                                                                .text,
-                                                        teamBattingFirstTopBowlerPerformance:
-                                                            teamABestPlayer2Controller.text,
+                                                            teamBScoreController.text,
+                                                        teamBattingFirstTopBatter: teamABestPlayer1Controller.text,
+                                                        teamBattingFirstTopBowlerPerformance: teamABestPlayer2Controller.text,
                                                         teamBattingSecondTopBatter: teamBBestPlayer1Controller.text,
                                                         teamBattingSecondTopBowlerPerformance: teamBBestPlayer2Controller.text,
                                                         teamBattingFirstLogoUrl: teamALogoUrlController.text,
@@ -1615,15 +1643,20 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                                 .text,
                                                         matchType: matchTypeController
                                                             .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
+                                                        teamALocation:
+                                                            teamALocationController
+                                                                .text,
+                                                        teamBLocation:
+                                                            teamBLocationController
+                                                                .text,
                                                         matchTime: matchTimeController
                                                             .text,
                                                         matchDayDate:
                                                             matchDayDateController
                                                                 .text,
-                                                        teamAName: teamANameController
-                                                            .text,
+                                                        teamAName:
+                                                            teamANameController
+                                                                .text,
                                                         teamBName:
                                                             teamBNameController
                                                                 .text,
@@ -1634,8 +1667,10 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                             teamBScoreController
                                                                 .text,
                                                         teamATopGoalScorer:
-                                                            teamABestPlayer1Controller.text,
-                                                        teamBTopGoalScorer: teamBBestPlayer1Controller.text,
+                                                            teamABestPlayer1Controller
+                                                                .text,
+                                                        teamBTopGoalScorer:
+                                                            teamBBestPlayer1Controller.text,
                                                         teamALogoUrl: teamALogoUrlController.text,
                                                         teamBLogoUrl: teamBLogoUrlController.text,
                                                         teamAId: teamADocIdController.text,
@@ -1703,23 +1738,24 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         matchLocation:
                                                             matchLocationController
                                                                 .text,
-                                                        matchType:
-                                                            matchTypeController
-                                                                .text,
-                                                        matchTime:
-                                                            matchTimeController
-                                                                .text,
+                                                        matchType: matchTypeController
+                                                            .text,
+                                                        matchTime: matchTimeController
+                                                            .text,
                                                         matchDayDate:
                                                             matchDayDateController
                                                                 .text,
-                                                        teamAName:
-                                                            teamANameController
-                                                                .text,
+                                                        teamAName: teamANameController
+                                                            .text,
                                                         teamBName:
                                                             teamBNameController
                                                                 .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
+                                                        teamALocation:
+                                                            teamALocationController
+                                                                .text,
+                                                        teamBLocation:
+                                                            teamBLocationController
+                                                                .text,
                                                         teamAPoints:
                                                             teamAPoints,
                                                         teamBPoints:
@@ -1734,10 +1770,8 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                             teamBBestPlayer1Controller
                                                                 .text,
                                                         teamBTopDefender:
-                                                            teamBBestPlayer2Controller
-                                                                .text,
-                                                        teamALogoUrl:
-                                                            teamALogoUrlController.text,
+                                                            teamBBestPlayer2Controller.text,
+                                                        teamALogoUrl: teamALogoUrlController.text,
                                                         teamBLogoUrl: teamBLogoUrlController.text,
                                                         teamAId: teamADocIdController.text,
                                                         teamBId: teamBDocIdController.text);
@@ -1798,35 +1832,48 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                       0; // Default to 0 if parsing fails
                                                   if (addMatchKey.currentState!
                                                       .validate()) {
-                                                    String result = await InterCollegeServices().recordVolleyballGirlsMatch(
-                                                        academicYear:
-                                                            "2024-2025",
-                                                        matchLocation:
-                                                            matchLocationController
-                                                                .text,
-                                                        matchType:
-                                                            matchTypeController
-                                                                .text,
-                                                        matchTime:
-                                                            matchTimeController
-                                                                .text,
-                                                        matchDayDate:
-                                                            matchDayDateController
-                                                                .text,
-                                                        teamAName:
-                                                            teamANameController
-                                                                .text,
-                                                        teamBName:
-                                                            teamBNameController
-                                                                .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
-                                                        teamAScore:
-                                                            teamAPoints.toString(),
-                                                        teamBScore:
-                                                            teamBPoints.toString(),                                                        teamALogoUrl:
-                                                            teamALogoUrlController.text,
-                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    String result =
+                                                        await InterCollegeServices()
+                                                            .recordVolleyballGirlsMatch(
+                                                      academicYear: "2024-2025",
+                                                      matchLocation:
+                                                          matchLocationController
+                                                              .text,
+                                                      matchType:
+                                                          matchTypeController
+                                                              .text,
+                                                      matchTime:
+                                                          matchTimeController
+                                                              .text,
+                                                      matchDayDate:
+                                                          matchDayDateController
+                                                              .text,
+                                                      teamAName:
+                                                          teamANameController
+                                                              .text,
+                                                      teamBName:
+                                                          teamBNameController
+                                                              .text,
+                                                      teamALocation:
+                                                          teamALocationController
+                                                              .text,
+                                                      teamBLocation:
+                                                          teamBLocationController
+                                                              .text,
+                                                      teamAScore: teamAPoints
+                                                          .toString(),
+                                                      teamBScore: teamBPoints
+                                                          .toString(),
+                                                      teamALogoUrl:
+                                                          teamALogoUrlController
+                                                              .text,
+                                                      teamBLogoUrl:
+                                                          teamBLogoUrlController
+                                                              .text,
+                                                      teamAId:
+                                                          teamADocIdController
+                                                              .text,
+                                                              teamBId: teamBDocIdController.text,
                                                     );
 
                                                     if (result ==
@@ -1885,35 +1932,45 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                       0; // Default to 0 if parsing fails
                                                   if (addMatchKey.currentState!
                                                       .validate()) {
-                                                    String result = await InterCollegeServices().recordVolleyballBoysMatch(
-                                                        academicYear:
-                                                            "2024-2025",
-                                                        matchLocation:
-                                                            matchLocationController
-                                                                .text,
-                                                        matchType:
-                                                            matchTypeController
-                                                                .text,
-                                                        matchTime:
-                                                            matchTimeController
-                                                                .text,
-                                                        matchDayDate:
-                                                            matchDayDateController
-                                                                .text,
-                                                        teamAName:
-                                                            teamANameController
-                                                                .text,
-                                                        teamBName:
-                                                            teamBNameController
-                                                                .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
-                                                        teamAScore:
-                                                            teamAPoints.toString(),
-                                                        teamBScore:
-                                                            teamBPoints.toString(),                                                        teamALogoUrl:
-                                                            teamALogoUrlController.text,
-                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    String result =
+                                                        await InterCollegeServices()
+                                                            .recordVolleyballBoysMatch(
+                                                      academicYear: "2024-2025",
+                                                      matchLocation:
+                                                          matchLocationController
+                                                              .text,
+                                                      matchType:
+                                                          matchTypeController
+                                                              .text,
+                                                      matchTime:
+                                                          matchTimeController
+                                                              .text,
+                                                      matchDayDate:
+                                                          matchDayDateController
+                                                              .text,
+                                                      teamAName:
+                                                          teamANameController
+                                                              .text,
+                                                      teamBName:
+                                                          teamBNameController
+                                                              .text,
+                                                      teamALocation:
+                                                          teamALocationController
+                                                              .text,
+                                                      teamBLocation:
+                                                          teamBLocationController
+                                                              .text,
+                                                      teamAScore: teamAPoints
+                                                          .toString(),
+                                                      teamBScore: teamBPoints
+                                                          .toString(),
+                                                      teamALogoUrl:
+                                                          teamALogoUrlController
+                                                              .text,
+                                                      teamBLogoUrl:
+                                                          teamBLogoUrlController
+                                                              .text, teamAId: teamADocIdController.text,
+                                                              teamBId: teamBDocIdController.text,
                                                     );
 
                                                     if (result ==
@@ -1972,35 +2029,45 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                       0; // Default to 0 if parsing fails
                                                   if (addMatchKey.currentState!
                                                       .validate()) {
-                                                    String result = await InterCollegeServices().recordTugOfWarMatch(
-                                                        academicYear:
-                                                            "2024-2025",
-                                                        matchLocation:
-                                                            matchLocationController
-                                                                .text,
-                                                        matchType:
-                                                            matchTypeController
-                                                                .text,
-                                                        matchTime:
-                                                            matchTimeController
-                                                                .text,
-                                                        matchDayDate:
-                                                            matchDayDateController
-                                                                .text,
-                                                        teamAName:
-                                                            teamANameController
-                                                                .text,
-                                                        teamBName:
-                                                            teamBNameController
-                                                                .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
-                                                        teamAScore:
-                                                            teamAPoints.toString(),
-                                                        teamBScore:
-                                                            teamBPoints.toString(),                                                        teamALogoUrl:
-                                                            teamALogoUrlController.text,
-                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    String result =
+                                                        await InterCollegeServices()
+                                                            .recordTugOfWarMatch(
+                                                      academicYear: "2024-2025",
+                                                      matchLocation:
+                                                          matchLocationController
+                                                              .text,
+                                                      matchType:
+                                                          matchTypeController
+                                                              .text,
+                                                      matchTime:
+                                                          matchTimeController
+                                                              .text,
+                                                      matchDayDate:
+                                                          matchDayDateController
+                                                              .text,
+                                                      teamAName:
+                                                          teamANameController
+                                                              .text,
+                                                      teamBName:
+                                                          teamBNameController
+                                                              .text,
+                                                      teamALocation:
+                                                          teamALocationController
+                                                              .text,
+                                                      teamBLocation:
+                                                          teamBLocationController
+                                                              .text,
+                                                      teamAScore: teamAPoints
+                                                          .toString(),
+                                                      teamBScore: teamBPoints
+                                                          .toString(),
+                                                      teamALogoUrl:
+                                                          teamALogoUrlController
+                                                              .text,
+                                                      teamBLogoUrl:
+                                                          teamBLogoUrlController
+                                                              .text, teamAId: teamADocIdController.text,
+                                                              teamBId: teamBDocIdController.text,
                                                     );
 
                                                     if (result ==
@@ -2017,7 +2084,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                         textColor: Colors.white,
                                                       );
                                                     }
-                                                  }  else {
+                                                  } else {
                                                     Fluttertoast.showToast(
                                                       msg:
                                                           "Failed to add TugOfWar Match)",
@@ -2059,35 +2126,45 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                       0; // Default to 0 if parsing fails
                                                   if (addMatchKey.currentState!
                                                       .validate()) {
-                                                    String result = await InterCollegeServices().recordBasketBsallMatch(
-                                                        academicYear:
-                                                            "2024-2025",
-                                                        matchLocation:
-                                                            matchLocationController
-                                                                .text,
-                                                        matchType:
-                                                            matchTypeController
-                                                                .text,
-                                                        matchTime:
-                                                            matchTimeController
-                                                                .text,
-                                                        matchDayDate:
-                                                            matchDayDateController
-                                                                .text,
-                                                        teamAName:
-                                                            teamANameController
-                                                                .text,
-                                                        teamBName:
-                                                            teamBNameController
-                                                                .text,
-                                                        teamALocation: teamALocationController.text,
-                                                        teamBLocation: teamBLocationController.text,
-                                                        teamAScore:
-                                                            teamAPoints.toString(),
-                                                        teamBScore:
-                                                            teamBPoints.toString(),                                                        teamALogoUrl:
-                                                            teamALogoUrlController.text,
-                                                        teamBLogoUrl: teamBLogoUrlController.text,
+                                                    String result =
+                                                        await InterCollegeServices()
+                                                            .recordBasketBsallMatch(
+                                                      academicYear: "2024-2025",
+                                                      matchLocation:
+                                                          matchLocationController
+                                                              .text,
+                                                      matchType:
+                                                          matchTypeController
+                                                              .text,
+                                                      matchTime:
+                                                          matchTimeController
+                                                              .text,
+                                                      matchDayDate:
+                                                          matchDayDateController
+                                                              .text,
+                                                      teamAName:
+                                                          teamANameController
+                                                              .text,
+                                                      teamBName:
+                                                          teamBNameController
+                                                              .text,
+                                                      teamALocation:
+                                                          teamALocationController
+                                                              .text,
+                                                      teamBLocation:
+                                                          teamBLocationController
+                                                              .text,
+                                                      teamAScore: teamAPoints
+                                                          .toString(),
+                                                      teamBScore: teamBPoints
+                                                          .toString(),
+                                                      teamALogoUrl:
+                                                          teamALogoUrlController
+                                                              .text,
+                                                      teamBLogoUrl:
+                                                          teamBLogoUrlController
+                                                              .text, teamAId: teamADocIdController.text,
+                                                              teamBId: teamBDocIdController.text,
                                                     );
 
                                                     if (result ==
@@ -2133,7 +2210,7 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                   Navigator.of(context).pop();
                                                   print('Error: $e');
                                                 }
-                                              } else  {
+                                              } else {
                                                 Fluttertoast.showToast(
                                                   msg:
                                                       "Method Still Not Defined for $selectedSport",
@@ -2241,8 +2318,8 @@ class MyTextField extends StatelessWidget {
       validator: validator,
     );
   }
-  
 }
+
 Widget _buildAnimatedTextField({
   required TextEditingController controller,
   required String labelText,

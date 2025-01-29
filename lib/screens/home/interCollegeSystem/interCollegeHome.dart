@@ -1,22 +1,22 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gif/gif.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/leaderBoard.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/adminInterCollegePage.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeCricketHome.dart';
-import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeFootballHome.dart';
-import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeKabaddiHome.dart';
-import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeTugofWarHome.dart';
-import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeVolleyballHome.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/interCollegeSportsButton.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
 
 class InterCollegeHome extends StatefulWidget {
   final int userRole;
-  const InterCollegeHome({
+  InterCollegeHome({
     super.key,
     required this.userRole,
   });
@@ -32,6 +32,351 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
   bool _imagePrecached = false;
   final List<String> carouselImages = [];
   int _currentCarouselIndex = 0;
+  final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
+  // bool isSheetReady = false;
+  final GlobalKey sheetKey = GlobalKey();
+  double sheetSize = 0.7;
+
+  bool isOutdoorExpanded = false;
+  bool isIndoorExpanded = false;
+
+  final List<Map<String, dynamic>> interCollegeOutdoorSportsEventsData = [
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.jpeg'),
+      'name': 'Football',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/basketball.jpeg'),
+      'name': 'Basketball',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon':
+          Image.asset('assets/images/InterCollegeSports/volleyball_boys.jpeg'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+  ];
+
+  final List<Map<String, dynamic>> interCollegeIndoorSportsEventsData = [
+    {
+      'icon': Image.asset(
+        'assets/images/InterCollegeSports/powerlifting.png',
+        fit: BoxFit.cover,
+      ),
+      'name': 'Football',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Basketball',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
+      'name': 'Cricket',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+    },
+  ];
+
+  void toggleOutdoorExpansion(bool expand) {
+    setState(() {
+      isOutdoorExpanded = expand;
+      _sheetController.animateTo(
+        expand ? 0.99 : 0.7,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void toggleIndoorExpansion(bool expand) {
+    setState(() {
+      isIndoorExpanded = expand;
+      _sheetController.animateTo(
+        expand ? 0.99 : 0.7,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  Widget buildEventGrid(List<Map<String, dynamic>> eventData) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: eventData.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1.0,
+      ),
+      itemBuilder: (context, index) {
+        final event = eventData[index];
+        return InterCollegeSportsButton(
+          context: context,
+          sportsIcon: event['icon'] as Image,
+          sportsName: event['name'] as String,
+          navigator: event['navigator'] as MaterialPageRoute,
+        );
+      },
+    );
+  }
+
+  Widget outdoorSportsSection(
+      BuildContext context, List<Map<String, dynamic>> outdoorEvents) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child: Text(
+            "Outdoor Sports",
+            style: GoogleFonts.robotoSlab(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              isOutdoorExpanded
+                  ? buildEventGrid(outdoorEvents)
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          flex: 8,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: outdoorEvents
+                                .take(3)
+                                .map(
+                                  (event) => InterCollegeSportsButton(
+                                    context: context,
+                                    sportsIcon: event['icon'] as Image,
+                                    sportsName: event['name'] as String,
+                                    navigator:
+                                        event['navigator'] as MaterialPageRoute,
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 2,
+                          child: IconButton(
+                              onPressed: () {
+                                if (!isOutdoorExpanded) {
+                                  GestureDetector(
+                                    onTap: () => toggleOutdoorExpansion(!isOutdoorExpanded),
+                                    child: Text(
+                                      "See More Events ...",
+                                      style: GoogleFonts.robotoSlab(
+                                        color: Colors.blue[700],
+                                        fontSize: 12,
+                                        textStyle: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: Colors.blue[700],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: Icon(Icons.arrow_forward)),
+                        )
+                      ],
+                    ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () => toggleOutdoorExpansion(true),
+                    child: isOutdoorExpanded
+                        ? Icon(
+                            Icons.keyboard_arrow_up,
+                            size: 24,
+                          )
+                        : Text(
+                            "See More Events ...",
+                            style: GoogleFonts.robotoSlab(
+                              color:  Color(0xFF222232),
+                              fontSize: 12,
+                              decorationColor: Colors.blue[700],
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget indoorSportsSection(
+      BuildContext context, List<Map<String, dynamic>> indoorEvents) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child: Text(
+            "Indoor Sports",
+            style: GoogleFonts.robotoSlab(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              isIndoorExpanded
+                  ? buildEventGrid(indoorEvents):
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 8,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: indoorEvents
+                          .take(3)
+                          .map(
+                            (event) => InterCollegeSportsButton(
+                              context: context,
+                              sportsIcon: event['icon'] as Image,
+                              sportsName: event['name'] as String,
+                              navigator:
+                                  event['navigator'] as MaterialPageRoute,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: IconButton(
+                        onPressed: () {
+                          if (!isIndoorExpanded) {
+                            GestureDetector(
+                              onTap: () => toggleIndoorExpansion(true),
+                              child: Text(
+                                "See More Events ...",
+                                style: GoogleFonts.robotoSlab(
+                                  color: Colors.blue[700],
+                                  fontSize: 12,
+                                  textStyle: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.blue[700],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(Icons.arrow_forward)),
+                  )
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () => toggleIndoorExpansion(true),
+                    child: isOutdoorExpanded
+                        ? Icon(
+                          color:  Color(0xFF222232),
+                            Icons.keyboard_arrow_up,
+                            size: 24,
+                          )
+                        : Text(
+                            "See More Events ...",
+                            style: GoogleFonts.robotoSlab(
+                              color: const Color.fromARGB(255, 87, 87, 87),
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.blue[700],
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   void didChangeDependencies() {
@@ -55,12 +400,28 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
   @override
   void initState() {
     super.initState();
+    _sheetController.addListener(_onSheetChange);
     _fetchImages();
+  }
+
+  void _onSheetChange() {
+    // Update expansion state based on sheet position
+    setState(() {
+      if (_sheetController.size >= 0.9) {
+        isOutdoorExpanded = true;
+        isIndoorExpanded = true;
+      } else {
+        isOutdoorExpanded = false;
+        isIndoorExpanded = false;
+      }
+    });
   }
 
   @override
   void dispose() {
+    _sheetController.removeListener(_onSheetChange);
     _gifController.dispose();
+    _sheetController.dispose();
     super.dispose();
   }
 
@@ -106,7 +467,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
               );
             },
             child: Container(
-                padding: EdgeInsets.only(right: 30),
+                padding: EdgeInsets.only(right: 10),
                 child: Gif(
                   controller: _gifController,
                   image: AssetImage('assets/gifs/leaderboard_intercollege.gif'),
@@ -130,19 +491,19 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
             )
           : null,
       body: Stack(
-        alignment: Alignment.center,
         children: [
           Container(
             height: MediaQuery.of(context).size.height * 0.6,
             color: Color.fromRGBO(120, 78, 209, 1),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                Container(
+                  margin: EdgeInsets.only(top: 10), 
+                  padding: const EdgeInsets.only(top: 5.0),
                   child: CarouselSlider(
                     options: CarouselOptions(
-                      height: 180,
-                      viewportFraction: 1.5,
+                      height: MediaQuery.of(context).size.height * 0.22,
+                      viewportFraction: 0.8,
                       initialPage: 0,
                       enableInfiniteScroll: true,
                       reverse: false,
@@ -162,15 +523,16 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                       return Builder(
                         builder: (BuildContext context) {
                           return Container(
-                            width: MediaQuery.of(context).size.width - 100,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 7, vertical: 5),
+                            width: MediaQuery.of(context).size.width > 600
+                                ? 350
+                                : MediaQuery.of(context).size.width - 100,
                             padding: EdgeInsets.all(1),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.0),
                               child: CachedNetworkImage(
                                 imageUrl: img,
                                 fit: BoxFit.fill,
@@ -182,7 +544,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 15),
                 Container(
                   padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
@@ -210,73 +572,55 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
               ],
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.25,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+          DraggableScrollableSheet(
+              key: sheetKey,
+              controller: _sheetController,
+              initialChildSize:
+                  MediaQuery.of(context).size.height > 700 ? 0.65 : 0.2,
+              minChildSize:
+                  MediaQuery.of(context).size.height > 700 ? 0.65 : 0.2,
+              maxChildSize: 0.99,
+              snap: true,
+              snapSizes: [0.65, 0.99],
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InterCollegeSportsButton(
-                          context: context,
-                          sportsIcon: Icon(Icons.sports_cricket),
-                          sportsName: "Cricket",
-                          navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeCricketHome(
-                                    currentAcademicYear: '2024-2025',
-                                  )),
+                        SizedBox(
+                          height: 10,
                         ),
-                        InterCollegeSportsButton(
-                          context: context,
-                          sportsIcon: Icon(Icons.sports_football),
-                          sportsName: "Football",
-                          navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeFootballHome(currentAcademicYear: '2024-2025',)),
+                        outdoorSportsSection(
+                            context, interCollegeOutdoorSportsEventsData),
+                        SizedBox(
+                          height: 10,
                         ),
-                        InterCollegeSportsButton(
-                          context: context,
-                          sportsIcon: Icon(Icons.sports_volleyball),
-                          sportsName: "Volleyball",
-                          navigator: MaterialPageRoute(
-                              builder: (context) =>
-                                  InterCollegeVolleyballHome()),
-                        ),
-                        InterCollegeSportsButton(
-                          context: context,
-                          sportsIcon: Icon(Icons.sports_kabaddi),
-                          sportsName: "Kabaddi",
-                          navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeKabaddiHome(currentAcademicYear: '2024-2025',)),
-                        ),
-                        InterCollegeSportsButton(
-                          context: context,
-                          sportsIcon: Icon(Icons.sports_esports),
-                          sportsName: "Tug of War",
-                          navigator: MaterialPageRoute(
-                              builder: (context) => InterCollegeTugOfWarHome(currentAcademicYear: '2024-2025',)),
-                        ),
+                        indoorSportsSection(
+                            context, interCollegeIndoorSportsEventsData),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                );
+              }),
         ],
       ),
     );

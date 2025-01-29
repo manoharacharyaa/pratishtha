@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/services/attendanceServices.dart';
@@ -35,6 +37,7 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
   TextEditingController volunteerSakecmailController = TextEditingController();
   TextEditingController departmentPersonUUidController =
       TextEditingController();
+  TextEditingController TodayDate = TextEditingController();
 
   List<Map<String, String>> volunteerList = [];
   Map<String, bool> attendanceStatus = {};
@@ -79,6 +82,7 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
         log(isTodayAttendanceMarked);
       });
     });
+    TodayDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now()).toString();
   }
 
   Future<List<User>> fetchUsers() async {
@@ -226,6 +230,8 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
         widget.teamId,
         volunteerIds,
         volunteerAttendanceStatus,
+        TodayDate.text,
+
       );
 
       // Check if the result explicitly matches "Success"
@@ -827,6 +833,77 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                   ),
                 ),
                 Padding(
+                    padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Column(
+               
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        " For ${TodayDate.text} :",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                        TextField(
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.blue.shade50,
+                          border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.blue.shade800,
+                            width: 2,
+                          ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.blue.shade800,
+                            width: 2,
+                          ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Colors.teal.shade700,
+                            width: 2,
+                          ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 15,
+                          ),
+                        ),
+                        readOnly: true,
+                        controller: TodayDate,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                          setState(() {
+                            TodayDate.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+                          });
+                          }
+                        },
+                        
+                    
+        
+                        
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
@@ -835,7 +912,7 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                (isTodayAttendanceMarked == 'No_Today_Entry')
+                                (isTodayAttendanceMarked == 'No_Today_Entry' && TodayDate.text != DateTime.now().toString()) 
                                     ? Colors.blue
                                     : Colors.grey,
                             shape: RoundedRectangleBorder(
@@ -843,14 +920,14 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                             ),
                           ),
                           onPressed: () {
-                            if (isTodayAttendanceMarked == 'No_Today_Entry') {
+                            if (isTodayAttendanceMarked == 'No_Today_Entry' && TodayDate.text != DateTime.now().toString()) {
                               submitAttendance();
                             } else {
                               null;
                             }
                           },
-                          child: Text(
-                            "Submit Attendance",
+                          child: AutoSizeText(
+                            "Submit ",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -878,7 +955,7 @@ class _AttendanceChildrenModule extends State<AttendanceChildrenModule> {
                               null;
                             }
                           },
-                          child: Text(
+                          child: AutoSizeText(
                             "Edit Attendance",
                             style: TextStyle(
                               fontSize: 16,

@@ -8,6 +8,8 @@ class InterCollegeCricketMatch {
   final String teamBattingSecondScore;
   final String teamBattingFirstTopBatter;
   final String teamBattingFirstLocation;
+  final String teamBattingFirstLogoUrl;
+  final String teamBattingSecondLogoUrl;
   final String teamBattingSecondLocation;
   final String teamBattingFirstTopBowlerPerformance;
   final String teamBattingSecondTopBatter;
@@ -27,6 +29,8 @@ class InterCollegeCricketMatch {
     required this.teamBattingSecondScore,
     required this.teamBattingFirstTopBatter,
     required this.teamBattingFirstLocation,
+    required this.teamBattingFirstLogoUrl,
+    required this.teamBattingSecondLogoUrl,
     required this.teamBattingSecondLocation,
     required this.teamBattingFirstTopBowlerPerformance,
     required this.teamBattingSecondTopBatter,
@@ -53,6 +57,8 @@ class InterCollegeCricketMatch {
       teamBattingFirstTopBowlerPerformance:
           data['teamBattingFirstTopBowlerPerformance'] ?? '',
       teamBattingSecondTopBatter: data['teamBattingSecondTopBatter'] ?? '',
+      teamBattingFirstLogoUrl: data['teamBattingFirstLogoUrl'] ?? '',
+      teamBattingSecondLogoUrl: data['teamBattingSecondLogoUrl'] ?? '',
       teamBattingSecondTopBowlerPerformance:
           data['teamBattingSecondTopBowlerPerformance'] ?? '',
       result: data['result'] ?? '',
