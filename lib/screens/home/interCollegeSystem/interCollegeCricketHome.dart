@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/cricketInterCollege.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
+import 'package:glassmorphism/glassmorphism.dart'; // Import the package
 
 class InterCollegeCricketHome extends StatefulWidget {
   final String currentAcademicYear;
@@ -37,290 +39,361 @@ class _InterCollegeCricketHomeState extends State<InterCollegeCricketHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          FutureBuilder<List<InterCollegeCricketMatch>>(
-            future: allCricketMatches,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: loadingWidget());
-              }
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.arrow_back),
+          ),
+          title: const Text('Cricket 2024-2025'),
+          backgroundColor: Colors.green.withOpacity(0.6),
+          elevation: 0,
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
+          ],
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+                child: Image.asset(
+              "assets/images/cricket_screen.png",
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            )),
+            Column(
+              children: [
+                FutureBuilder<List<InterCollegeCricketMatch>>(
+                  future: allCricketMatches,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: loadingWidget());
+                    }
 
-              if (snapshot.hasError) {
-                print("Error: ${snapshot.error}");
-                return Center(
-                    child: Text(
-                        'Error in loading cricket Matches, Try after some time'));
-              }
+                    if (snapshot.hasError) {
+                      print("Error: ${snapshot.error}");
+                      return Center(
+                          child: Text(
+                              'Error in loading cricket Matches, Try after some time'));
+                    }
 
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                print("No Cricket Matches Available");
-                return Center(child: Text('No Cricket Matches Available'));
-              }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      print("No Cricket Matches Available");
+                      return Center(
+                          child: Text('No Cricket Matches Available'));
+                    }
 
-              List<InterCollegeCricketMatch> matches = snapshot.data!;
+                    List<InterCollegeCricketMatch> matches = snapshot.data!;
 
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: matches.length,
-                  itemBuilder: (context, index) {
-                    InterCollegeCricketMatch match = matches[index];
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: matches.length,
+                        itemBuilder: (context, index) {
+                          InterCollegeCricketMatch match = matches[index];
 
-                    final parts = splitScore(match.teamBattingFirstScore);
-                    final parts2 = splitScore(match.teamBattingSecondScore);
+                          final parts = splitScore(match.teamBattingFirstScore);
+                          final parts2 =
+                              splitScore(match.teamBattingSecondScore);
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFA8F7E3),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        height: isExtended
-                            ? MediaQuery.of(context).size.height / 2.5
-                            : MediaQuery.of(context).size.height / 4,
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Match Info Row (Match Type, Date, Time, Stadium)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      match.matchType,
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      match.matchDayDate,
-                                      style: GoogleFonts.poppins(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.access_time,
-                                            size: 16, color: Colors.black),
-                                        SizedBox(width: 10),
-                                        Text(match.matchTime,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500)),
-                                      ],
-                                    ),
-                                    SizedBox(height: 4),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.stadium,
-                                            size: 16,
-                                            color:
-                                                Colors.black.withOpacity(0.8)),
-                                        SizedBox(width: 10),
-                                        Text(match.matchLocation,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500)),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 15),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      radius:
-                                          MediaQuery.of(context).size.width /
-                                              15,
-                                      child: Icon(Icons.sports_cricket),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(match.teamBattingFirst,
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          parts[0],
-                                          style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 15),
-                                        ),
-                                        if (parts[1].isNotEmpty)
-                                          Text(
-                                            parts[1],
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: Color(0xFF859185)),
-                                          ),
-                                      ],
-                                    ),
-                                    SizedBox(width: 10),
-                                    Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xFF02DB70),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: Text(
-                                          'VS',
-                                          style: GoogleFonts.poppins(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          parts2[0],
-                                          style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 15),
-                                        ),
-                                        if (parts2[1].isNotEmpty)
-                                          Text(
-                                            parts2[1],
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: Color(0xFF859185)),
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    CircleAvatar(
-                                      radius:
-                                          MediaQuery.of(context).size.width /
-                                              15,
-                                      child: Icon(Icons.sports_kabaddi),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(match.teamBattingSecond,
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Text(match.result,
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isExtended = !isExtended;
-                                    });
-                                  },
-                                  child: Icon(
-                                    isExtended
-                                        ? Icons.expand_less
-                                        : Icons.expand_more,
-                                    size: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (isExtended)
-                              Column(
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: GlassmorphicContainer(
+                              width: MediaQuery.of(context).size.width,
+                              height: isExtended
+                                  ? MediaQuery.of(context).size.height / 2.75
+                                  : MediaQuery.of(context).size.height / 3.75,
+                              borderRadius: 30,
+                              blur: 5,
+                              alignment: Alignment.center,
+                              border: 0,
+                              linearGradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withOpacity(0.1),
+                                  Colors.white.withOpacity(0.1),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderGradient:
+                                  LinearGradient(colors: [Colors.yellow]),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Top Performances",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17)),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  // Match Info Row (Match Type, Date, Time, Stadium)
+                                  Column(
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(match.teamBattingFirstTopBatter,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                          SizedBox(height: 4),
-                                          Text(
-                                              match
-                                                  .teamBattingFirstTopBowlerPerformance,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                match.matchType,
+                                                style: GoogleFonts.poppins(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                match.matchDayDate,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.access_time,
+                                                      size: 16,
+                                                      color: Colors.black),
+                                                  SizedBox(width: 10),
+                                                  Text(match.matchTime,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)),
+                                                ],
+                                              ),
+                                              SizedBox(height: 4),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.stadium,
+                                                      size: 16,
+                                                      color: Colors.black
+                                                          .withOpacity(0.8)),
+                                                  SizedBox(width: 10),
+                                                  Text(match.matchLocation,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                      SizedBox(height: 15),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Text(match.teamBattingSecondTopBatter,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                          SizedBox(height: 4),
-                                          Text(
-                                              match
-                                                  .teamBattingSecondTopBowlerPerformance,
-                                              style: GoogleFonts.poppins(
-                                                  fontWeight:
-                                                      FontWeight.normal)),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    15,
+                                                child:
+                                                    Icon(Icons.sports_cricket),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(match.teamBattingFirst,
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    parts[0],
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 15),
+                                                  ),
+                                                  if (parts[1].isNotEmpty)
+                                                    Text(
+                                                      parts[1],
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              color: Color(
+                                                                  0xFF859185)),
+                                                    ),
+                                                ],
+                                              ),
+                                              SizedBox(width: 10),
+                                              Container(
+                                                height: 30,
+                                                width: 30,
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xFF02DB70),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Center(
+                                                  child: Text(
+                                                    'VS',
+                                                    style: GoogleFonts.poppins(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    parts2[0],
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 15),
+                                                  ),
+                                                  if (parts2[1].isNotEmpty)
+                                                    Text(
+                                                      parts2[1],
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              color: Color(
+                                                                  0xFF859185)),
+                                                    ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    15,
+                                                child:
+                                                    Icon(Icons.sports_kabaddi),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(match.teamBattingSecond,
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ],
                                   ),
+
+                                  SizedBox(height: 10),
+                                  Center(
+                                    child: Text(match.result,
+                                        style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isExtended = !isExtended;
+                                          });
+                                        },
+                                        child: Icon(
+                                          isExtended
+                                              ? Icons.expand_less
+                                              : Icons.expand_more,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (isExtended)
+                                    Column(
+                                      children: [
+                                        Text("Top Performances",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17)),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    match
+                                                        .teamBattingFirstTopBatter,
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                    match
+                                                        .teamBattingFirstTopBowlerPerformance,
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                    match
+                                                        .teamBattingSecondTopBatter,
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                    match
+                                                        .teamBattingSecondTopBowlerPerformance,
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
-                          ],
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          ],
+        ));
   }
 }

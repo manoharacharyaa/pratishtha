@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class InterCollegeFootballHome extends StatefulWidget {
-  const InterCollegeFootballHome({super.key});
+  const InterCollegeFootballHome(
+      {super.key, required String currentAcademicYear});
 
   @override
   State<InterCollegeFootballHome> createState() =>
