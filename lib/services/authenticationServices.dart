@@ -51,7 +51,6 @@ class AuthenticationService {
       await _firebaseAuth.currentUser!.sendEmailVerification();
 
       // await FirebaseMessaging.instance.subscribeToTopic('All');
-      
 
       await _collectionReference.doc(uid).set({
         'uid': uid,

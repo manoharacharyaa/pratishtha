@@ -195,9 +195,9 @@ class FestList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 100,
-      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.16),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
         itemCount: fests.length,
         separatorBuilder: (context, index) => SizedBox(width: 20),
         itemBuilder: (context, index) {

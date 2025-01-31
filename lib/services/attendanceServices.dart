@@ -8,7 +8,7 @@ class AttendaceServices {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<String> addHeadorCohead(String currentAcademicYear, String deptName,
-      String deptHeadorCoheadName, String departmentPersonUUid) async {
+      String deptHeadorCoheadName, dynamic departmentPersonUUid) async {
     try {
       // Log parameters for debugging
       log("Parameters: currentAcademicYear=$currentAcademicYear, deptName=$deptName, "

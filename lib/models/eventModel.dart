@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 //import 'package:flutter/material.dart';
 Event eventFromMap(Map<String, dynamic> data, String id) =>
@@ -222,4 +223,42 @@ class Event {
         'is_event': isEvent,
         'created_by': createdBy,
       };
+}
+
+class MatchModel {
+  MatchModel({
+    this.matchId,
+    this.result,
+    this.resultsdeclare,
+    this.score01,
+    this.score02,
+    this.team01,
+    this.team01ID,
+    this.team02,
+    this.team02ID,
+  });
+
+  final String? matchId;
+  final String? result;
+  final bool? resultsdeclare;
+  final String? score01;
+  final String? score02;
+  final String? team01;
+  final String? team01ID;
+  final String? team02;
+  final String? team02ID;
+
+  factory MatchModel.fromJson(Map<String, dynamic> match) {
+    return MatchModel(
+      matchId: match['matchId'],
+      result: match['result'],
+      resultsdeclare: match['resultsdeclare'],
+      score01: match['score01'],
+      score02: match['score02'],
+      team01: match['team01'],
+      team01ID: match['team01ID'],
+      team02: match['team02'],
+      team02ID: match['team02ID'],
+    );
+  }
 }

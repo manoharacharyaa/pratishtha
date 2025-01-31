@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/utils/fonts.dart';
 
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];
@@ -32,14 +33,11 @@ BoxShadow containerShadow = BoxShadow(
 );
 
 ThemeData mainTheme = ThemeData(
-  
-    primarySwatch: createMaterialColor(primaryColor),
-    primaryColor: primaryColor,
-
+  primarySwatch: createMaterialColor(primaryColor),
+  primaryColor: primaryColor,
   cardColor: cardBackgroundColor,
   canvasColor: whiteColor,
   scaffoldBackgroundColor: whiteColor,
-
   fontFamily: 'Roboto',
   // textTheme: const TextTheme(
   // //
@@ -84,8 +82,12 @@ ThemeData mainTheme = ThemeData(
   // //
   //  ),
 
-  iconTheme: IconThemeData(
-    color: iconColor
-  ),
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(primaryColor)).copyWith(secondary: secondaryColor)
+  iconTheme: IconThemeData(color: iconColor),
+  colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: createMaterialColor(primaryColor),
+  ).copyWith(secondary: secondaryColor),
+
+  // appBarTheme: AppBarTheme(
+  //   titleTextStyle: AppFonts.poppins(),
+  // ),
 );

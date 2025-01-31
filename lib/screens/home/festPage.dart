@@ -87,6 +87,7 @@ class _FestPageState extends State<FestPage> {
                                       Align(
                                         alignment: Alignment.bottomRight,
                                         child: FloatingActionButton(
+                                          heroTag: 'button1',
                                           child: Text('Add Teams',
                                               textAlign: TextAlign.center),
                                           onPressed: () {
@@ -110,6 +111,7 @@ class _FestPageState extends State<FestPage> {
                             Align(
                               alignment: Alignment.bottomRight,
                               child: FloatingActionButton(
+                                heroTag: 'button2',
                                 child: Icon(Icons.app_registration),
                                 onPressed: () {
                                   Navigator.push(
