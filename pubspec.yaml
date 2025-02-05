@@ -80,6 +80,8 @@ dependencies:
   flutter_riverpod: ^2.6.1
   dotted_border: ^2.1.0
   toastification: ^2.3.0
+  lottie: ^3.2.0
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -104,6 +106,8 @@ flutter:
   assets:
     - assets/images/
     - assets/gifs/
+    - assets/lottie/
+    - assets/lottie/tick.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

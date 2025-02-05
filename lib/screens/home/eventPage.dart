@@ -18,6 +18,7 @@ import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
 import 'package:pratishtha/models/userModel.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart' as sh;
 import 'package:pratishtha/widgets/connectivityChecker.dart';
@@ -1613,6 +1614,8 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     MaterialPageRoute(
                                       builder: (context) => MatchesDetailsPage(
                                         match: match,
+                                        team1Name: matchesList[index]['team01'],
+                                        team2Name: matchesList[index]['team02'],
                                         eventId: widget.event.id!,
                                       ),
                                     ),
@@ -1635,13 +1638,29 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
-                                        child: Image.asset(
-                                          'assets/images/codesandbx_transparent.png',
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/codesandbx_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team01']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                       Text(
                                         '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
@@ -1649,13 +1668,29 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                           fontSize: 33,
                                         ),
                                       ),
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
-                                        child: Image.asset(
-                                          'assets/images/globe_transparent.png',
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/globe_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team02']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

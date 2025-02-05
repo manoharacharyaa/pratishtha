@@ -59,7 +59,7 @@ class _AprovalPageState extends State<AprovalPage> {
       // final registeredUserIds =
       //     registeredUsersArray.map((user) => user['uid'] as String).toList();
 
-      final registeredUserIds = eventSnapshot['registered_users'] as List;
+      final registeredUserIds = eventSnapshot['approved_users'] as List;
 
       if (registeredUserIds.isEmpty) return;
 
@@ -419,7 +419,7 @@ class _AprovalPageState extends State<AprovalPage> {
             return primaryColor;
           }),
           fixedSize: WidgetStateProperty.all(
-            Size(MediaQuery.sizeOf(context).width * 0.45, 55),
+            Size(MediaQuery.sizeOf(context).width * 0.42, 55),
           ),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
