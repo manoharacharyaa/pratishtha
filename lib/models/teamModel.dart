@@ -11,7 +11,9 @@ class Team {
     this.photo = "",
     this.description = "",
     this.startYear,
-    this.endYear
+    this.endYear,
+    this.year,
+    this.post,
   });
 
   String? id;
@@ -22,6 +24,8 @@ class Team {
   String description;
   DateTime? startYear;
   DateTime? endYear;
+  String? year;
+  String? post;
 
   factory Team.fromMap(Map<String, dynamic> map) => Team(
       id: map['id'],
@@ -31,7 +35,9 @@ class Team {
       photo: map['photo'] ?? "",
       description: map['description'] ?? "",
       startYear: map['start_year'] != null ? DateTime.parse(map['start_year'].toDate().toString()) : DateTime.now(),
-      endYear: map['end_year'] != null ? DateTime.parse(map['end_year'].toDate().toString()) : DateTime.now()
+      endYear: map['end_year'] != null ? DateTime.parse(map['end_year'].toDate().toString()) : DateTime.now(),
+      year: map['year'] ?? "",
+      post:   map['post'] ?? "",
   );
 
 }

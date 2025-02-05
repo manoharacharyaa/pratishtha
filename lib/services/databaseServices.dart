@@ -40,7 +40,7 @@ class DatabaseServices {
       FirebaseFirestore.instance.collection('event_types');
 
   final CollectionReference councilCollection =
-      FirebaseFirestore.instance.collection('council');
+      FirebaseFirestore.instance.collection('council2425');
 
   final CollectionReference teamCollection =
       FirebaseFirestore.instance.collection('team');

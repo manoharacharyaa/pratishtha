@@ -347,6 +347,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                               text: "Leaderboard",
                                             ),
                                           ]),
+                                          //Aurum work todo
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height / 1.6,
@@ -367,7 +368,11 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                                 : leaderboardView(),
                                             matchesboardView()
                                           ]
-                                        : [
+                                        : widget.event.parentId == Aurum2024ID ? [
+                                          detailsView(),
+                                          participantsView(),
+                                          leaderboardView(),
+                                        ]:[
                                             detailsView(),
                                             coordinatorsView(),
                                             widget.event.parentId ==
@@ -670,6 +675,85 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                 });
                           })()),
                         ),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+    participantsView() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            this.widget.event.eventHeads!.isEmpty
+                ? Center(
+                    child: noContentWidget(
+                        message: "No participants registered yet"),
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Participants',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Container(
+                            child: FutureBuilder(
+                                future: databaseServices.getSpecificUsers(
+                                    this.widget.event.eventHeads!),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<User>> snapshot) {
+                                  if (snapshot.hasData) {
+                                    List<UserCard> eventHeadsList =
+                                        getListOfUserCards(snapshot.data!);
+                                    List<Widget> displayEventHeads = [];
+                                    eventHeadsList.forEach((eventHead) {
+                                      displayEventHeads.add(Container(
+                                        margin: EdgeInsets.only(left: 5),
+                                        child: Row(
+                                          children: [
+                                            Expanded(child: eventHead),
+                                            SizedBox(width: 5),
+                                            IconButton(
+                                                onPressed: () {
+                                                
+                                                },
+                                                icon: Icon(
+                                                  FontAwesomeIcons.phone,
+                                                  size: 40,
+                                                  color: dullGreyColor,
+                                                )),
+                                            SizedBox(width: 10),
+                                          ],
+                                        ),
+                                      ));
+                                    });
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        children: displayEventHeads,
+                                      ),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(child: CustomErrorWidget());
+                                  } else {
+                                    return Center(child: loadingWidget());
+                                  }
+                                })),
+                      ),
+                      SizedBox(
+                        height: 30.0,
                       ),
                     ],
                   ),

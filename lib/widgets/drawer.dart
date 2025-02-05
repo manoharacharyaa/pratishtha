@@ -4,6 +4,7 @@ import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
+import 'package:pratishtha/screens/addCouncil.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
@@ -317,6 +318,17 @@ class _MyDrawerState extends State<MyDrawer> {
                       //       MaterialPageRoute(
                       //         builder: (BuildContext context) =>
                       //             GalleryScreen(),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      //      ListTile(
+                      //   title: Text('Add council  backend'),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (BuildContext context) => AddCouncil(),
                       //       ),
                       //     );
                       //   },

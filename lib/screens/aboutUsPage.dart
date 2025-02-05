@@ -83,13 +83,13 @@ class _AboutUsState extends State<AboutUs> {
                       //council
                       council(
                           councilDetails: (snapshot.data as List)[1],
-                          year: '2021-2022'),
-                      council2(
-                          councilDetails: (snapshot.data as List)[1],
-                          year: '2022-2023'),
-                      council3(
-                          councilDetails: (snapshot.data as List)[1],
-                          year: '2023-2024'),
+                          year: '2024-2025'),
+                      // council2(
+                      //     councilDetails: (snapshot.data as List)[1],
+                      //     year: '2022-2023'),
+                      // council3(
+                      //     councilDetails: (snapshot.data as List)[1],
+                      //     year: '2023-2024'),
                     ]);
               } else if (snapshot.hasError) {
                 debugPrint("council snapshot error: ${snapshot.error}");
@@ -140,7 +140,8 @@ class _AboutUsState extends State<AboutUs> {
     facultyMembers.clear();
     facultyMembers.addAll(teamDetails!);
     facultyMembers.removeWhere((teamMember) =>
-        ["App Developer", "Website Developer"].contains(teamMember.position));
+      ["App Developer", "Website Developer", "Web & App dev Secretary", "Web & App dev Coordinator"].contains(teamMember.position) ||
+      teamMember.year == '2024-2025');
     return Scaffold(
       backgroundColor: secondaryColor,
       body: SingleChildScrollView(
@@ -181,8 +182,9 @@ class _AboutUsState extends State<AboutUs> {
   Widget appTeam({List<Team>? teamDetails}) {
     appTeamMembers.clear();
     appTeamMembers.addAll(teamDetails!);
-    appTeamMembers
-        .removeWhere((teamMember) => teamMember.position != "App Developer");
+    appTeamMembers = teamDetails!
+      .where((teamMember) => teamMember.year == '2024-2025' && teamMember.post != null)
+      .toList();
     return Scaffold(
       backgroundColor: primaryColor,
       body: SingleChildScrollView(
@@ -264,7 +266,7 @@ class _AboutUsState extends State<AboutUs> {
 
   Widget council({List<Council>? councilDetails, required String year}) {
     List<Council> filteredCouncils = councilDetails!
-        .where((council) => council.year == "2021-2022")
+      
         .toList();
 
     return Scaffold(
