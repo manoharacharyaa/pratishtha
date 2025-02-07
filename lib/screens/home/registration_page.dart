@@ -33,42 +33,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
   ImagePicker picker = ImagePicker();
   TextEditingController transactionIdController = TextEditingController();
 
+//Checks whether user registration exists in the registration collection within registrartion Map
+  bool userExists = false;
+
   void setIsLoading(bool isLoading) {
     setState(() {
       _isLoading = isLoading;
-    });
-  }
-
-  Future isUserApproved() async {
-    if (currentUser == null) return;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
-        .collection('events')
-        .doc(widget.event.id)
-        .get();
-
-    if (!docSnapshot.exists) return;
-
-    final data = docSnapshot.data();
-    if (data == null) return;
-
-    if (data is Map && data.containsKey('approved_users')) {
-      final approvedUids = data['approved_users'];
-
-      if (approvedUids is List && approvedUids.contains(currentUser!.uid)) {
-        setState(() {
-          _isApproved = true;
-          prefs.remove('${currentUser!.uid}_${widget.event.id}');
-        });
-      }
-    }
-  }
-
-  Future<void> assignUser() async {
-    currentUser = await getCurrentUser();
-    setState(() {
-      getRegistrationStatus();
     });
   }
 
@@ -117,22 +87,46 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }, SetOptions(merge: true));
   }
 
-  Future<void> getRegistrationStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isRegistered =
-          prefs.getBool('${currentUser!.uid}_${widget.event.id}') ?? false;
-    });
+  Future<void> checkUserStatus() async {
+    currentUser = await getCurrentUser();
+    if (currentUser == null) return;
+
+    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+        .collection('events')
+        .doc(widget.event.id)
+        .get();
+
+    if (docSnapshot.exists && docSnapshot.data() is Map) {
+      final data = docSnapshot.data() as Map<String, dynamic>;
+      if (data.containsKey('approved_users') &&
+          data['approved_users'] is List &&
+          data['approved_users'].contains(currentUser!.uid)) {
+        setState(() {
+          _isApproved = true;
+        });
+      }
+    }
+
+    DocumentSnapshot eventSnapshot = await FirebaseFirestore.instance
+        .collection('registrations')
+        .doc(widget.event.id)
+        .get();
+
+    if (eventSnapshot.exists && eventSnapshot.data() is Map) {
+      final eventData = eventSnapshot.data() as Map<String, dynamic>;
+      if (eventData.containsKey('registrations') &&
+          eventData['registrations'] is List) {
+        setState(() {
+          _isRegistered = eventData['registrations']
+              .any((user) => user['uid'] == currentUser!.uid);
+        });
+      }
+    }
   }
 
   @override
   void initState() {
-    assignUser().then((_) {
-      if (currentUser != null) {
-        isUserApproved();
-      }
-    });
-    getRegistrationStatus();
+    checkUserStatus();
     super.initState();
   }
 
@@ -201,18 +195,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       _paymentSS != null
                           ? uploadPaymentSS().then((value) async {
                               setIsLoading(false);
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String registrationKey =
-                                  '${currentUser!.uid}_${widget.event.id}';
-                              prefs.setBool(
-                                registrationKey,
-                                true,
-                              );
                               Fluttertoast.showToast(
                                 msg: 'Uploaded Sucessfully',
                               );
-                              await Duration(seconds: 3);
+                              await Duration(seconds: 2);
                               Navigator.of(dialogContext).pop();
                               Navigator.of(context).pop();
                             })

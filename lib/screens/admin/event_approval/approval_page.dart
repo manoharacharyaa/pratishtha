@@ -232,6 +232,50 @@ class _ApprovalPageState extends State<ApprovalPage> {
   //   }
   // }
 
+  Future<void> rejectRegistration(String uid, String imageUrl) async {
+    print(uid);
+    _setLoading(true);
+
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('registrations')
+          .doc(widget.event.eventId)
+          .get();
+
+      if (!docSnapshot.exists) {
+        print('Document does not exist.');
+        return;
+      }
+
+      final data = docSnapshot.data() as Map<String, dynamic>?;
+
+      if (data == null || !data.containsKey('registrations')) {
+        print('No registrations found.');
+        return;
+      }
+
+      List<dynamic> registrations = List.from(data['registrations']);
+
+      registrations.removeWhere((reg) => reg['uid'] == uid);
+
+      Reference storageRef = FirebaseStorage.instance.refFromURL(imageUrl);
+      await storageRef.delete();
+
+      await FirebaseFirestore.instance
+          .collection('registrations')
+          .doc(widget.event.eventId)
+          .update({'registrations': registrations});
+
+      print('Registration removed successfully.');
+
+      setState(() {});
+    } catch (e) {
+      print('Error deleting registrations: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   @override
   void initState() {
     checkApprovedUsers();
@@ -252,213 +296,251 @@ class _ApprovalPageState extends State<ApprovalPage> {
           style: AppFonts.poppins(),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Column(
-          children: [
-            CustomSearchBar(searchController: searchController),
-            const SizedBox(height: 10),
-            _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: filteredRegistrations.length,
-                    itemBuilder: (context, index) {
-                      final registration = filteredRegistrations[index];
-                      return Container(
-                        height: size.height * 0.18,
-                        width: double.infinity,
-                        margin: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: secondaryColor,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                _showSSDialog(context, registration.screenshot);
-                              },
-                              child: Container(
-                                height: size.height * 0.3,
-                                width: 80,
-                                margin: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: primaryColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: registration.screenshot.isEmpty
-                                    ? Center(
-                                        child: Text(
-                                          'No SS Found',
-                                          style: AppFonts.poppins(size: 10),
-                                        ),
-                                      )
-                                    : Image.network(registration.screenshot),
+      body: eventRegistrations.isEmpty
+          ? Scaffold(
+              body: Center(
+                child: Text(
+                  'No Registration',
+                  style: AppFonts.poppins(),
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                children: [
+                  CustomSearchBar(searchController: searchController),
+                  const SizedBox(height: 10),
+                  _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredRegistrations.length,
+                          itemBuilder: (context, index) {
+                            final registration = filteredRegistrations[index];
+                            return Container(
+                              height: size.height * 0.18,
+                              width: double.infinity,
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: secondaryColor,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: size.width * 0.65,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                              'Name: ${registration.userName}',
-                                              maxLines: 1,
-                                              style: AppFonts.poppins(),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: size.width * 0.65,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                              'Branch: ${registration.branch}',
-                                              maxLines: 1,
-                                              style: AppFonts.poppins(),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: size.width * 0.65,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                              'Phone: ${registration.phone}',
-                                              maxLines: 1,
-                                              style: AppFonts.poppins(),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      _showSSDialog(
+                                          context, registration.screenshot);
+                                    },
+                                    child: Container(
+                                      height: size.height * 0.3,
+                                      width: 80,
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: registration.screenshot.isEmpty
+                                          ? Center(
+                                              child: Text(
+                                                'No SS Found',
+                                                style:
+                                                    AppFonts.poppins(size: 10),
+                                              ),
+                                            )
+                                          : Image.network(
+                                              registration.screenshot),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: approvedUids
-                                          .contains(registration.uid)
-                                      ? [
-                                          Container(
-                                            // margin: EdgeInsets.only(
-                                            //   left: size.width * 0.38,
-                                            // ),
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 8, horizontal: 16),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xff32cf15),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              'Approved',
-                                              style: AppFonts.poppins(
-                                                  color: Colors.white,
-                                                  size: 16),
-                                            ),
-                                          ),
-                                        ]
-                                      : [
-                                          SizedBox(
-                                            width: size.width * 0.30,
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                  Color(0xff32cf15),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: size.width * 0.65,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                    'Name: ${registration.userName}',
+                                                    maxLines: 1,
+                                                    style: AppFonts.poppins(),
+                                                  ),
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                _approvalRejectionDailog(
-                                                  context,
-                                                  title: 'Confirm\nApproval',
-                                                  lottie:
-                                                      'assets/lottie/tick.json',
-                                                  onConfirm: () {
-                                                    uploadConfirmation(
-                                                      registration.uid,
-                                                      registration.screenshot,
-                                                    ).then((_) {
-                                                      checkApprovedUsers();
-
-                                                      Navigator.pop(context);
-                                                      print(
-                                                          '✅ Approval success');
-                                                    }).catchError((error) {
-                                                      print('❌ Error: $error');
-                                                    });
-                                                  },
-                                                );
-                                              },
-                                              child: Text(
-                                                'Approve',
-                                                style: AppFonts.poppins(
-                                                  color: Colors.white,
-                                                  size: 15,
+                                              SizedBox(
+                                                width: size.width * 0.65,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                    'Branch: ${registration.branch}',
+                                                    maxLines: 1,
+                                                    style: AppFonts.poppins(),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 0.03,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 0.30,
-                                            child: ElevatedButton(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                  Color(0xffee0000),
+                                              SizedBox(
+                                                width: size.width * 0.65,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                    'Phone: ${registration.phone}',
+                                                    maxLines: 1,
+                                                    style: AppFonts.poppins(),
+                                                  ),
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                _approvalRejectionDailog(
-                                                  context,
-                                                  title: 'Confirm\nRejection',
-                                                  lottie:
-                                                      'assets/lottie/cross.json',
-                                                );
-                                              },
-                                              child: Text(
-                                                'Reject',
-                                                style: AppFonts.poppins(
-                                                  color: Colors.white,
-                                                  size: 15,
-                                                ),
-                                              ),
-                                            ),
+                                            ],
                                           ),
-                                          // SizedBox(
-                                          //   width: size.width * 0.02,
-                                          // ),
                                         ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: approvedUids
+                                                .contains(registration.uid)
+                                            ? [
+                                                Container(
+                                                  // margin: EdgeInsets.only(
+                                                  //   left: size.width * 0.38,
+                                                  // ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 16),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xff32cf15),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: Text(
+                                                    'Approved',
+                                                    style: AppFonts.poppins(
+                                                        color: Colors.white,
+                                                        size: 16),
+                                                  ),
+                                                ),
+                                              ]
+                                            : [
+                                                SizedBox(
+                                                  width: size.width * 0.30,
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          WidgetStatePropertyAll(
+                                                        Color(0xff32cf15),
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      _approvalRejectionDailog(
+                                                        context,
+                                                        title:
+                                                            'Confirm\nApproval',
+                                                        lottie:
+                                                            'assets/lottie/tick.json',
+                                                        onConfirm: () {
+                                                          uploadConfirmation(
+                                                            registration.uid,
+                                                            registration
+                                                                .screenshot,
+                                                          ).then((_) {
+                                                            checkApprovedUsers();
+
+                                                            Navigator.pop(
+                                                                context);
+                                                            print(
+                                                                '✅ Approval success');
+                                                          }).catchError(
+                                                              (error) {
+                                                            print(
+                                                                '❌ Error: $error');
+                                                          });
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      'Approve',
+                                                      style: AppFonts.poppins(
+                                                        color: Colors.white,
+                                                        size: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: size.width * 0.03,
+                                                ),
+                                                SizedBox(
+                                                  width: size.width * 0.30,
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          WidgetStatePropertyAll(
+                                                        Color(0xffee0000),
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      _approvalRejectionDailog(
+                                                        context,
+                                                        title:
+                                                            'Confirm\nRejection',
+                                                        lottie:
+                                                            'assets/lottie/cross.json',
+                                                        onConfirm: () async {
+                                                          await rejectRegistration(
+                                                            registration.uid,
+                                                            registration
+                                                                .screenshot,
+                                                          ).then((_) {
+                                                            Fluttertoast
+                                                                .showToast(
+                                                              msg:
+                                                                  'Rejected Sucesssfully',
+                                                            );
+                                                            Navigator.pop(
+                                                                context);
+                                                          });
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      'Reject',
+                                                      style: AppFonts.poppins(
+                                                        color: Colors.white,
+                                                        size: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-          ],
-        ),
-      ),
+                ],
+              ),
+            ),
     );
   }
 }

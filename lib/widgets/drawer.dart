@@ -68,9 +68,10 @@ class _MyDrawerState extends State<MyDrawer> {
     'yashkumar.jain16659@sakec.ac.in',
     'diya.17365@sakec.ac.in',
     'manoharacharya63@gmail.com',
-    'manohar.acharya16602@sakec.ac.in'
-        'pradneshssr.45@gmail.com'
-        'pradnesh.revadekar17644@sakec.ac.in',
+    'manohar.acharya16602@sakec.ac.in',
+    'harsh.jain16401@sakec.ac.in',
+    'pradneshssr.45@gmail.com',
+    'pradnesh.revadekar17644@sakec.ac.in',
   ];
 
   @override
