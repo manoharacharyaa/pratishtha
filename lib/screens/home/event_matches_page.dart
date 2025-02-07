@@ -84,7 +84,7 @@ class _EventMatchesPageState extends State<EventMatchesPage> {
                               builder: (context) => AprovalPage(
                                 index: index,
                                 event: widget.event,
-                                matchId: match.matchId!,
+                                matchId: match.matchId ?? '',
                               ),
                             ),
                           );

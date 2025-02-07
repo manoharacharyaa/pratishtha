@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/models/userModel.dart';
@@ -26,17 +27,59 @@ class AprovalPage extends StatefulWidget {
 class _AprovalPageState extends State<AprovalPage> {
   List<User> registeredUsers = [];
   bool isLoading = true;
+  bool resultsDeclared = false;
   List<String> selectedUids = [];
   List<String> team1 = [];
   List<String> team2 = [];
   List<String> team1UserNames = [];
   List<String> team2UserNames = [];
+  String whoIsWinner = '';
 
   @override
   void initState() {
     super.initState();
+    if (widget.matchId.isEmpty) {
+      _fetchWinner();
+      setState(() {
+        resultsDeclared = true;
+      });
+
+      return;
+    }
     _fetchRegisteredUsers();
     _setupTeamStreams();
+  }
+
+  Future<void> _fetchWinner() async {
+    final DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+        .collection('events')
+        .doc(widget.event.id)
+        .get();
+
+    if (!docSnapshot.exists) return;
+
+    final event = docSnapshot.data() as Map<String, dynamic>?;
+
+    if (event == null || !event.containsKey('matches')) return;
+
+    final List<dynamic> matchs = event['matches'];
+
+    if (widget.index < 0 || widget.index >= matchs.length) return;
+
+    final match = matchs[widget.index] as Map<String, dynamic>?;
+
+    if (match == null ||
+        !match.containsKey('score01') ||
+        !match.containsKey('score02')) return;
+
+    final int score01 = int.tryParse(match['score01'].toString()) ?? 0;
+    final int score02 = int.tryParse(match['score02'].toString()) ?? 0;
+
+    setState(() {
+      whoIsWinner = score01 > score02 ? match['team01'] : match['team02'];
+    });
+
+    debugPrint("Winner: $whoIsWinner");
   }
 
   Future<void> _fetchRegisteredUsers() async {
@@ -54,10 +97,6 @@ class _AprovalPageState extends State<AprovalPage> {
         );
         return;
       }
-
-      // final registeredUsersArray = eventSnapshot['registered_users'] as List;
-      // final registeredUserIds =
-      //     registeredUsersArray.map((user) => user['uid'] as String).toList();
 
       final registeredUserIds = eventSnapshot['approved_users'] as List;
 
@@ -329,7 +368,7 @@ class _AprovalPageState extends State<AprovalPage> {
                         ),
                         const SizedBox(width: 20),
                         Text(
-                          '${user.firstName!} ${user.lastName!}',
+                          '${user.firstName ?? ''} ${user.lastName ?? ''}',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -388,15 +427,13 @@ class _AprovalPageState extends State<AprovalPage> {
       padding: const EdgeInsets.all(10),
       child: TextButton(
         onPressed: selectedUids.isEmpty
-            ? null // Disable button if no users selected
+            ? null
             : () async {
                 final currentTeam = teamField == 'team1' ? team1 : team2;
                 final updatedTeam = [...currentTeam, ...selectedUids];
 
-                // First update Firestore
                 await _updateTeamInFirestore(teamField, updatedTeam);
 
-                // Then clear selection
                 if (mounted) {
                   setState(() {
                     selectedUids.clear();
@@ -433,57 +470,118 @@ class _AprovalPageState extends State<AprovalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 0,
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Approvals',
-            style: AppFonts.poppins(color: Colors.black),
-          ),
-          bottom: const TabBar(
-            indicatorColor: Colors.transparent,
-            tabs: [
-              Tab(icon: Icon(Icons.people)),
-              Tab(icon: Icon(Icons.group_add)),
-            ],
-          ),
-        ),
-        body: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : registeredUsers.isEmpty
-                ? const Center(child: Text('No users found'))
-                : TabBarView(
+    return resultsDeclared
+        ? Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Winner',
+                style: AppFonts.poppins(),
+              ),
+            ),
+            body: Center(
+              child: Column(
+                children: [
+                  Stack(
                     children: [
-                      _buildRegisteredMembersView(),
-                      Stack(
-                        children: [
-                          const Center(
-                            child: VerticalDivider(
-                              indent: 20,
-                              endIndent: 20,
-                              width: 10,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                _buildTeamColumn(
-                                    'Team 1', team1UserNames, team1, 'team1'),
-                                const Spacer(),
-                                _buildTeamColumn(
-                                    'Team 2', team2UserNames, team2, 'team2'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      Lottie.asset('assets/lottie/trophy.json'),
+                      Lottie.asset('assets/lottie/popper.json'),
                     ],
                   ),
-      ),
+                  StrokeText(
+                    text: 'Winners\n$whoIsWinner',
+                    fontSize: 50,
+                  ),
+                ],
+              ),
+            ),
+          )
+        : DefaultTabController(
+            initialIndex: 0,
+            length: 2,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'Approvals',
+                  style: AppFonts.poppins(color: Colors.black),
+                ),
+                bottom: const TabBar(
+                  indicatorColor: Colors.transparent,
+                  tabs: [
+                    Tab(icon: Icon(Icons.people)),
+                    Tab(icon: Icon(Icons.group_add)),
+                  ],
+                ),
+              ),
+              body: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : registeredUsers.isEmpty
+                      ? const Center(child: Text('No users found'))
+                      : TabBarView(
+                          children: [
+                            _buildRegisteredMembersView(),
+                            Stack(
+                              children: [
+                                const Center(
+                                  child: VerticalDivider(
+                                    indent: 20,
+                                    endIndent: 20,
+                                    width: 10,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      _buildTeamColumn('Team 1', team1UserNames,
+                                          team1, 'team1'),
+                                      const Spacer(),
+                                      _buildTeamColumn('Team 2', team2UserNames,
+                                          team2, 'team2'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+            ),
+          );
+  }
+}
+
+class StrokeText extends StatelessWidget {
+  const StrokeText({
+    super.key,
+    required this.text,
+    required this.fontSize,
+  });
+
+  final String text;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Text(
+          text,
+          style: GoogleFonts.bonaNova(
+            fontSize: fontSize,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 3
+              ..color = primaryColor,
+          ),
+        ),
+        Text(
+          text,
+          style: GoogleFonts.bonaNova(
+            fontSize: fontSize,
+            color: Color(0xffffd25d),
+          ),
+        ),
+      ],
     );
   }
 }

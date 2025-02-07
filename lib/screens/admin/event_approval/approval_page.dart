@@ -289,7 +289,14 @@ class _ApprovalPageState extends State<ApprovalPage> {
                                   color: primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Image.network(registration.screenshot),
+                                child: registration.screenshot.isEmpty
+                                    ? Center(
+                                        child: Text(
+                                          'No SS Found',
+                                          style: AppFonts.poppins(size: 10),
+                                        ),
+                                      )
+                                    : Image.network(registration.screenshot),
                               ),
                             ),
                             Column(
