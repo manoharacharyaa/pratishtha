@@ -14,7 +14,6 @@ import 'package:pratishtha/screens/home/pointsPage.dart';
 import 'package:pratishtha/screens/home/walletPage.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart';
-import 'package:pratishtha/utils/corners.dart';
 import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/avatarPicker.dart';
 import 'package:pratishtha/widgets/balanceCard.dart';
@@ -100,14 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
         isLoading = true;
       });
 
-      // final eventsSnapshot = await FirebaseFirestore.instance
-      //     .collection('events')
-      //     .where('registered_users',
-      //         arrayContains: {'uid': currentUser!.uid}).get();
-
       final eventsSnapshot = await FirebaseFirestore.instance
           .collection('events')
-          .where('registered_users', arrayContains: currentUser!.uid)
+          .where('approved_users', arrayContains: currentUser!.uid)
           .get();
 
       if (mounted) {
@@ -121,7 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       if (mounted) {
-        // Add mounted check
         setState(() {
           isLoading = false;
         });

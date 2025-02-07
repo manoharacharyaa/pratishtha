@@ -2,6 +2,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pratishtha/services/databaseServices.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/avatars.dart';
@@ -10,14 +12,15 @@ import 'package:pratishtha/constants/keys.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/screens/admin/editEvent.dart';
 import 'package:pratishtha/screens/home/addMatchFormPage.dart';
+import 'package:pratishtha/screens/home/addPointsAurum.dart';
 import 'package:pratishtha/screens/home/addTeams.dart';
 import 'package:pratishtha/screens/home/eventPointsCard.dart';
 import 'package:pratishtha/screens/home/matches_details_page.dart';
 import 'package:pratishtha/screens/home/registration_page.dart';
-import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
 import 'package:pratishtha/models/userModel.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart' as sh;
 import 'package:pratishtha/widgets/connectivityChecker.dart';
@@ -99,6 +102,13 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
 
   bool enableMatchManage() {
     if ([5, 3, 7].contains(currentUser.role)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  bool enableAddPoints() {
+    if ([5,3].contains(currentUser.role)) {
       return true;
     } else {
       return false;
@@ -186,8 +196,10 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                               icon: Icon(FontAwesomeIcons.penToSquare),
                             )
                           : Container(),
-                      enableMatchManage()
-                          ? ElevatedButton.icon(
+
+                    if (widget.event.parentId == Olympus2024ID && enableMatchManage())
+
+                          ElevatedButton.icon(
                               style: ButtonStyle(
                                   backgroundColor:
                                       WidgetStateProperty.all<Color>(
@@ -206,10 +218,11 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                               },
                               label: Text("Matches"),
                               icon: Icon(FontAwesomeIcons.plus),
-                            )
-                          : Container(),
-                      enableMatchManage()
-                          ? ElevatedButton.icon(
+                            ),
+                          
+                      if (widget.event.parentId == Olympus2024ID && enableMatchManage())
+
+                          ElevatedButton.icon(
                               style: ButtonStyle(
                                   backgroundColor:
                                       WidgetStateProperty.all<Color>(
@@ -227,7 +240,8 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                               label: Text("Teams"),
                               icon: Icon(FontAwesomeIcons.plus),
                             )
-                          : Container(),
+                          ,
+                        
                       ElevatedButton(
                         onPressed: () async {
                           //URL Redirecting to browser
@@ -336,7 +350,17 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                               text: "Matches",
                                             )
                                           ]
-                                        : <Widget>[
+                                        : widget.event.parentId == Aurum2024ID?[
+                                          Tab(
+                                            text: "Details",
+                                          ),
+                                          Tab(
+                                            text: "Participants",
+                                          ),
+                                          Tab(
+                                            text: "Leaderboard",
+                                          ),
+                                        ] :<Widget>[
                                             Tab(
                                               text: "Details",
                                             ),
@@ -371,7 +395,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                         : widget.event.parentId == Aurum2024ID ? [
                                           detailsView(),
                                           participantsView(),
-                                          leaderboardView(),
+                                          aurumLeaderboardView(),
                                         ]:[
                                             detailsView(),
                                             coordinatorsView(),
@@ -603,6 +627,157 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
     );
   }
 
+Future<List<Map<String, dynamic>>> fetchApprovedUsers(eventId) async {
+    List<Map<String, dynamic>> approvedUsers = [];
+
+    DocumentSnapshot eventDoc =
+        await databaseServices.eventCollection.doc(eventId).get();
+
+    if (eventDoc.exists) {
+      List<dynamic> approvedUsersList =
+          eventDoc.get('approved_users') ?? [];
+
+      for (var userMap in approvedUsersList) {
+        String userId = userMap.keys.first; // Extract userId
+        int points = userMap[userId]['points'] ?? 0; // Extract points
+
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        if (userDoc.exists) {
+          String username = userDoc.get('first_name'); // Fetch username
+
+          // Add username & points to list
+          approvedUsers.add({
+            'userId': userId,
+            'username': username,
+            'points': points,
+          });
+        }
+      }
+    }
+
+    return approvedUsers;
+  }
+
+aurumLeaderboardView() {
+  return FutureBuilder<List<Map<String, dynamic>>>(
+    future: fetchApprovedUsers(this.widget.event.id),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('No Users registered yet'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return Center(child: Text("No approved users found."));
+      }
+
+      // Get the approved users and sort them by points (descending).
+      List<Map<String, dynamic>> approvedUsers = snapshot.data!;
+      approvedUsers.sort((a, b) => b['points'].compareTo(a['points']));
+
+      // Build the list of leaderboard items.
+      List<Widget> leaderboardItems = [];
+      for (int i = 0; i < approvedUsers.length; i++) {
+        final user = approvedUsers[i];
+
+        // Determine medal color based on rank.
+        Color medalColor;
+        if (i == 0) {
+          medalColor = goldColor;
+        } else if (i == 1) {
+          medalColor = Colors.grey.shade700;
+        } else if (i == 2) {
+          medalColor = const Color.fromARGB(255, 156, 83, 57);
+        } else {
+          medalColor = dullGreyColor;
+        }
+
+        leaderboardItems.add(
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                )
+              ],
+            ),
+            child: Row(
+              children: [
+                // Medal Icon based on rank.
+                Icon(
+                  FontAwesomeIcons.medal,
+                  size: 40,
+                  color: medalColor,
+                ),
+                SizedBox(width: 10),
+                // User information.
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user['username'],
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${user['points']} points',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                // Ranking number.
+                Text(
+                  '#${i + 1}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(10.0, 25.0, 10.0, 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  'Leaderboard',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Column(
+                children: leaderboardItems,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
   leaderboardView() {
     return SingleChildScrollView(
       child: Container(
@@ -683,85 +858,104 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
       ),
     );
   }
-    participantsView() {
-    return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            this.widget.event.eventHeads!.isEmpty
-                ? Center(
-                    child: noContentWidget(
-                        message: "No participants registered yet"),
-                  )
-                : Column(
-                    children: [
-                      Text(
-                        'Participants',
-                        style: TextStyle(
-                          fontSize: 20.0,
+ participantsView() {
+  return SingleChildScrollView(
+    child: Container(
+      padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+             enableAddPoints()
+                          ? ElevatedButton.icon(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.all<Color>(
+                                          secondaryColor)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddPointsAurum(eventId: this.widget.event.id!),
+                                      
+                                  ),
+                                );
+                              },
+                              label: Text("Add Points"),
+                              icon: Icon(FontAwesomeIcons.plus),
+                            ): Container(),
+          this.widget.event.approved_users!.isEmpty
+              ? Center(
+                  child: noContentWidget(
+                    message: "No participants registered yet",
+                  ),
+                )
+              : Column(
+                  children: [
+                    Text(
+                      'Participants',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Container(
+                        child: FutureBuilder<List<User>>(
+                          future: databaseServices.getApprovedUser(this.widget.event.id),
+                          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: loadingWidget());
+                            } else if (snapshot.hasError) {
+                              return Center(child: CustomErrorWidget());
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return Center(child: noContentWidget(message: "No participants registered yet"));
+                            } else {
+                              // Here, snapshot.data contains the detailed user info (including username)
+                              // Create user cards based on the detailed user information.
+                              List<UserCard> userCards = getListOfUserCards(snapshot.data!);
+                              List<Widget> displayUserCards = userCards.map((userCard) {
+                                return Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  child: Row(
+                                    children: [
+                                      Expanded(child: userCard),
+                                      SizedBox(width: 5),
+                                      IconButton(
+                                        onPressed: () {
+                                          // Implement phone call or any other action here
+                                        },
+                                        icon: Icon(
+                                          FontAwesomeIcons.phone,
+                                          size: 40,
+                                          color: dullGreyColor,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                    ],
+                                  ),
+                                );
+                              }).toList();
+                              return Column(
+                                children: displayUserCards,
+                              );
+                            }
+                          },
                         ),
                       ),
-                      SizedBox(
-                        height: 4.0,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Container(
-                            child: FutureBuilder(
-                                future: databaseServices.getSpecificUsers(
-                                    this.widget.event.eventHeads!),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<User>> snapshot) {
-                                  if (snapshot.hasData) {
-                                    List<UserCard> eventHeadsList =
-                                        getListOfUserCards(snapshot.data!);
-                                    List<Widget> displayEventHeads = [];
-                                    eventHeadsList.forEach((eventHead) {
-                                      displayEventHeads.add(Container(
-                                        margin: EdgeInsets.only(left: 5),
-                                        child: Row(
-                                          children: [
-                                            Expanded(child: eventHead),
-                                            SizedBox(width: 5),
-                                            IconButton(
-                                                onPressed: () {
-                                                
-                                                },
-                                                icon: Icon(
-                                                  FontAwesomeIcons.phone,
-                                                  size: 40,
-                                                  color: dullGreyColor,
-                                                )),
-                                            SizedBox(width: 10),
-                                          ],
-                                        ),
-                                      ));
-                                    });
-                                    return Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Column(
-                                        children: displayEventHeads,
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Center(child: CustomErrorWidget());
-                                  } else {
-                                    return Center(child: loadingWidget());
-                                  }
-                                })),
-                      ),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                    ],
-                  ),
-          ],
-        ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                  ],
+                ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   coordinatorsView() {
     return SingleChildScrollView(
@@ -1697,6 +1891,8 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     MaterialPageRoute(
                                       builder: (context) => MatchesDetailsPage(
                                         match: match,
+                                        team1Name: matchesList[index]['team01'],
+                                        team2Name: matchesList[index]['team02'],
                                         eventId: widget.event.id!,
                                       ),
                                     ),
@@ -1719,13 +1915,29 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
-                                        child: Image.asset(
-                                          'assets/images/codesandbx_transparent.png',
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/codesandbx_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team01']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                       Text(
                                         '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
@@ -1733,13 +1945,29 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                           fontSize: 33,
                                         ),
                                       ),
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
-                                        child: Image.asset(
-                                          'assets/images/globe_transparent.png',
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/globe_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team02']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/models/userModel.dart';
+import 'package:pratishtha/models/userModel.dart' as app;
 import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
 import 'package:pratishtha/screens/addCouncil.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
+import 'package:pratishtha/screens/admin/event_approval/registration_list_page.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
@@ -23,8 +27,11 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   Map? features;
-  User? user;
+  app.User? user;
+  User? currentUser;
+  bool _isAnApprovedUser = false;
 
+  List<app.User> approvalAccess = [];
   Future<bool> checkFieldExists() async {
     try {
       // Get the document
@@ -47,9 +54,54 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   bool? isEventHead24_25;
+  Future<void> getCurrentUID() async {
+    currentUser = FirebaseAuth.instance.currentUser;
+  }
+
+  Future<void> getCurrentUsersSAKECEmail() async {
+    print('getCurrentUsersSAKECEmail called');
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser!.uid)
+        .get();
+
+    if (!userSnapshot.exists) return;
+
+    Map<String, dynamic> data = userSnapshot.data() as Map<String, dynamic>;
+
+    String email = data['email'];
+    String sakecEmail = data['sakec_id'];
+
+    print(email);
+    print(sakecEmail);
+
+    if (currentUser != null) {
+      if (emails.contains(email) || emails.contains(sakecEmail)) {
+        print('--Approved User 🔥😄');
+        setState(() {
+          _isAnApprovedUser = true;
+        });
+      } else {
+        print('--Not an Approved User 😢');
+      }
+    }
+  }
+
+  List<String> emails = [
+    'umang.jain16823@sakec.ac.in',
+    'yashkumar.jain16659@sakec.ac.in',
+    'diya.17365@sakec.ac.in',
+    'manoharacharya63@gmail.com',
+    'manohar.acharya16602@sakec.ac.in'
+        'pradneshssr.45@gmail.com'
+        'pradnesh.revadekar17644@sakec.ac.in',
+  ];
 
   @override
   void initState() {
+    getCurrentUID().then((_) {
+      getCurrentUsersSAKECEmail();
+    });
     super.initState();
   }
 
@@ -344,6 +396,20 @@ class _MyDrawerState extends State<MyDrawer> {
                           );
                         },
                       ),
+                      _isAnApprovedUser
+                          ? ListTile(
+                              title: Text('Approval'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        const RegistrationListPage(),
+                                  ),
+                                );
+                              },
+                            )
+                          : const SizedBox(),
                     ],
                   ),
                 );

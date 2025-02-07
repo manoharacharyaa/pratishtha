@@ -8,10 +8,14 @@ class MatchesDetailsPage extends StatefulWidget {
     super.key,
     required this.match,
     required this.eventId,
+    this.team1Name,
+    this.team2Name,
   });
 
   final Map<String, dynamic> match;
   final String eventId;
+  final String? team1Name;
+  final String? team2Name;
 
   @override
   State<MatchesDetailsPage> createState() => _MatchesDetailsPageState();
@@ -38,10 +42,6 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage>
         .where('uid', whereIn: team2IDs)
         .get();
 
-    // List<Map<String, dynamic>> team1Data = team1Snapshot.docs.map((doc) {
-    //   final data = doc.data() as Map<String, dynamic>;
-    //   return {'firstName': data['first_name'], 'lastName': data['last_name']};
-    // }).toList();
     List<String> team1Data = team1Snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return data['first_name'] as String;
@@ -176,7 +176,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PlayersList(
-                  heding: 'Team 1',
+                  heding: widget.team1Name,
                   firstNameList: team1Users,
                 ),
                 Center(
@@ -185,7 +185,7 @@ class _MatchesDetailsPageState extends State<MatchesDetailsPage>
                   ),
                 ),
                 PlayersList(
-                  heding: 'Team 2',
+                  heding: widget.team2Name,
                   firstNameList: team2Users,
                 ),
               ],

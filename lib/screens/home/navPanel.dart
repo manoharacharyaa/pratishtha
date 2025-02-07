@@ -60,6 +60,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
     _selectedIndex = widget.selectedIndex;
     _pageController = PageController();
     //_pageController.jumpToPage(_selectedIndex);
