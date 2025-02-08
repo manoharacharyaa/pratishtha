@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
@@ -298,7 +297,10 @@ class _MyDrawerState extends State<MyDrawer> {
                             ),
                       isEventHead24_25 == true || user?.role == 8
                           ? ListTile(
-                              title: Text('Attendance'),
+                              title: Text(
+                                'Attendance',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,

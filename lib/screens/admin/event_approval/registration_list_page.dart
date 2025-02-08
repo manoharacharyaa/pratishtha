@@ -119,6 +119,7 @@ class CustomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -153,9 +154,12 @@ class CustomListTile extends StatelessWidget {
                       ),
                     ),
             ),
-            Text(
-              eventName,
-              style: AppFonts.poppins(),
+            SizedBox(
+              width: size.width * 0.35,
+              child: Text(
+                eventName,
+                style: AppFonts.poppins(),
+              ),
             ),
             Spacer(),
             Padding(
