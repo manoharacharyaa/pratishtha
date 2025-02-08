@@ -1090,395 +1090,398 @@ aurumLeaderboardView() {
 
   detailsView() {
     return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
-        // margin: MediaQuery.of(context).padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    this.widget.event.name!.isEmpty
-                        ? "Coming Soon"
-                        : this.widget.event.name!,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                [5, 3].contains(currentUser.role)
-                    ? IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              elevation: 10,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(10),
-                                ),
-                              ),
-                              builder: (context) {
-                                return StatefulBuilder(
-                                    builder: (context, setState) {
-                                  return Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Go Live",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            Spacer(),
-                                            Switch(
-                                                value: goLive,
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    goLive = val;
-                                                  });
-                                                }),
-                                          ],
-                                        ),
-                                        !this.widget.event.closeEvent
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    "Close Event",
-                                                    style:
-                                                        TextStyle(fontSize: 16),
-                                                  ),
-                                                  Spacer(),
-                                                  Switch(
-                                                      value: closeEvent,
-                                                      onChanged: (val) {
-                                                        setState(() {
-                                                          closeEvent = val;
-                                                        });
-                                                      }),
-                                                ],
-                                              )
-                                            : Container(),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            Spacer(),
-                                            Switch(
-                                                value: softDelete,
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    softDelete = val;
-                                                  });
-                                                }),
-                                          ],
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () async {
-                                              if (this.widget.event.goLive !=
-                                                      goLive ||
-                                                  this
-                                                          .widget
-                                                          .event
-                                                          .softDelete !=
-                                                      softDelete ||
-                                                  this
-                                                          .widget
-                                                          .event
-                                                          .closeEvent !=
-                                                      closeEvent) {
-                                                if (softDelete || closeEvent) {
-                                                  showDialog<bool>(
-                                                    context: context,
-                                                    barrierDismissible:
-                                                        false, // user must tap button!
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Warning'),
-                                                        content:
-                                                            SingleChildScrollView(
-                                                          child: ListBody(
-                                                            children: const <Widget>[
-                                                              Text(
-                                                                  'Are you sure you want to delete this event?'),
-                                                              Text(
-                                                                  'You will not be able to reverse this change'),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            child: const Text(
-                                                                'Yes'),
-                                                            onPressed:
-                                                                () async {
-                                                              await databaseServices.updateSoftDeleteAndGoLiveStatusForEvents(
-                                                                  goLive:
-                                                                      goLive,
-                                                                  softDelete:
-                                                                      softDelete,
-                                                                  closeEvent:
-                                                                      closeEvent,
-                                                                  event: this
-                                                                      .widget
-                                                                      .event);
-
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(true);
-                                                              Navigator.pop(
-                                                                  context);
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                          ),
-                                                          TextButton(
-                                                            child: const Text(
-                                                                'No'),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(false);
-                                                            },
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                } else {
-                                                  await databaseServices
-                                                      .updateSoftDeleteAndGoLiveStatusForEvents(
-                                                          goLive: goLive,
-                                                          softDelete:
-                                                              softDelete,
-                                                          closeEvent:
-                                                              closeEvent,
-                                                          event: this
-                                                              .widget
-                                                              .event);
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                }
-                                              }
-                                            },
-                                            child: Text("Save"))
-                                      ],
-                                    ),
-                                  );
-                                });
-                              });
-                        },
-                        icon: Icon(Icons.menu, color: primaryColor))
-                    : Container()
-              ],
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            this.widget.event.closeEvent
-                ? Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "This event is now closed",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+          // margin: MediaQuery.of(context).padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      this.widget.event.name!.isEmpty
+                          ? "Coming Soon"
+                          : this.widget.event.name!,
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                     ),
-                  )
-                : this.widget.event.registration!.contains(currentUser.uid)
-                    ? Column(
+                  ),
+                  [5, 3].contains(currentUser.role)
+                      ? IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                elevation: 10,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(10),
+                                  ),
+                                ),
+                                builder: (context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height / 3,
+                                      padding: EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Go Live",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Spacer(),
+                                              Switch(
+                                                  value: goLive,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      goLive = val;
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                          !this.widget.event.closeEvent
+                                              ? Row(
+                                                  children: [
+                                                    Text(
+                                                      "Close Event",
+                                                      style:
+                                                          TextStyle(fontSize: 16),
+                                                    ),
+                                                    Spacer(),
+                                                    Switch(
+                                                        value: closeEvent,
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            closeEvent = val;
+                                                          });
+                                                        }),
+                                                  ],
+                                                )
+                                              : Container(),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Delete",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Spacer(),
+                                              Switch(
+                                                  value: softDelete,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      softDelete = val;
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                          ElevatedButton(
+                                              onPressed: () async {
+                                                if (this.widget.event.goLive !=
+                                                        goLive ||
+                                                    this
+                                                            .widget
+                                                            .event
+                                                            .softDelete !=
+                                                        softDelete ||
+                                                    this
+                                                            .widget
+                                                            .event
+                                                            .closeEvent !=
+                                                        closeEvent) {
+                                                  if (softDelete || closeEvent) {
+                                                    showDialog<bool>(
+                                                      context: context,
+                                                      barrierDismissible:
+                                                          false, // user must tap button!
+                                                      builder:
+                                                          (BuildContext context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Warning'),
+                                                          content:
+                                                              SingleChildScrollView(
+                                                            child: ListBody(
+                                                              children: const <Widget>[
+                                                                Text(
+                                                                    'Are you sure you want to delete this event?'),
+                                                                Text(
+                                                                    'You will not be able to reverse this change'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  'Yes'),
+                                                              onPressed:
+                                                                  () async {
+                                                                await databaseServices.updateSoftDeleteAndGoLiveStatusForEvents(
+                                                                    goLive:
+                                                                        goLive,
+                                                                    softDelete:
+                                                                        softDelete,
+                                                                    closeEvent:
+                                                                        closeEvent,
+                                                                    event: this
+                                                                        .widget
+                                                                        .event);
+        
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                                Navigator.pop(
+                                                                    context);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  'No'),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    await databaseServices
+                                                        .updateSoftDeleteAndGoLiveStatusForEvents(
+                                                            goLive: goLive,
+                                                            softDelete:
+                                                                softDelete,
+                                                            closeEvent:
+                                                                closeEvent,
+                                                            event: this
+                                                                .widget
+                                                                .event);
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  }
+                                                }
+                                              },
+                                              child: Text("Save"))
+                                        ],
+                                      ),
+                                    );
+                                  });
+                                });
+                          },
+                          icon: Icon(Icons.menu, color: primaryColor))
+                      : Container()
+                ],
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              this.widget.event.closeEvent
+                  ? Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "You have registered for this event!",
+                            "You have not registered yet",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
-                            height: 10.0,
-                          ),
-                          this.widget.event.registrationUrl.isEmpty
-                              ? Container()
-                              : TextButton(
-                                  onPressed: () {
-                                    inAppBrowser(widget.event.registrationUrl);
-                                  },
-                                  child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        text: "Please finish your ",
-                                        style: TextStyle(color: blackColor),
-                                        children: [
-                                          TextSpan(
-                                              text: "Registration ",
-                                              style: TextStyle(
-                                                  color: primaryColor,
-                                                  fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text:
-                                                  "to participate in this event, if you haven't already done so.")
-                                        ]),
-                                  )),
-                          this.widget.event.registrationUrl.isEmpty
-                              ? Container()
-                              : SizedBox(
-                                  height: 15.0,
-                                ),
-                        ],
-                      )
-                    : this.widget.event.completed!.contains(currentUser.uid)
-                        ? Column(
-                            children: [
-                              Text(
-                                "You have completed this event!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              this.widget.event.feedbackUrl.isEmpty
-                                  ? Container()
-                                  : TextButton(
-                                      onPressed: () {
-                                        // call feedback url
-                                        inAppBrowser(widget.event.feedbackUrl);
-                                      },
-                                      child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                            text: "Please give us your ",
-                                            style: TextStyle(color: blackColor),
-                                            children: [
-                                              TextSpan(
-                                                  text: "Feedback",
-                                                  style: TextStyle(
-                                                      color: primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              TextSpan(text: " for this event!")
-                                            ]),
-                                      )),
-                              this.widget.event.feedbackUrl.isEmpty
-                                  ? Container()
-                                  : SizedBox(
-                                      height: 15.0,
-                                    ),
-                            ],
+                            height: 10,
                           )
-                        : this.widget.event.dateTo!.isBefore(DateTime.now())
-                            ? Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "This event is now closed",
+                        ],
+                      ),
+                    )
+                  : this.widget.event.registration!.contains(currentUser.uid)
+                      ? Column(
+                          children: [
+                            Text(
+                              "You have registered for this event!",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            this.widget.event.registrationUrl.isEmpty
+                                ? Container()
+                                : TextButton(
+                                    onPressed: () {
+                                      inAppBrowser(widget.event.registrationUrl);
+                                    },
+                                    child: RichText(
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    )
-                                  ],
+                                      text: TextSpan(
+                                          text: "Please finish your ",
+                                          style: TextStyle(color: blackColor),
+                                          children: [
+                                            TextSpan(
+                                                text: "Registration ",
+                                                style: TextStyle(
+                                                    color: primaryColor,
+                                                    fontWeight: FontWeight.bold)),
+                                            TextSpan(
+                                                text:
+                                                    "to participate in this event, if you haven't already done so.")
+                                          ]),
+                                    )),
+                            this.widget.event.registrationUrl.isEmpty
+                                ? Container()
+                                : SizedBox(
+                                    height: 15.0,
+                                  ),
+                          ],
+                        )
+                      : this.widget.event.completed!.contains(currentUser.uid)
+                          ? Column(
+                              children: [
+                                Text(
+                                  "You have completed this event!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15, fontWeight: FontWeight.bold),
                                 ),
-                              )
-                            : Container(),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                ((() {
-                  if (this.widget.event.description.isEmpty) {
-                    return "Coming Soon";
-                  }
-                  return this.widget.event.description.replaceAll("\\n", "\n");
-                })()),
-                style: TextStyle(color: dullGreyColor, fontSize: 16),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                this.widget.event.feedbackUrl.isEmpty
+                                    ? Container()
+                                    : TextButton(
+                                        onPressed: () {
+                                          // call feedback url
+                                          inAppBrowser(widget.event.feedbackUrl);
+                                        },
+                                        child: RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                              text: "Please give us your ",
+                                              style: TextStyle(color: blackColor),
+                                              children: [
+                                                TextSpan(
+                                                    text: "Feedback",
+                                                    style: TextStyle(
+                                                        color: primaryColor,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                TextSpan(text: " for this event!")
+                                              ]),
+                                        )),
+                                this.widget.event.feedbackUrl.isEmpty
+                                    ? Container()
+                                    : SizedBox(
+                                        height: 15.0,
+                                      ),
+                              ],
+                            )
+                          // : this.widget.event.dateTo!.isBefore(DateTime.now())
+                          //     ? Center(
+                          //         child: Column(
+                          //           crossAxisAlignment: CrossAxisAlignment.center,
+                          //           children: [
+                          //             Text(
+                          //               "This event is now closed",
+                          //               textAlign: TextAlign.center,
+                          //               style: TextStyle(
+                          //                   fontSize: 15,
+                          //                   fontWeight: FontWeight.bold),
+                          //             ),
+                          //             SizedBox(
+                          //               height: 15,
+                          //             )
+                          //           ],
+                          //         ),
+                          //       )
+                              : Container(),
+              SizedBox(
+                height: 5,
               ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            this.widget.event.type == 2 && this.widget.event.price == 0
-                ? Container()
-                : displayPrice(),
-            this.widget.event.type == 2 && this.widget.event.price == 0
-                ? Container()
-                : SizedBox(
-                    height: 10,
-                  ),
-            displayDate(),
-            SizedBox(
-              height: 15.0,
-            ),
-            displayTimeLocation(),
-            SizedBox(
-              height: 20,
-            ),
-            ((this.widget.event.registration!.length +
-                            this.widget.event.completed!.length) >
-                        4 &&
-                    this.widget.event.type != 2)
-                ? displayRegistrations()
-                : Container(),
-            ((this.widget.event.registration!.length +
-                            this.widget.event.completed!.length) >
-                        4 &&
-                    this.widget.event.type != 2)
-                ? SizedBox(
-                    height: 30.0,
-                  )
-                : Container(),
-            // this.widget.event.type == 2 ? Container() : displayPoints(),
-            this.widget.event.type == 2
-                ? Container()
-                : SizedBox(
-                    height: 30.0,
-                  ),
-            this.widget.event.type == 2 && this.widget.event.rules!.isEmpty
-                ? Container()
-                : displayRules(),
-            // [5, 3].contains(currentUser.role) ||
-            //         this.widget.event.eventHeads.contains(currentUser.uid) ||
-            //         this.widget.event.volunteers.contains(currentUser.uid)
-            //     ? TextButton(
-            //         onPressed: () async {
-            //           List<List> participantList = await databaseServices
-            //               .getParticipants(this.widget.event.id);
-            //           Navigator.push(
-            //               context,
-            //               MaterialPageRoute(
-            //                   builder: (context) => ChangeParticipantStatus(
-            //                         eventId: this.widget.event.id,
-            //                         participantsList: participantList,
-            //                         event: widget.event,
-            //                       )));
-            //         },
-            //         child: Text("View Participants"))
-            //     : Container(),
-          ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  ((() {
+                    if (this.widget.event.description.isEmpty) {
+                      return "Coming Soon";
+                    }
+                    return this.widget.event.description.replaceAll("\\n", "\n");
+                  })()),
+                  style: TextStyle(color: dullGreyColor, fontSize: 16),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              this.widget.event.type == 2 && this.widget.event.price == 0
+                  ? Container()
+                  : displayPrice(),
+              this.widget.event.type == 2 && this.widget.event.price == 0
+                  ? Container()
+                  : SizedBox(
+                      height: 10,
+                    ),
+              displayDate(),
+              SizedBox(
+                height: 15.0,
+              ),
+              displayTimeLocation(),
+              SizedBox(
+                height: 20,
+              ),
+              ((this.widget.event.registration!.length +
+                              this.widget.event.completed!.length) >
+                          4 &&
+                      this.widget.event.type != 2)
+                  ? displayRegistrations()
+                  : Container(),
+              ((this.widget.event.registration!.length +
+                              this.widget.event.completed!.length) >
+                          4 &&
+                      this.widget.event.type != 2)
+                  ? SizedBox(
+                      height: 30.0,
+                    )
+                  : Container(),
+              // this.widget.event.type == 2 ? Container() : displayPoints(),
+              this.widget.event.type == 2
+                  ? Container()
+                  : SizedBox(
+                      height: 30.0,
+                    ),
+              this.widget.event.type == 2 && this.widget.event.rules!.isEmpty
+                  ? Container()
+                  : displayRules(),
+              // [5, 3].contains(currentUser.role) ||
+              //         this.widget.event.eventHeads.contains(currentUser.uid) ||
+              //         this.widget.event.volunteers.contains(currentUser.uid)
+              //     ? TextButton(
+              //         onPressed: () async {
+              //           List<List> participantList = await databaseServices
+              //               .getParticipants(this.widget.event.id);
+              //           Navigator.push(
+              //               context,
+              //               MaterialPageRoute(
+              //                   builder: (context) => ChangeParticipantStatus(
+              //                         eventId: this.widget.event.id,
+              //                         participantsList: participantList,
+              //                         event: widget.event,
+              //                       )));
+              //         },
+              //         child: Text("View Participants"))
+              //     : Container(),
+            ],
+          ),
         ),
       ),
     );

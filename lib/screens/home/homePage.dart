@@ -55,15 +55,119 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SponsorCarousel(sponsors: sponsors),
                       SizedBox(height: 15.0),
-                      FestList(fests: fests),
+                      Container(child: FestList(fests: fests)),
                       SizedBox(height: 20.0),
-                      Text(
-                        'Upcoming Events',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20.0),
-                      ),
-                      SizedBox(height: 10.0),
-                      EventList(events: events, currentUser: currentUser),
+                      Container(
+                        margin:   EdgeInsets.symmetric(horizontal: 20),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Text(
+                                  ' Event Dates',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 20.0),
+                                ),
+                              ),
+                              SizedBox(height: 10.0),
+                              RichText(
+                              text: TextSpan(
+                                text: 'Yuva ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
+                                children: <TextSpan>[
+                                TextSpan(
+                                  text: '7th 2025',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal, fontSize: 20.0),
+                                ),
+                                ],
+                              ),
+                              ),
+                              RichText(
+                              text: TextSpan(
+                                text: 'Olympus ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
+                                children: <TextSpan>[
+                                TextSpan(
+                                  text: '8th - 9th Feb 2025',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal, fontSize: 20.0),
+                                ),
+                                ],
+                              ),
+                              ),
+                              RichText(
+                              text: TextSpan(
+                                text: 'Aurum ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
+                                children: <TextSpan>[
+                                TextSpan(
+                                  text: '10th - 11th Feb 2025',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal, fontSize: 20.0),
+                                ),
+                                ],
+                              ),
+                              ),
+                              RichText(
+                              text: TextSpan(
+                                text: 'Olympus ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
+                                children: <TextSpan>[
+                                TextSpan(
+                                  text: '15th - 16th Feb 2025',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal, fontSize: 20.0),
+                                ),
+                                ],
+                              ),
+                              ),
+                              RichText(
+                              text: TextSpan(
+                                text: 'Verve ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
+                                children: <TextSpan>[
+                                TextSpan(
+                                  text: '17th - 20th Feb 2025',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal, fontSize: 20.0),
+                                ),
+                                ],
+                              ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+
+                      // SizedBox(height: 20.0),
+                      // Text(
+                      //   'Upcoming Events',
+                      //   style: TextStyle(
+                      //       fontWeight: FontWeight.bold, fontSize: 20.0),
+                      // ),
+                      // SizedBox(height: 10.0),
+                      // EventList(events: events, currentUser: currentUser),
                     ],
                   ),
                 ),
@@ -149,7 +253,7 @@ class SponsorCarousel extends StatelessWidget {
           autoPlay: true,
           enlargeCenterPage: true,
           aspectRatio: 16 / 9,
-          viewportFraction: 0.8,
+          viewportFraction: 0.7,
         ),
       ),
     );
@@ -170,6 +274,14 @@ class SponsorCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
@@ -194,19 +306,36 @@ class FestList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: fests.length,
-        separatorBuilder: (context, index) => SizedBox(width: 20),
-        itemBuilder: (context, index) {
-          return FestButton(
-            event: fests[index],
-            individualEventsList: [], // You may need to adjust this
-            context: context,
-          );
-        },
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      width: double.infinity,
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      height: 110,
+      child: Center(
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: fests.length,
+          separatorBuilder: (context, index) => SizedBox(width: 20),
+          itemBuilder: (context, index) {
+            return FestButton(
+              event: fests[index],
+              individualEventsList: [], // You may need to adjust this
+              context: context,
+            );
+          },
+        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:pratishtha/models/userModel.dart';
 import 'package:pratishtha/services/searchServices.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart';
 import 'package:pratishtha/services/storageServices.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:pratishtha/widgets/customTextField.dart';
 import 'package:pratishtha/services/databaseServices.dart';
@@ -1283,14 +1284,52 @@ class _EditEventState extends State<EditEvent> {
                                               });
                                             },
                                           ),
-                                          hasImage
+                                          bannerUrl.isEmpty
                                               ? AspectRatio(
                                                   aspectRatio: 16 / 9,
-                                                  child: Image.file(img!))
-                                              : AspectRatio(
-                                                  aspectRatio: 16 / 9,
-                                                  child: Image.network(
-                                                      widget.event!.bannerUrl)),
+                                                  child: Container(
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 15,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'No Banner Found',
+                                                        style:
+                                                            AppFonts.poppins(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : hasImage
+                                                  ? AspectRatio(
+                                                      aspectRatio: 16 / 9,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 15,
+                                                        ),
+                                                        child: Image.file(img!),
+                                                      ),
+                                                    )
+                                                  : AspectRatio(
+                                                      aspectRatio: 16 / 9,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 15),
+                                                        child: Image.network(
+                                                          widget
+                                                              .event!.bannerUrl,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
                                         ],
                                       );
                                     }),

@@ -14,6 +14,7 @@ import 'package:pratishtha/screens/admin/assignRolesPage.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
@@ -170,7 +171,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       !features?['1']['roles'].contains(user?.role)
                           ? Container()
                           : ListTile(
-                              title: Text('Assign Roles'),
+                              title: Text(
+                                'Assign Roles',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -216,7 +220,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       !features?['0']['roles'].contains(user?.role)
                           ? Container()
                           : ListTile(
-                              title: Text('Add Event'),
+                              title: Text(
+                                'Add Event',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -258,7 +265,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       !features?['4']['roles'].contains(user?.role)
                           ? Container()
                           : ListTile(
-                              title: Text('Manage Sponsorships'),
+                              title: Text(
+                                'Manage Sponsorships',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -272,7 +282,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       !features?['5']['roles'].contains(user?.role)
                           ? Container()
                           : ListTile(
-                              title: Text('Add/Update College'),
+                              title: Text(
+                                'Add/Update College',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -297,23 +310,26 @@ class _MyDrawerState extends State<MyDrawer> {
                               },
                             )
                           : Container(),
-                      ListTile(
-                        title: Text('InterCollege'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  InterCollegeHome(
-                                userRole: user!.role,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      // ListTile(
+                      //   title: Text('InterCollege'),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (BuildContext context) =>
+                      //             InterCollegeHome(
+                      //           userRole: user!.role,
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       user?.role == 9
                           ? ListTile(
-                              title: Text('Attendance'),
+                              title: Text(
+                                'Attendance',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -328,7 +344,10 @@ class _MyDrawerState extends State<MyDrawer> {
                           : SizedBox(),
 
                       ListTile(
-                        title: Text('LeaderBoard'),
+                        title: Text(
+                          'LeaderBoard',
+                          style: AppFonts.poppins(size: 14),
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -386,7 +405,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       //   },
                       // ),
                       ListTile(
-                        title: Text('About Us'),
+                        title: Text(
+                          'About Us',
+                          style: AppFonts.poppins(size: 14),
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -398,7 +420,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       ),
                       _isAnApprovedUser
                           ? ListTile(
-                              title: Text('Approval'),
+                              title: Text(
+                                'Approval',
+                                style: AppFonts.poppins(size: 14),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,

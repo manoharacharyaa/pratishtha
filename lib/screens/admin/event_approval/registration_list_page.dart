@@ -138,13 +138,20 @@ class CustomListTile extends StatelessWidget {
                 color: primaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  eventImg,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              child: eventImg.isEmpty
+                  ? Center(
+                      child: Text(
+                        eventName,
+                        style: AppFonts.poppins(color: secondaryColor),
+                      ),
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        eventImg,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ),
             Text(
               eventName,
