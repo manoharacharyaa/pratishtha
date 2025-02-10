@@ -9,44 +9,40 @@ Widget InterCollegeSportsButton({
   required MaterialPageRoute navigator,
 }) {
   return GestureDetector(
-    
+    onTap: () {
+      Navigator.push(context, navigator);
+    },
     child: Container(
       child: Column(
         children: [
           CircleAvatar(
             backgroundColor: Color(0xFF222232),
-             radius: MediaQuery.of(context).size.width * 0.09,
-            
+            radius: MediaQuery.of(context).size.width * 0.09,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: MediaQuery.of(context).size.width * 0.05,
-                backgroundImage: sportsIcon.image,  
+                  backgroundImage: sportsIcon.image,
                   backgroundColor: Color(0xFF222232),
-                 
-                
                 ),
-               
-              
               ],
             ),
           ),
           SizedBox(height: 5),
-            AutoSizeText(
-              sportsName,
-              maxLines: 1,
-              minFontSize: 10,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.sourceSans3(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+          AutoSizeText(
+            sportsName,
+            maxLines: 1,
+            minFontSize: 10,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.sourceSans3(
+              fontSize: 16,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
+          ),
         ],
-        
       ),
     ),
   );

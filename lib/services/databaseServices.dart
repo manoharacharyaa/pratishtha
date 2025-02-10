@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/models/councilModel.dart';
 import 'package:pratishtha/models/eventModel.dart';
@@ -200,7 +201,31 @@ class DatabaseServices {
     await userCollection.doc(id).update(
         {"event_roles": currentUser.eventRoles, "role": currentUser.role});
   }
+  Future<List<String>> getFestBanners() async {
+    List<String> bannerUrls = [];
+    final storageRef = FirebaseStorage.instance.ref().child('festbanners');
+    final ListResult result = await storageRef.listAll();
 
+    for (var item in result.items) {
+      final String url = await item.getDownloadURL();
+      bannerUrls.add(url);
+    }
+
+    // Custom order
+    List<String> orderedBannerUrls = [];
+    List<String> order = ['yuva', 'olympus', 'aurum', 'verve'];
+
+    for (var banner in order) {
+      for (var url in bannerUrls) {
+        if (url.contains(banner)) {
+          orderedBannerUrls.add(url);
+          break;
+        }
+      }
+    }
+
+    return orderedBannerUrls;
+  }
   //Register for Event
 
   Future<String> registerEvent(String eventId) async {
