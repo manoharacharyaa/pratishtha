@@ -77,85 +77,40 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Center(
-                                child: Text(
-                                  ' Event Dates',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 20.0),
-                                ),
+
+                      SizedBox(height: 10.0),
+                        FutureBuilder(
+                        future: databaseServices.getFestBanners(), // Assuming you have this method
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                          return CustomErrorWidget();
+                          } else if (snapshot.hasData) {
+                          final List<String>? bannerUrls = snapshot.data;
+                          return Column(
+                            children: bannerUrls!.map((url) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(),
                               ),
-                              SizedBox(height: 10.0),
-                              RichText(
-                              text: TextSpan(
-                                text: 'Yuva ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-                                children: <TextSpan>[
-                                TextSpan(
-                                  text: '7th 2025',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal, fontSize: 20.0),
-                                ),
-                                ],
+                              errorWidget: (context, url, error) => Icon(Icons.error),
                               ),
-                              ),
-                              RichText(
-                              text: TextSpan(
-                                text: 'Olympus ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-                                children: <TextSpan>[
-                                TextSpan(
-                                  text: '8th - 9th Feb 2025',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal, fontSize: 20.0),
-                                ),
-                                ],
-                              ),
-                              ),
-                              RichText(
-                              text: TextSpan(
-                                text: 'Aurum ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-                                children: <TextSpan>[
-                                TextSpan(
-                                  text: '10th - 11th Feb 2025',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal, fontSize: 20.0),
-                                ),
-                                ],
-                              ),
-                              ),
-                              RichText(
-                              text: TextSpan(
-                                text: 'Olympus ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-                                children: <TextSpan>[
-                                TextSpan(
-                                  text: '15th - 16th Feb 2025',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal, fontSize: 20.0),
-                                ),
-                                ],
-                              ),
-                              ),
-                              RichText(
-                              text: TextSpan(
-                                text: 'Verve ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-                                children: <TextSpan>[
-                                TextSpan(
-                                  text: '17th - 20th Feb 2025',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.normal, fontSize: 20.0),
-                                ),
-                                ],
-                              ),
-                              ),
-                            ],
+                            );
+                            SizedBox(height: 10.0);
+                            }).toList(),
+                          );
+                          } else {
+                          return CustomErrorWidget();
+                          }
+                        },
+                        ),
+                      
+                       ],
                           ),
                         ),
                       )

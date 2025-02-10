@@ -9,7 +9,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/leaderBoard.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/adminInterCollegePage.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeBoysVolleyBall.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeCricketHome.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeFootballHome.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeGirlsVolleyBall.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeKabaddiHome.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/interCollegeSportsButton.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
@@ -47,7 +51,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
       'name': 'Football',
       'navigator': MaterialPageRoute(
           builder: (context) =>
-              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+              InterCollegeFootballHome(currentAcademicYear: '2024-2025')),
     },
     {
       'icon': Image.asset('assets/images/InterCollegeSports/basketball.jpeg'),
@@ -66,24 +70,24 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
     },
     {
       'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
-      'name': 'Cricket',
+      'name': 'GirlsVolleyball',
       'navigator': MaterialPageRoute(
           builder: (context) =>
-              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+              InterCollegeVolleyBallGirlsHome(currentAcademicYear: '2024-2025')),
+    },
+    {
+      'icon': Image.asset('assets/images/InterCollegeSports/volleyball_boys.jpeg'),
+      'name': 'BoysVolleyball',
+      'navigator': MaterialPageRoute(
+          builder: (context) =>
+              InterCollegeVolleyBallBoysHome(currentAcademicYear: '2024-2025')),
     },
     {
       'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
-      'name': 'Cricket',
+      'name': 'Kabbadi',
       'navigator': MaterialPageRoute(
           builder: (context) =>
-              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
-    },
-    {
-      'icon': Image.asset('assets/images/InterCollegeSports/football.png'),
-      'name': 'Cricket',
-      'navigator': MaterialPageRoute(
-          builder: (context) =>
-              InterCollegeCricketHome(currentAcademicYear: '2024-2025')),
+              InterCollegeKabaddiHome(currentAcademicYear: '2024-2025')),
     },
   ];
 
@@ -573,6 +577,8 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
             ),
           ),
           DraggableScrollableSheet(
+            expand: true,
+            
               key: sheetKey,
               controller: _sheetController,
               initialChildSize:
@@ -580,7 +586,7 @@ class _InterCollegeHomeState extends State<InterCollegeHome>
               minChildSize:
                   MediaQuery.of(context).size.height > 700 ? 0.65 : 0.2,
               maxChildSize: 0.99,
-              snap: true,
+              // snap: true,
               snapSizes: [0.65, 0.99],
               builder:
                   (BuildContext context, ScrollController scrollController) {

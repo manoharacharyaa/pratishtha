@@ -312,20 +312,20 @@ class _MyDrawerState extends State<MyDrawer> {
                               },
                             )
                           : Container(),
-                      // ListTile(
-                      //   title: Text('InterCollege'),
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder: (BuildContext context) =>
-                      //             InterCollegeHome(
-                      //           userRole: user!.role,
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
+                      ListTile(
+                        title: Text('InterCollege'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  InterCollegeHome(
+                                userRole: user!.role,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       user?.role == 9
                           ? ListTile(
                               title: Text(
