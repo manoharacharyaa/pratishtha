@@ -339,25 +339,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                           ],
                         ),
-                        child: Expanded(
-                          child: TextFormField(
-                            controller: transactionIdController,
-                            cursorHeight: 18,
-                            cursorColor: Colors.black,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: secondaryColor,
-                              hintText: 'Enter 12 Digits UPI Tranction Id',
-                              hintStyle: AppFonts.poppins(
-                                size: 15.5,
-                                color: primaryColor,
-                              ),
-                              border: OutlineInputBorder(
-                                gapPadding: 0,
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                        child: TextFormField(
+                          controller: transactionIdController,
+                          cursorHeight: 18,
+                          cursorColor: Colors.black,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: secondaryColor,
+                            hintText: 'Enter 12 Digits UPI Tranction Id',
+                            hintStyle: AppFonts.poppins(
+                              size: 15.5,
+                              color: primaryColor,
+                            ),
+                            border: OutlineInputBorder(
+                              gapPadding: 0,
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(15),
                             ),
                           ),
                         ),

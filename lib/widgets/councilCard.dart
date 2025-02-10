@@ -14,11 +14,6 @@ class CouncilCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        launch(
-          ('tel: +91${council.phone}'),
-        );
-      },
       child: Container(
         margin: EdgeInsets.only(left: 10, right: 10),
         decoration: BoxDecoration(
@@ -46,7 +41,9 @@ class CouncilCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    imageUrl: council.photo,
+                    imageUrl: council.photo != ""
+                        ? council.photo
+                        : "https://firebasestorage.googleapis.com/v0/b/pratishtha-2021.appspot.com/o/council%2Fdefault.png?alt=media&token=3b3b3b3b-3b3b-3b3b-3b3b-3b3b3b3b3b3b",
                     placeholder: (context, url) => loadingWidget(),
                     errorWidget: (context, url, error) => Icon(
                       Icons.error,

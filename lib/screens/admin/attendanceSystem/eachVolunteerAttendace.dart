@@ -71,7 +71,7 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFF4B80),
+        backgroundColor: Colors.blue,
         title: Text(
           'ATTENDANCE',
           style: GoogleFonts.poppins(
@@ -92,8 +92,8 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
               Material(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Color(0xFFFFF7FA),
+                    borderRadius: BorderRadius.circular(2),
+                    color: Color.fromARGB(255, 246, 251, 255),
                   ),
                   child: TableCalendar(
                     firstDay: firstDay,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,42 +8,69 @@ class AttendaceServices {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<String> addHeadorCohead(String currentAcademicYear, String deptName,
-      String deptHeadorCoheadName) async {
+      String deptHeadorCoheadName, dynamic departmentPersonUUid) async {
     try {
-      // Reference to the Tech document in the attendance collection
-      final DocumentReference docRef = firestore
+      // Log parameters for debugging
+      log("Parameters: currentAcademicYear=$currentAcademicYear, deptName=$deptName, "
+          "deptHeadorCoheadName=$deptHeadorCoheadName, departmentPersonUUid=$departmentPersonUUid");
+
+      // Reference to the department document
+      final DocumentReference deptDocRef = firestore
           .collection('attendance')
           .doc(currentAcademicYear)
           .collection("departments")
           .doc(deptName);
 
-      // Get the document snapshot
-      final DocumentSnapshot docSnapshot = await docRef.get();
+      // Check if the department document exists
+      final DocumentSnapshot deptDocSnapshot = await deptDocRef.get();
+      log("Department document exists: ${deptDocSnapshot.exists}");
 
-      if (!docSnapshot.exists) {
-        // If document doesn't exist, create it with 'member1'
-        await docRef.set({
-          'member1': deptHeadorCoheadName,
-        });
-        print('Document created with member1: $deptHeadorCoheadName');
-        return "Member Added";
+      if (!deptDocSnapshot.exists) {
+        // Create new document if it doesn't exist
+        await deptDocRef.set({'member1': deptHeadorCoheadName});
+        log('New department document created with member1=$deptHeadorCoheadName');
       } else {
-        // If document exists, check existing members
-        final data = docSnapshot.data() as Map<String, dynamic>;
+        // Add a new member field to the existing document
+        final data = deptDocSnapshot.data() as Map<String, dynamic>;
         final int currentMemberCount =
             data.keys.where((key) => key.startsWith('member')).length;
-
-        // Add the next member field (e.g., member2, member3)
         final String nextMemberKey = 'member${currentMemberCount + 1}';
-        await docRef.update({
-          nextMemberKey: deptHeadorCoheadName,
-        });
-        print('$nextMemberKey added with value: $deptHeadorCoheadName');
-        return "Member Updated";
+        await deptDocRef.update({nextMemberKey: deptHeadorCoheadName});
+        log('Added $nextMemberKey with value=$deptHeadorCoheadName');
       }
-    } catch (e) {
-      print('Error adding head or co-head: $e');
-      return "Failed to add member";
+
+      // Reference to the user document
+      final DocumentReference userDocRef =
+          firestore.collection("users").doc(departmentPersonUUid);
+
+      // Check if the user document exists
+      final DocumentSnapshot userDocSnapshot = await userDocRef.get();
+      log("User document exists: ${userDocSnapshot.exists}");
+
+      if (!userDocSnapshot.exists) {
+        log("Error: User document with UUID $departmentPersonUUid does not exist.");
+        return "User document not found.";
+      }
+
+      // Update the isDeptHead field in the user document
+      await userDocRef
+          .set({'isDeptHead2024_25': true}, SetOptions(merge: true));
+      log("Updated isDeptHead2024_25 for user with UUID $departmentPersonUUid");
+
+      return "Member Added/Updated Successfully";
+    } catch (e, stackTrace) {
+      // Handle exceptions and provide detailed error messages
+      if (e is FirebaseException && e.code == 'permission-denied') {
+        log("Permission Denied: $e");
+        return "Permission Denied: Check Firestore rules.";
+      }
+      if (e.toString().contains("does not exist")) {
+        log("User document not found error: $e");
+        return "User document not found.";
+      }
+      log("Error in addHeadorCohead: $e");
+      log("StackTrace: $stackTrace");
+      return "Unexpected error: $e";
     }
   }
 
@@ -163,42 +192,116 @@ class AttendaceServices {
     }
   }
 
-  Future<String> addVoulunteerAttendance(
-      String currentAcademicYear,
-      String teamId,
-      List<String> volunteerids,
-      List<bool> volunteerAttendanceStatus) async {
-    if (volunteerids.length != volunteerAttendanceStatus.length) {
-      return "Failed";
+ Future<String> addVolunteerAttendance(
+  String currentAcademicYear,
+  String teamId,
+  List<String> volunteerIds,
+  List<bool> volunteerAttendanceStatus,
+  String date, // Accept the date as a parameter in "DD-MM-YYYY" format
+) async {
+  if (volunteerIds.length != volunteerAttendanceStatus.length) {
+    return "Failed";
+  }
+
+  try {
+    final collectionPath = FirebaseFirestore.instance
+        .collection('attendance')
+        .doc(currentAcademicYear)
+        .collection('departments')
+        .doc(teamId)
+        .collection('volunteers');
+
+    final collectionPath2 = FirebaseFirestore.instance
+        .collection('attendance')
+        .doc(currentAcademicYear)
+        .collection('departments')
+        .doc(teamId);
+
+    for (int i = 0; i < volunteerIds.length; i++) {
+      String docId = volunteerIds[i];
+      bool status = volunteerAttendanceStatus[i];
+
+      // Reference to volunteer document
+      DocumentReference docRef = collectionPath.doc(docId);
+      DocumentSnapshot snapshot = await docRef.get();
+
+      // Retrieve the attendanceStatus field, or initialize it if it doesn't exist
+      List<dynamic> attendanceStatus =
+          (snapshot.data() as Map<String, dynamic>?)?['attendanceStatus']
+                  as List<dynamic>? ??
+              [];
+
+      bool dateFound = false;
+
+      // Check for existing entry and update it
+      for (var entry in attendanceStatus) {
+        if (entry is Map<String, dynamic> && entry.containsKey(date)) {
+          entry[date] = status; // Update the status for the specified date
+          dateFound = true;
+          break;
+        }
+      }
+
+      // If the specified date is not found, add a new map entry
+      if (!dateFound) {
+        attendanceStatus.add({date: status});
+      }
+
+      // Update the attendanceStatus field in Firestore
+      await docRef.set({
+        'attendanceStatus': attendanceStatus,
+      }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
     }
 
+    // Update attendanceMarkedDate array in collectionPath2
+    await collectionPath2.set({
+      'attendanceMarkedDate': FieldValue.arrayUnion([
+        {date: true}
+      ]),
+    }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
+
+    return "Success";
+  } catch (e) {
+    print("Error in add volunteer attendance record: $e");
+    return "Failed";
+  }
+}
+
+  Future<String> checkTodayAttendanceEntry(
+      String currentAcademicYear, String teamId) async {
     try {
-      final collectionPath = FirebaseFirestore.instance
+      final DocumentReference collectionPath2 = FirebaseFirestore.instance
           .collection('attendance')
           .doc(currentAcademicYear)
           .collection('departments')
-          .doc(teamId)
-          .collection('volunteers');
+          .doc(teamId);
 
-      // Get today's date formatted as DD-MM-YYYY
       String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
-      for (int i = 0; i < volunteerids.length; i++) {
-        String docId = volunteerids[i];
-        bool status = volunteerAttendanceStatus[i];
+      DocumentSnapshot documentSnapshot = await collectionPath2.get();
 
-        DocumentReference docRef = collectionPath.doc(docId);
+      if (documentSnapshot.exists) {
+        List<dynamic> attendanceMarkedDate =
+            documentSnapshot.get('attendanceMarkedDate') ?? [];
 
-        await docRef.update({
-          'attendanceStatus': FieldValue.arrayUnion([
-            {todayDate: status}
-          ])
+        bool isTodayMarked = attendanceMarkedDate.any((entry) {
+          if (entry is Map<String, dynamic>) {
+            return entry.containsKey(todayDate) && entry[todayDate] == true;
+          }
+          return false;
         });
+
+        if (isTodayMarked) {
+          return "Yes_Today_Entry";
+        } else {
+          return "No_Today_Entry";
+        }
+      } else {
+        return "No_Today_Entry";
       }
-      return "Sucess";
     } catch (e) {
-      print("Error in add volunteer attendance record : $e");
-      return "Failed";
+      print("Error in check today attendance entry: $e");
+      return "No_Today_Entry";
     }
   }
 

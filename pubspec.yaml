@@ -4,7 +4,6 @@ description: A new Flutter application.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
 # publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -21,62 +20,63 @@ environment:
   sdk: ">=2.18.0 <4.0.0"
 
 dependencies:
+  animated_text_kit: ^4.2.2
+  async: ^2.11.0
+  auto_size_text: ^3.0.0
+  bubble_tab_indicator: ^0.1.6
+  buttons_tabbar: ^1.3.15
+  cached_network_image: ^3.3.1
+  carousel_slider: ^5.0.0
+  cloud_firestore: ^4.14.0
+  connectivity_plus: ^5.0.2
+  cupertino_icons: ^1.0.2
+  data_connection_checker_nulls: ^0.0.2
+  date_time_picker: ^2.1.0
+  excel: ^4.0.2
+  figma_squircle: ^0.5.3
+  firebase_auth: ^4.16.0
+  firebase_auth_platform_interface: ^7.0.9
+  firebase_core: ^2.15.0
+  firebase_storage: ^11.6.0
   flutter:
     sdk: flutter
-
-  # splashscreen:
-
-  provider: ^6.1.1
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  cloud_firestore: ^5.6.0
-  firebase_core: ^3.9.0
-  syncfusion_flutter_calendar: ^21.2.3
-  firebase_auth: ^5.3.4
-  font_awesome_flutter: ^10.6.0
-  date_time_picker: "^2.1.0"
-  intl: ^0.17.0
-  shared_preferences: ^2.2.2
+  flutter_easyloading: ^3.0.5
+  flutter_page_transition_plus: ^1.0.2
+  flutter_riverpod: ^2.6.1
+  flutter_slimy_card: ^1.0.2
+  flutter_svg: ^2.0.16
   fluttermoji: ^1.0.2
   fluttertoast: ^8.2.4
-  firebase_storage: ^12.3.7
+  font_awesome_flutter: ^10.8.0
+  gif: ^2.3.0
+  glassmorphism: ^3.0.0
+  
+  google_fonts: ^6.2.1
   image_picker: ^1.0.7
+  intl: ^0.17.0
+  liquid_progress_indicator_v2: ^0.5.0
   # flutter_page_transition: ^0.1.0
   #liquid_progress_indicator:
-  connectivity_plus: ^5.0.2
   # data_connection_checker: ^0.3.4
-  data_connection_checker_nulls: ^0.0.2
   #firebase_messaging: ^11.2.4
   #flutter_local_notifications: ^9.1.5
-  animated_text_kit: ^4.2.3
   uuid: ^4.3.3
-  flutter_easyloading: ^3.0.5
-  auto_size_text: ^3.0.0
-  cached_network_image: ^3.3.1
   liquid_swipe: ^3.1.0
   loading_indicator: ^3.1.1
   url_launcher: ^6.2.3
-  flutter_inappwebview: ^5.7.2+3
-  google_fonts: ^6.2.1
-  carousel_slider: ^5.0.0
-  async: ^2.11.0
-  excel: ^4.0.2
+
+
+
   path_provider: ^2.1.2
   youtube_player_flutter: ^8.1.2
-  bubble_tab_indicator: ^0.1.6
-  flutter_slimy_card: ^1.0.2
-  page_transition: ^2.1.0
-  flutter_page_transition_plus: "^1.0.2"
-  liquid_progress_indicator_v2: ^0.5.0
-  internet_connection_checker: ^1.0.0+1
-  #firebase_messaging: ^11.2.4
-  #flutter_local_notifications: ^9.1.5
-  size_config: ^2.0.3
-  firebase_auth_platform_interface: ^7.0.9
+
+
   multi_dropdown: ^2.1.3
+  page_transition: ^2.1.0
+  syncfusion_flutter_calendar: ^21.2.3
   table_calendar: ^3.0.8
+
+
   dotted_border: ^2.1.0
   toastification: ^2.3.0
   lottie: ^3.2.0
@@ -90,10 +90,8 @@ dev_dependencies:
 #  android: true
 #  ios: true
 #  image_path: "assets/images/PratishthaLogo.png"
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -104,16 +102,15 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/InterCollegeSports/
     - assets/gifs/
     - assets/lottie/
     - assets/lottie/tick.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

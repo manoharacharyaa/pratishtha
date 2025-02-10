@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/models/userModel.dart' as app;
 import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
+import 'package:pratishtha/screens/addCouncil.dart';
 import 'package:pratishtha/screens/admin/addEvent.dart';
 import 'package:pratishtha/screens/admin/event_approval/registration_list_page.dart';
 import 'package:pratishtha/screens/admin/assignRolesPage.dart';
@@ -12,6 +14,7 @@ import 'package:pratishtha/screens/admin/attendanceSystem/attendance.dart';
 import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import 'package:pratishtha/utils/fonts.dart';
+import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
@@ -29,7 +32,28 @@ class _MyDrawerState extends State<MyDrawer> {
   bool _isAnApprovedUser = false;
 
   List<app.User> approvalAccess = [];
+  Future<bool> checkFieldExists() async {
+    try {
+      // Get the document
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user!.uid)
+          .get();
 
+      // Check if the document exists
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data =
+            docSnapshot.data() as Map<String, dynamic>?;
+        return data?.containsKey("isDeptHead2024_25") ?? false;
+      }
+      return false; // Document does not exist
+    } catch (e) {
+      print("Error checking field in document: $e");
+      return false;
+    }
+  }
+
+  bool? isEventHead24_25;
   Future<void> getCurrentUID() async {
     currentUser = FirebaseAuth.instance.currentUser;
   }
@@ -127,6 +151,15 @@ class _MyDrawerState extends State<MyDrawer> {
                 features = snapshot.data[0];
                 user = snapshot.data[1];
                 //print(features['1']['roles']);
+                // Call checkFieldExists() after user is populated
+                if (isEventHead24_25 == null) {
+                  checkFieldExists().then((exists) {
+                    setState(() {
+                      isEventHead24_25 = exists;
+                      print("UUid Exists or not: $exists");
+                    });
+                  });
+                }
                 return SizedBox(
                   width: MediaQuery.of(context).size.width,
                   //height: MediaQuery.of(context).size.height / 1.9,
@@ -263,10 +296,10 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             ),
-                      user?.role == 8
+                      isEventHead24_25 == true || user?.role == 8
                           ? ListTile(
                               title: Text(
-                                'Add Dept Head',
+                                'Attendance',
                                 style: AppFonts.poppins(size: 14),
                               ),
                               onTap: () {
@@ -279,7 +312,21 @@ class _MyDrawerState extends State<MyDrawer> {
                                 );
                               },
                             )
-                          : SizedBox(),
+                          : Container(),
+                      // ListTile(
+                      //   title: Text('InterCollege'),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (BuildContext context) =>
+                      //             InterCollegeHome(
+                      //           userRole: user!.role,
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       user?.role == 9
                           ? ListTile(
                               title: Text(
@@ -298,6 +345,7 @@ class _MyDrawerState extends State<MyDrawer> {
                               },
                             )
                           : SizedBox(),
+
                       ListTile(
                         title: Text(
                           'LeaderBoard',
@@ -344,6 +392,17 @@ class _MyDrawerState extends State<MyDrawer> {
                       //       MaterialPageRoute(
                       //         builder: (BuildContext context) =>
                       //             GalleryScreen(),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      //      ListTile(
+                      //   title: Text('Add council  backend'),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (BuildContext context) => AddCouncil(),
                       //       ),
                       //     );
                       //   },

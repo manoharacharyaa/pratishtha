@@ -161,7 +161,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
               },
               icon: Icon(Icons.refresh))
         ],
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.blue,
         title: Text(
           'ATTENDANCE',
           style: GoogleFonts.poppins(
@@ -179,7 +179,7 @@ class _ViewAttendanceAsTeacherState extends State<ViewAttendanceAsTeacher> {
           Container(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
             height: MediaQuery.of(context).size.height / 14,
-            color: Colors.pink,
+            color: Colors.blue,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
@@ -414,10 +414,10 @@ Widget _buildVolunteerGroup(
 Widget _buildVolunteerCard(
     Map<String, dynamic> volunteer, BuildContext context) {
   return Card(
-    shadowColor: Color.fromRGBO(255, 152, 148, 1),
+    shadowColor: Color.fromRGBO(100, 100, 100, 1),
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(width: 2, color: Color.fromRGBO(252, 218, 217, 1.0))),
+        side: BorderSide(width: 1, color: const Color.fromARGB(255, 179, 210, 235))),
     elevation: 5,
     margin: const EdgeInsets.symmetric(vertical: 8.0),
     child: Padding(
@@ -438,7 +438,7 @@ Widget _buildVolunteerCard(
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.pink,
+                    color: Colors.blue,
                   ),
                 ),
                 SizedBox(height: 8),
@@ -447,7 +447,7 @@ Widget _buildVolunteerCard(
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Color.fromARGB(255, 234, 136, 137),
+                    color: Color.fromARGB(255, 82, 82, 82),
                   ),
                 ),
               ],
@@ -468,14 +468,14 @@ Widget _buildVolunteerCard(
                       style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.pink),
+                          color: Colors.blue),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'CLASS',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(255, 234, 136, 137),
+                    color: Color.fromARGB(255, 82, 82, 82),
                       ),
                     ),
                   ],
@@ -489,7 +489,7 @@ Widget _buildVolunteerCard(
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink,
+                        color: Colors.blue,
                       ),
                     ),
                     SizedBox(height: 4),
@@ -497,7 +497,7 @@ Widget _buildVolunteerCard(
                       'ROLL NO.',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(255, 234, 136, 137),
+                    color: Color.fromARGB(255, 82, 82, 82),
                       ),
                     ),
                   ],
