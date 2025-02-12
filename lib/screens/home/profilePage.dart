@@ -297,7 +297,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       Text(
                                         '${this.widget.selectedUser!.firstName! + ' ' + this.widget.selectedUser!.lastName!}',
-                                        style: TextStyle(fontSize: 20),
+                                        style: AppFonts.poppins(
+                                          size: 16,
+                                          weight: FontWeight.w600,
+                                        ),
                                       ),
                                       SizedBox(width: 5),
                                       this.widget.selectedUser!.isVerified
@@ -346,8 +349,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           .widget
                                                           .selectedUser!
                                                           .sakecId,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
+                                                  style: AppFonts.poppins(
+                                                    size: 16,
+                                                    weight: FontWeight.w600,
+                                                  ),
                                                   maxLines: 1,
                                                 ),
                                               ),
@@ -375,7 +380,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                             Text(
                                               this.widget.selectedUser!.phone!,
-                                              style: TextStyle(fontSize: 20),
+                                              style: AppFonts.poppins(
+                                                size: 16,
+                                                weight: FontWeight.w600,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -414,8 +422,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       .widget
                                                       .selectedUser!
                                                       .branch,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
+                                                  style: AppFonts.poppins(
+                                                    size: 16,
+                                                    weight: FontWeight.w600,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -438,8 +448,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       .widget
                                                       .selectedUser!
                                                       .year,
-                                                  style:
-                                                      TextStyle(fontSize: 20),
+                                                  style: AppFonts.poppins(
+                                                    size: 16,
+                                                    weight: FontWeight.w600,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -462,7 +474,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Flexible(
                                         child: Text(
                                           this.widget.selectedUser!.institute!,
-                                          style: TextStyle(fontSize: 20),
+                                          style: AppFonts.poppins(
+                                            size: 16,
+                                            weight: FontWeight.w600,
+                                          ),
                                           overflow: TextOverflow.clip,
                                           maxLines: 2,
                                         ),

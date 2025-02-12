@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:pratishtha/models/interCollegeBoysVolleyballMatch.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
 
+import '../../../models/inter_college_models/interCollegeBoysVolleyballMatch.dart';
+
 class InterCollegeVolleyBallBoysHome extends StatefulWidget {
   final String currentAcademicYear;
-  const InterCollegeVolleyBallBoysHome({required this.currentAcademicYear, super.key});
+  const InterCollegeVolleyBallBoysHome(
+      {required this.currentAcademicYear, super.key});
 
   @override
   State<InterCollegeVolleyBallBoysHome> createState() =>
       _InterCollegeVolleyBallBoysHomeState();
 }
 
-class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallBoysHome> {
+class _InterCollegeVolleyBallBoysHomeState
+    extends State<InterCollegeVolleyBallBoysHome> {
   late Future<List<InterCollegeVlleyballBoysMatch>> allVolleyBallBoysMatches;
   bool isExtended = false;
 
@@ -37,7 +39,7 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
 
   @override
   Widget build(BuildContext context) {
-     return Container(
+    return Container(
       child: Column(
         children: [
           FutureBuilder<List<InterCollegeVlleyballBoysMatch>>(
@@ -56,7 +58,8 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 print("No VolleyBallBoys Matches Available");
-                return Center(child: Text('No VolleyBallBoys Matches Available'));
+                return Center(
+                    child: Text('No VolleyBallBoys Matches Available'));
               }
 
               List<InterCollegeVlleyballBoysMatch> matches = snapshot.data!;
@@ -67,8 +70,6 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
                   itemBuilder: (context, index) {
                     InterCollegeVlleyballBoysMatch match = matches[index];
 
-                
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Container(
@@ -77,9 +78,7 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
                           borderRadius: BorderRadius.circular(18),
                         ),
                         width: MediaQuery.of(context).size.width,
-                        height: isExtended
-                            ? 320
-                            : 250,
+                        height: isExtended ? 320 : 250,
                         padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,12 +193,11 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                        match.teamBScore.toString(),
+                                          match.teamBScore.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w700,
                                               fontSize: 15),
                                         ),
-                                        
                                       ],
                                     ),
                                   ],
@@ -273,7 +271,7 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
                             //                   style: GoogleFonts.poppins(
                             //                       fontWeight:
                             //                           FontWeight.normal)),
-                            
+
                             //             ],
                             //           ),
                             //           Column(
@@ -290,7 +288,7 @@ class _InterCollegeVolleyBallBoysHomeState extends State<InterCollegeVolleyBallB
                             //                   style: GoogleFonts.poppins(
                             //                       fontWeight:
                             //                           FontWeight.normal)),
-                                         
+
                             //             ],
                             //           ),
                             //         ],

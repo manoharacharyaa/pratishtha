@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pratishtha/models/interCollege.dart';
+import 'package:pratishtha/models/inter_college_models/interCollege.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
 
@@ -87,7 +87,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
           size: 25,
         ),
         backgroundColor: Color.fromARGB(249, 34, 34, 50),
-        foregroundColor:  Color.fromARGB(249, 34, 34, 50),
+        foregroundColor: Color.fromARGB(249, 34, 34, 50),
         title: Text(
           'LeaderBoard',
           style: GoogleFonts.poppins(
@@ -111,7 +111,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                           child: Row(
                             children: [
                               ButtonsTabBar(
-                                buttonMargin: EdgeInsets.symmetric(horizontal: 20.0),
+                                buttonMargin:
+                                    EdgeInsets.symmetric(horizontal: 20.0),
                                 radius: 50,
                                 height: 50,
                                 backgroundColor:
@@ -229,17 +230,16 @@ class _LeaderBoardState extends State<LeaderBoard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
-          Row(mainAxisAlignment: MainAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-            
-                CircleAvatar(
+              CircleAvatar(
                 backgroundImage: AssetImage(
                   'assets/images/InterCollegeSports/${sportName}.png',
                 ),
                 radius: 25,
                 backgroundColor: Colors.transparent,
-                ),
+              ),
               Text(sportName.toUpperCase(),
                   style: GoogleFonts.sourceSans3(
                     color: Colors.white,
@@ -279,14 +279,13 @@ class _LeaderBoardState extends State<LeaderBoard> {
                         flex: 3,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children:  [
+                          children: [
                             Text(
                               'MP',
                               style: GoogleFonts.sourceSans3(
                                 color: Colors.white70,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -324,17 +323,18 @@ class _LeaderBoardState extends State<LeaderBoard> {
                   ),
                 ),
                 const Divider(color: Colors.white),
-          
+
                 // Leaderboard list
                 Expanded(
                   child: ListView.builder(
                     itemCount: colleges.length,
                     itemBuilder: (context, index) {
                       final college = colleges[index];
-                      final matchesPlayed = college.matchesPlayed![sportName] ?? 0;
+                      final matchesPlayed =
+                          college.matchesPlayed![sportName] ?? 0;
                       final matchesWon = college.matchesWon![sportName] ?? 0;
                       final matchesLost = college.matchesLost![sportName] ?? 0;
-          
+
                       return Column(
                         children: [
                           Padding(
@@ -365,7 +365,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                           decoration: BoxDecoration(
                                             color: Colors
                                                 .black, // Tooltip background color
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           padding: const EdgeInsets.all(8),
                                           child: Text(
@@ -432,7 +433,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
       child: Text(
         value.toString(),
         style: TextStyle(
-          color: isPoints? Colors.white : Colors.white70,
+          color: isPoints ? Colors.white : Colors.white70,
           fontWeight: isPoints ? FontWeight.w600 : FontWeight.normal,
           fontSize: 14,
         ),

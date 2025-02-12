@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:pratishtha/is_live_provider.dart';
 import 'package:pratishtha/styles/mainTheme.dart';
 import 'package:pratishtha/widgets/splashScreen.dart';
+import 'package:pratishtha/youtube.dart';
 import 'services/authenticationServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
               context.read<AuthenticationService>().authStateChanged,
           initialData: null,
         ),
+        ChangeNotifierProvider(create: (context) => IsLiveProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,6 +42,7 @@ class MyApp extends StatelessWidget {
         supportedLocales: [Locale('en', 'US')],
         theme: mainTheme,
         home: splashScreen(),
+        // home: Youtube(),
       ),
     );
   }

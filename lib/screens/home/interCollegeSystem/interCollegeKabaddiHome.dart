@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'package:pratishtha/models/kabaddiInterCollege.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
+import '../../../models/inter_college_models/kabaddiInterCollege.dart';
 
 class InterCollegeKabaddiHome extends StatefulWidget {
   final String currentAcademicYear;
@@ -68,8 +67,6 @@ class _InterCollegeKabaddiHomeState extends State<InterCollegeKabaddiHome> {
                   itemBuilder: (context, index) {
                     InterCollegeKabaddiMatch match = matches[index];
 
-                
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Container(
@@ -78,9 +75,7 @@ class _InterCollegeKabaddiHomeState extends State<InterCollegeKabaddiHome> {
                           borderRadius: BorderRadius.circular(18),
                         ),
                         width: MediaQuery.of(context).size.width,
-                        height: isExtended
-                            ? 320
-                            : 250,
+                        height: isExtended ? 320 : 250,
                         padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,12 +190,11 @@ class _InterCollegeKabaddiHomeState extends State<InterCollegeKabaddiHome> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                        match.teamBPoints.toString(),
+                                          match.teamBPoints.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w700,
                                               fontSize: 15),
                                         ),
-                                        
                                       ],
                                     ),
                                   ],
@@ -268,13 +262,11 @@ class _InterCollegeKabaddiHomeState extends State<InterCollegeKabaddiHome> {
                                                   fontWeight:
                                                       FontWeight.normal)),
                                           SizedBox(height: 4),
-                                                Text(
-                                              match
-                                                  .teamATopDefender.toString(),
+                                          Text(
+                                              match.teamATopDefender.toString(),
                                               style: GoogleFonts.poppins(
                                                   fontWeight:
                                                       FontWeight.normal)),
-                            
                                         ],
                                       ),
                                       Column(
@@ -286,12 +278,11 @@ class _InterCollegeKabaddiHomeState extends State<InterCollegeKabaddiHome> {
                                                   fontWeight:
                                                       FontWeight.normal)),
                                           SizedBox(height: 4),
-                                          Text(match.teamBTopDefender
-                                          .toString(),
+                                          Text(
+                                              match.teamBTopDefender.toString(),
                                               style: GoogleFonts.poppins(
                                                   fontWeight:
                                                       FontWeight.normal)),
-                                         
                                         ],
                                       ),
                                     ],

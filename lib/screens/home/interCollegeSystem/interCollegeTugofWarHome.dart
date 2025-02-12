@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pratishtha/models/interCollegeTugOfWarMatch.dart';
-
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/loadingWidget.dart';
+import '../../../models/inter_college_models/interCollegeTugOfWarMatch.dart';
 
 class InterCollegeTugOfWarHome extends StatefulWidget {
   final String currentAcademicYear;
-  const InterCollegeTugOfWarHome({required this.currentAcademicYear, super.key});
+  const InterCollegeTugOfWarHome(
+      {required this.currentAcademicYear, super.key});
 
   @override
   State<InterCollegeTugOfWarHome> createState() =>
@@ -68,8 +68,6 @@ class _InterCollegeTugOfWarHomeState extends State<InterCollegeTugOfWarHome> {
                   itemBuilder: (context, index) {
                     InterCollegeTugOfWarMatch match = matches[index];
 
-                
-
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Container(
@@ -78,9 +76,7 @@ class _InterCollegeTugOfWarHomeState extends State<InterCollegeTugOfWarHome> {
                           borderRadius: BorderRadius.circular(18),
                         ),
                         width: MediaQuery.of(context).size.width,
-                        height: isExtended
-                            ? 320
-                            : 250,
+                        height: isExtended ? 320 : 250,
                         padding: EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,12 +191,11 @@ class _InterCollegeTugOfWarHomeState extends State<InterCollegeTugOfWarHome> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                        match.teamBScore.toString(),
+                                          match.teamBScore.toString(),
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w700,
                                               fontSize: 15),
                                         ),
-                                        
                                       ],
                                     ),
                                   ],
@@ -274,7 +269,7 @@ class _InterCollegeTugOfWarHomeState extends State<InterCollegeTugOfWarHome> {
                             //                   style: GoogleFonts.poppins(
                             //                       fontWeight:
                             //                           FontWeight.normal)),
-                            
+
                             //             ],
                             //           ),
                             //           Column(
@@ -291,7 +286,7 @@ class _InterCollegeTugOfWarHomeState extends State<InterCollegeTugOfWarHome> {
                             //                   style: GoogleFonts.poppins(
                             //                       fontWeight:
                             //                           FontWeight.normal)),
-                                         
+
                             //             ],
                             //           ),
                             //         ],

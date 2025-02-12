@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pratishtha/constants/colors.dart';
-import 'package:pratishtha/models/interCollege.dart';
+import 'package:pratishtha/models/inter_college_models/interCollege.dart';
 import 'package:pratishtha/services/interCollegeServices.dart';
 import 'package:pratishtha/widgets/customTextField.dart';
 
@@ -416,7 +416,12 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
     }
   }
 
-  final List<String> suggestions = ['semi-final', 'final', 'quarter final','Group Stage - M(num)'];
+  final List<String> suggestions = [
+    'semi-final',
+    'final',
+    'quarter final',
+    'Group Stage - M(num)'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -1365,11 +1370,15 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                   // Match Type, Location, DayDate, Time
                                                   Row(
                                                     children: [
-                                                        Expanded(
-                                                        child: _buildAnimatedTextFieldWithSuggestions(
-                                                          controller: matchTypeController,
-                                                          labelText: 'Enter Match Type (Group Stage - M(num), QF, SF, Final)',
-                                                          suggestions: suggestions,
+                                                      Expanded(
+                                                        child:
+                                                            _buildAnimatedTextFieldWithSuggestions(
+                                                          controller:
+                                                              matchTypeController,
+                                                          labelText:
+                                                              'Enter Match Type (Group Stage - M(num), QF, SF, Final)',
+                                                          suggestions:
+                                                              suggestions,
                                                         ),
                                                       ),
                                                       SizedBox(width: 10),
@@ -1873,7 +1882,9 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                       teamAId:
                                                           teamADocIdController
                                                               .text,
-                                                              teamBId: teamBDocIdController.text,
+                                                      teamBId:
+                                                          teamBDocIdController
+                                                              .text,
                                                     );
 
                                                     if (result ==
@@ -1969,8 +1980,13 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                               .text,
                                                       teamBLogoUrl:
                                                           teamBLogoUrlController
-                                                              .text, teamAId: teamADocIdController.text,
-                                                              teamBId: teamBDocIdController.text,
+                                                              .text,
+                                                      teamAId:
+                                                          teamADocIdController
+                                                              .text,
+                                                      teamBId:
+                                                          teamBDocIdController
+                                                              .text,
                                                     );
 
                                                     if (result ==
@@ -2066,8 +2082,13 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                               .text,
                                                       teamBLogoUrl:
                                                           teamBLogoUrlController
-                                                              .text, teamAId: teamADocIdController.text,
-                                                              teamBId: teamBDocIdController.text,
+                                                              .text,
+                                                      teamAId:
+                                                          teamADocIdController
+                                                              .text,
+                                                      teamBId:
+                                                          teamBDocIdController
+                                                              .text,
                                                     );
 
                                                     if (result ==
@@ -2163,8 +2184,13 @@ class _AdminInterCollegePageState extends State<AdminInterCollegePage> {
                                                               .text,
                                                       teamBLogoUrl:
                                                           teamBLogoUrlController
-                                                              .text, teamAId: teamADocIdController.text,
-                                                              teamBId: teamBDocIdController.text,
+                                                              .text,
+                                                      teamAId:
+                                                          teamADocIdController
+                                                              .text,
+                                                      teamBId:
+                                                          teamBDocIdController
+                                                              .text,
                                                     );
 
                                                     if (result ==

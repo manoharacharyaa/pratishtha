@@ -131,6 +131,7 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
         setState(() {
           isLoading = false;
         });
+        Navigator.pop(context);
         Fluttertoast.showToast(
             msg: "Match Added Successfully",
             toastLength: Toast.LENGTH_SHORT,

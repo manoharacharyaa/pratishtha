@@ -8,7 +8,10 @@ import '../../widgets/connectivityChecker.dart';
 
 class declareResultPage extends StatefulWidget {
   const declareResultPage(
-      {required this.eventID, this.matchList, required this.index, required this.event});
+      {required this.eventID,
+      this.matchList,
+      required this.index,
+      required this.event});
   final String eventID;
   final dynamic matchList;
   final int index;
@@ -46,7 +49,7 @@ class _declareResultPageState extends State<declareResultPage> {
   Future<void> updateArrayElement(
       int index, Map<String, dynamic> newValue) async {
     var docRef =
-    FirebaseFirestore.instance.collection('events').doc(widget.eventID);
+        FirebaseFirestore.instance.collection('events').doc(widget.eventID);
     var snapshot = await docRef.get();
     var array = snapshot.data()!['matches'] as List;
     array[index] = newValue;
@@ -66,13 +69,14 @@ class _declareResultPageState extends State<declareResultPage> {
     };
     updateArrayElement(widget.index, teams);
     Fluttertoast.showToast(
-        msg: "Result Declared",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: blackColor,
-        textColor: whiteColor,
-        fontSize: 16.0);
+      msg: "Result Declared",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: blackColor,
+      textColor: whiteColor,
+      fontSize: 16.0,
+    );
   }
 
   Future<void> _onRefresh() async {
@@ -150,145 +154,146 @@ class _declareResultPageState extends State<declareResultPage> {
 
               return (documents.length == 0)
                   ? Scaffold(
-                body: Center(
-                  child: Text(
-                    'No Teams Found',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              )
-                  : Column(
-                children: [
-                  ListView.builder(
-                    itemCount: documents.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    addAutomaticKeepAlives: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Card(
-                          margin: EdgeInsets.only(
-                              left: 20, right: 20, bottom: 5),
-                          color: whiteColor,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            side: new BorderSide(
-                              color: blackColor,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              8.0,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  "Team  ${documents[index]['name']}",
-                                  style: TextStyle(
-                                    color: blackColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                trailing: widget.matchList[
-                                'resultsdeclare'] ==
-                                    true
-                                    ? ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                    Colors.grey[700],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          8.0),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "Declared",
-                                    style: TextStyle(
-                                      color: whiteColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Fluttertoast.showToast(
-                                      msg:
-                                      "Result Declared Already",
-                                      toastLength:
-                                      Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0,
-                                    );
-                                  },
-                                )
-                                    : ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(
-                                          8.0),
-                                    ),
-                                  ),
-                                  label: Text(
-                                    "Winner",
-                                    style: TextStyle(
-                                      color: whiteColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  icon: Icon(Icons.add),
-                                  onPressed: () {
-                                    updateResult(
-                                        documents[index]['name']);
-                                    updateScoreForFestDocument(
-                                        documents[index]['id']);
-                                    updateScoreForEventDocument(
-                                        documents[index]['id'],
-                                        widget.eventID);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: ((context) =>
-                                            EventPage(
-                                              event: widget.event, key: null,
-                                            )),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                            ],
+                      body: Center(
+                        child: Text(
+                          'No Teams Found',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  Divider(),
-                  Center(
-                    child: Text(
-                      "Results : ${widget.matchList['result']}",
-                      style: TextStyle(
-                        color: blackColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  )
-                ],
-              );
+                    )
+                  : Column(
+                      children: [
+                        ListView.builder(
+                          itemCount: documents.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          addAutomaticKeepAlives: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Card(
+                                margin: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 5),
+                                color: whiteColor,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  side: new BorderSide(
+                                    color: blackColor,
+                                    width: 1.0,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    8.0,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        "Team  ${documents[index]['name']}",
+                                        style: TextStyle(
+                                          color: blackColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      trailing: widget.matchList[
+                                                  'resultsdeclare'] ==
+                                              true
+                                          ? ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.grey[700],
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Declared",
+                                                style: TextStyle(
+                                                  color: whiteColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Result Declared Already",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0,
+                                                );
+                                              },
+                                            )
+                                          : ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: primaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                              ),
+                                              label: Text(
+                                                "Winner",
+                                                style: TextStyle(
+                                                  color: whiteColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              icon: Icon(Icons.add),
+                                              onPressed: () {
+                                                updateResult(
+                                                    documents[index]['name']);
+                                                updateScoreForFestDocument(
+                                                    documents[index]['id']);
+                                                updateScoreForEventDocument(
+                                                    documents[index]['id'],
+                                                    widget.eventID);
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: ((context) =>
+                                                        EventPage(
+                                                          event: widget.event,
+                                                          key: null,
+                                                        )),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                    ),
+                                    SizedBox(height: 5),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        Divider(),
+                        Center(
+                          child: Text(
+                            "Results : ${widget.matchList['result']}",
+                            style: TextStyle(
+                              color: blackColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
             } else {
               return const Center(
                 child: CircularProgressIndicator(),

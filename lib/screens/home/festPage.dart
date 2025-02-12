@@ -11,6 +11,7 @@ import 'package:pratishtha/screens/home/olympusLeaderboardPage.dart';
 import 'package:pratishtha/services/databaseServices.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:pratishtha/widgets/errorWidget.dart';
@@ -53,111 +54,113 @@ class _FestPageState extends State<FestPage> {
   @override
   Widget build(BuildContext context) {
     return checkConection(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: RefreshIndicator(
-          onRefresh: () async {
-            widget.event = await databaseServices.getFest(widget.event.id!);
-            setState(() {});
-            return Future.delayed(Duration(seconds: 1));
-          },
-          child: FutureBuilder(
-              future: Future.wait([
-                getFeatureListValuesFromPrefs(),
-                getUserFromPrefs(),
-                databaseServices.getSpecificEvents(this.widget.event.childId!),
-              ]),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  featureMap = snapshot.data![0] as Map<dynamic, dynamic>;
-                  currentUser = snapshot.data![1] as User;
-                  childEvents =
-                      (snapshot.data![2] as List<dynamic>).cast<Event>();
-        
-                  childEvents.removeWhere((event) => event.softDelete);
-        
-                  return Scaffold(
-                    floatingActionButton: enableMatchManage()
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              (this.widget.event.id == Olympus2024ID ||
-                                      this.widget.event.id == Aurum2024ID ||
-                                      this.widget.event.id == Verve2024ID)
-                                  ? Row(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: FloatingActionButton(
-                                            heroTag: 'button1',
-                                            child: Text('Add Teams',
-                                                textAlign: TextAlign.center),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AddTeamToFest(),
-                                                ),
-                                              );
-                                            },
+      child: RefreshIndicator(
+        onRefresh: () async {
+          widget.event = await databaseServices.getFest(widget.event.id!);
+          setState(() {});
+          return Future.delayed(Duration(seconds: 1));
+        },
+        child: FutureBuilder(
+            future: Future.wait([
+              getFeatureListValuesFromPrefs(),
+              getUserFromPrefs(),
+              databaseServices.getSpecificEvents(this.widget.event.childId!),
+            ]),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                featureMap = snapshot.data![0] as Map<dynamic, dynamic>;
+                currentUser = snapshot.data![1] as User;
+                childEvents =
+                    (snapshot.data![2] as List<dynamic>).cast<Event>();
+
+                childEvents.removeWhere((event) => event.softDelete);
+
+                return Scaffold(
+                  floatingActionButton: enableMatchManage()
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            (this.widget.event.id == Olympus2024ID ||
+                                    this.widget.event.id == Aurum2024ID ||
+                                    this.widget.event.id == Verve2024ID)
+                                ? Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: FloatingActionButton.extended(
+                                          heroTag: 'button1',
+                                          label: Text(
+                                            'Add Teams',
+                                            textAlign: TextAlign.center,
                                           ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AddTeamToFest(),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      ],
-                                    )
-                                  : Container(),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  heroTag: 'button2',
-                                  child: Icon(Icons.app_registration),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            EditEvent(event: widget.event),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          )
-                        : Container(),
-                    body: CustomScrollView(
-                      slivers: <Widget>[
-                        SliverAppBar(
-                          expandedHeight: MediaQuery.of(context).size.height / 4,
-                          flexibleSpace: this.widget.event.bannerUrl == ""
-                              ? ComingSoonWidget(
-                                  waveColor: secondaryColor,
-                                  boxBackgroundColor: primaryColor,
-                                  textStyle: TextStyle(
-                                      fontSize: 80,
-                                      fontWeight: FontWeight.bold,
-                                      color: secondaryColor,
-                                      fontFamily: 'Agne'))
-                              : Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height,
-                                  child: FittedBox(
-                                    fit: BoxFit.fill,
-                                    child: Image(
-                                      image: NetworkImage(
-                                          this.widget.event.bannerUrl),
-                                      // image: NetworkImage(this.widget.event.bannerUrl),
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: FloatingActionButton(
+                                heroTag: 'button2',
+                                child: Icon(Icons.app_registration),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          EditEvent(event: widget.event),
                                     ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  body: CustomScrollView(
+                    slivers: <Widget>[
+                      SliverAppBar(
+                        expandedHeight: MediaQuery.of(context).size.height / 4,
+                        flexibleSpace: this.widget.event.bannerUrl == ""
+                            ? ComingSoonWidget(
+                                waveColor: secondaryColor,
+                                boxBackgroundColor: primaryColor,
+                                textStyle: TextStyle(
+                                    fontSize: 80,
+                                    fontWeight: FontWeight.bold,
+                                    color: secondaryColor,
+                                    fontFamily: 'Agne'))
+                            : Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Image(
+                                    image: NetworkImage(
+                                        this.widget.event.bannerUrl),
+                                    // image: NetworkImage(this.widget.event.bannerUrl),
                                   ),
                                 ),
-                          floating: true,
-                          backgroundColor: primaryColor,
-                        ),
-                        SliverToBoxAdapter(
+                              ),
+                        floating: true,
+                        backgroundColor: primaryColor,
+                      ),
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Container(
                             padding: EdgeInsets.fromLTRB(10.0, 15.0, 10.0, 0.0),
                             margin: MediaQuery.of(context).padding,
@@ -173,9 +176,7 @@ class _FestPageState extends State<FestPage> {
                                           this.widget.event.name!.isEmpty
                                               ? "Coming Soon"
                                               : this.widget.event.name!,
-                                          style: TextStyle(
-                                            fontSize: 28,
-                                          ),
+                                          style: AppFonts.poppins(size: 28),
                                         ),
                                       ),
                                       Spacer(),
@@ -186,10 +187,12 @@ class _FestPageState extends State<FestPage> {
                                                     context: context,
                                                     isScrollControlled: true,
                                                     elevation: 10,
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.vertical(
-                                                        top: Radius.circular(10),
+                                                        top:
+                                                            Radius.circular(10),
                                                       ),
                                                     ),
                                                     builder: (context) {
@@ -203,7 +206,8 @@ class _FestPageState extends State<FestPage> {
                                                                   .height /
                                                               3,
                                                           padding:
-                                                              EdgeInsets.all(20),
+                                                              EdgeInsets.all(
+                                                                  20),
                                                           child: Column(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -257,7 +261,8 @@ class _FestPageState extends State<FestPage> {
                                                                 ],
                                                               ),
                                                               ElevatedButton(
-                                                                  onPressed: () {
+                                                                  onPressed:
+                                                                      () {
                                                                     if (this.widget.event.goLive !=
                                                                             goLive ||
                                                                         this.widget.event.softDelete !=
@@ -270,13 +275,10 @@ class _FestPageState extends State<FestPage> {
                                                                           barrierDismissible:
                                                                               false, // user must tap button!
                                                                           builder:
-                                                                              (BuildContext
-                                                                                  context) {
+                                                                              (BuildContext context) {
                                                                             return AlertDialog(
-                                                                              title:
-                                                                                  const Text('Warning'),
-                                                                              content:
-                                                                                  SingleChildScrollView(
+                                                                              title: const Text('Warning'),
+                                                                              content: SingleChildScrollView(
                                                                                 child: ListBody(
                                                                                   children: const <Widget>[
                                                                                     Text('Are you sure you want to delete this event?'),
@@ -312,9 +314,8 @@ class _FestPageState extends State<FestPage> {
                                                                                 goLive,
                                                                             softDelete:
                                                                                 softDelete,
-                                                                            event: this
-                                                                                .widget
-                                                                                .event);
+                                                                            event:
+                                                                                this.widget.event);
                                                                       }
                                                                     }
                                                                   },
@@ -337,7 +338,8 @@ class _FestPageState extends State<FestPage> {
                                                 backgroundColor: primaryColor,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(100),
+                                                      BorderRadius.circular(
+                                                          100),
                                                 ),
                                               ),
                                               onPressed: () {
@@ -361,36 +363,36 @@ class _FestPageState extends State<FestPage> {
                                   SizedBox(
                                     height: 5.0,
                                   ),
-                                  // this
-                                  //             .widget
-                                  //             .event
-                                  //             .dateTo!
-                                  //             .isBefore(DateTime.now()) &&
-                                  //         !this
-                                  //             .widget
-                                  //             .event
-                                  //             .dateFrom!
-                                  //             .isAtSameMomentAs(
-                                  //                 DateTime(1975, 12, 11))
-                                  //     ? Center(
-                                  //         child: Column(
-                                  //           crossAxisAlignment:
-                                  //               CrossAxisAlignment.center,
-                                  //           children: [
-                                  //             Text(
-                                  //               "This fest is now over",
-                                  //               textAlign: TextAlign.center,
-                                  //               style: TextStyle(
-                                  //                   fontSize: 15,
-                                  //                   fontWeight: FontWeight.bold),
-                                  //             ),
-                                  //             SizedBox(
-                                  //               height: 15,
-                                  //             )
-                                  //           ],
-                                  //         ),
-                                  //       )
-                                  //     : Container(),
+                                  this
+                                              .widget
+                                              .event
+                                              .dateTo!
+                                              .isBefore(DateTime.now()) &&
+                                          !this
+                                              .widget
+                                              .event
+                                              .dateFrom!
+                                              .isAtSameMomentAs(
+                                                  DateTime(1975, 12, 11))
+                                      ? Center(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "This fest is now over",
+                                                textAlign: TextAlign.center,
+                                                style: AppFonts.poppins(
+                                                  size: 18,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
                                   SizedBox(
                                     height: 5.0,
                                   ),
@@ -411,17 +413,14 @@ class _FestPageState extends State<FestPage> {
                                             .description
                                             .replaceAll("\\n", "\n");
                                       })()),
-                                      style: TextStyle(
-                                          color: dullGreyColor, fontSize: 16),
+                                      style: AppFonts.poppins(
+                                        color: dullGreyColor,
+                                        size: 14,
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10.0,
-                                  ),
+                                  SizedBox(height: 20),
                                   displayTimeLocation(),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
                                   this.widget.event.rules!.isEmpty
                                       ? Container()
                                       : Text(
@@ -435,7 +434,11 @@ class _FestPageState extends State<FestPage> {
                                       : SizedBox(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          child: this.widget.event.rules!.isEmpty
+                                          child: this
+                                                  .widget
+                                                  .event
+                                                  .rules!
+                                                  .isEmpty
                                               ? Text(
                                                   "Coming Soon",
                                                   overflow: TextOverflow.clip,
@@ -453,10 +456,11 @@ class _FestPageState extends State<FestPage> {
                                                       itemBuilder:
                                                           (context, index) {
                                                         return Container(
-                                                          margin: EdgeInsets.only(
-                                                              left: 5,
-                                                              bottom: 5,
-                                                              right: 5),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  bottom: 5,
+                                                                  right: 5),
                                                           padding:
                                                               EdgeInsets.all(5),
                                                           child: Row(
@@ -466,7 +470,8 @@ class _FestPageState extends State<FestPage> {
                                                             children: [
                                                               Text(
                                                                   '${index + 1}.'),
-                                                              SizedBox(width: 5),
+                                                              SizedBox(
+                                                                  width: 5),
                                                               Flexible(
                                                                 child: Text(
                                                                   this
@@ -522,17 +527,18 @@ class _FestPageState extends State<FestPage> {
                                                               .widget
                                                               .event
                                                               .eventHeads!),
-                                                      builder:
-                                                          (BuildContext context,
-                                                              AsyncSnapshot<
-                                                                      List<User>>
-                                                                  snapshot) {
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<
+                                                                  List<User>>
+                                                              snapshot) {
                                                         if (snapshot.hasData) {
                                                           return Container(
-                                                            width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
                                                             child: Column(
                                                               children:
                                                                   getListOfUserCards(
@@ -591,17 +597,18 @@ class _FestPageState extends State<FestPage> {
                                                               .widget
                                                               .event
                                                               .volunteers!),
-                                                      builder:
-                                                          (BuildContext context,
-                                                              AsyncSnapshot<
-                                                                      List<User>>
-                                                                  snapshot) {
+                                                      builder: (BuildContext
+                                                              context,
+                                                          AsyncSnapshot<
+                                                                  List<User>>
+                                                              snapshot) {
                                                         if (snapshot.hasData) {
                                                           return Container(
-                                                            width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
                                                             child: Column(
                                                               children:
                                                                   getListOfUserCards(
@@ -635,10 +642,12 @@ class _FestPageState extends State<FestPage> {
                                       : Container(
                                           //height: (MediaQuery.of(context).size.height / 4)*childEvents.length,
                                           child: GridView.builder(
+                                              padding: EdgeInsets.only(top: 15),
                                               gridDelegate:
                                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisCount: 2,
-                                                      childAspectRatio: 0.9),
+                                                crossAxisCount: 2,
+                                                childAspectRatio: 0.9,
+                                              ),
                                               physics:
                                                   NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
@@ -646,10 +655,11 @@ class _FestPageState extends State<FestPage> {
                                               itemBuilder: (context, index) {
                                                 return Container(
                                                   child: ChildEventCard(
-                                                      context: context,
-                                                      event: childEvents[index],
-                                                      isVerified:
-                                                          currentUser.isVerified),
+                                                    context: context,
+                                                    event: childEvents[index],
+                                                    isVerified:
+                                                        currentUser.isVerified,
+                                                  ),
                                                 );
                                               }),
                                         ),
@@ -658,17 +668,17 @@ class _FestPageState extends State<FestPage> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  //print("fest page snapshot error: ${snapshot.error}");
-                  return CustomErrorWidget();
-                } else {
-                  return Center(child: loadingWidget());
-                }
-              }),
-        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                //print("fest page snapshot error: ${snapshot.error}");
+                return CustomErrorWidget();
+              } else {
+                return Center(child: loadingWidget());
+              }
+            }),
       ),
     );
   }
@@ -678,9 +688,9 @@ class _FestPageState extends State<FestPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 7),
-          height: 40,
-          width: MediaQuery.of(context).size.width / 1.2,
+          padding: EdgeInsets.symmetric(vertical: 2),
+          height: 50,
+          width: MediaQuery.sizeOf(context).width / 1.2,
           decoration: BoxDecoration(
               color: primaryColor,
               borderRadius: BorderRadius.circular(30),
@@ -723,7 +733,7 @@ class _FestPageState extends State<FestPage> {
                       dateTo: this.widget.event.dateTo);
                 })())),
                 overflow: TextOverflow.clip,
-                style: TextStyle(fontSize: 14, color: whiteColor),
+                style: AppFonts.poppins(color: Colors.white, size: 14),
               ),
             ],
           ),

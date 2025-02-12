@@ -42,7 +42,6 @@ dependencies:
     sdk: flutter
   flutter_easyloading: ^3.0.5
   flutter_page_transition_plus: ^1.0.2
-  flutter_riverpod: ^2.6.1
   flutter_slimy_card: ^1.0.2
   flutter_svg: ^2.0.16
   fluttermoji: ^1.0.2
@@ -50,7 +49,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   gif: ^2.3.0
   glassmorphism: ^3.0.0
-  
+
   google_fonts: ^6.2.1
   image_picker: ^1.0.7
   intl: ^0.17.0
@@ -65,22 +64,21 @@ dependencies:
   loading_indicator: ^3.1.1
   url_launcher: ^6.2.3
 
-
-
   path_provider: ^2.1.2
   youtube_player_flutter: ^8.1.2
-
 
   multi_dropdown: ^2.1.3
   page_transition: ^2.1.0
   syncfusion_flutter_calendar: ^21.2.3
   table_calendar: ^3.0.8
 
-
   dotted_border: ^2.1.0
   toastification: ^2.3.0
   lottie: ^3.2.0
   transparent_image: ^2.0.1
+  shared_preferences: ^2.5.2
+  provider: ^6.1.2
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

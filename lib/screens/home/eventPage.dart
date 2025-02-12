@@ -92,8 +92,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   bool enableEditEvent() {
-    if ([5, 3].contains(currentUser.role) ||
-        this.widget.event.eventHeads!.contains(currentUser.uid)) {
+    if (currentUser.role == 3 || currentUser.role == 5) {
       return true;
     } else {
       return false;
@@ -101,14 +100,18 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   bool enableMatchManage() {
-    if ([5, 3, 7].contains(currentUser.role)) {
+    if (currentUser.role == 2 ||
+        currentUser.role == 3 ||
+        currentUser.role == 5 ||
+        currentUser.role == 7) {
       return true;
     } else {
       return false;
     }
   }
+
   bool enableAddPoints() {
-    if ([5,3].contains(currentUser.role)) {
+    if ([5, 3].contains(currentUser.role)) {
       return true;
     } else {
       return false;
@@ -196,52 +199,43 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                               icon: Icon(FontAwesomeIcons.penToSquare),
                             )
                           : Container(),
-
-                    if (widget.event.parentId == Olympus2024ID && enableMatchManage())
-
-                          ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          secondaryColor)),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => addMatchFormPage(
-                                              eventID: this
-                                                  .widget
-                                                  .event
-                                                  .id
-                                                  .toString(),
-                                            )));
-                              },
-                              label: Text("Matches"),
-                              icon: Icon(FontAwesomeIcons.plus),
-                            ),
-                          
-                      if (widget.event.parentId == Olympus2024ID && enableMatchManage())
-
-                          ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          secondaryColor)),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => addTeamPage(
-                                      eventID: this.widget.event.id.toString(),
-                                    ),
-                                  ),
-                                );
-                              },
-                              label: Text("Teams"),
-                              icon: Icon(FontAwesomeIcons.plus),
-                            )
-                          ,
-                        
+                      if (widget.event.parentId == Olympus2024ID &&
+                          enableMatchManage())
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  secondaryColor)),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => addMatchFormPage(
+                                          eventID:
+                                              this.widget.event.id.toString(),
+                                        )));
+                          },
+                          label: Text("Matches"),
+                          icon: Icon(FontAwesomeIcons.plus),
+                        ),
+                      if (widget.event.parentId == Olympus2024ID &&
+                          enableMatchManage())
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  secondaryColor)),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => addTeamPage(
+                                  eventID: this.widget.event.id.toString(),
+                                ),
+                              ),
+                            );
+                          },
+                          label: Text("Teams"),
+                          icon: Icon(FontAwesomeIcons.plus),
+                        ),
                       ElevatedButton(
                         onPressed: () async {
                           //URL Redirecting to browser
@@ -350,28 +344,30 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                               text: "Matches",
                                             )
                                           ]
-                                        : widget.event.parentId == Aurum2024ID?[
-                                          Tab(
-                                            text: "Details",
-                                          ),
-                                          Tab(
-                                            text: "Participants",
-                                          ),
-                                          Tab(
-                                            text: "Leaderboard",
-                                          ),
-                                        ] :<Widget>[
-                                            Tab(
-                                              text: "Details",
-                                            ),
-                                            Tab(
-                                              text: "Coordinators",
-                                            ),
-                                            Tab(
-                                              text: "Leaderboard",
-                                            ),
-                                          ]),
-                                          //Aurum work todo
+                                        : widget.event.parentId == Aurum2024ID
+                                            ? [
+                                                Tab(
+                                                  text: "Details",
+                                                ),
+                                                Tab(
+                                                  text: "Participants",
+                                                ),
+                                                Tab(
+                                                  text: "Leaderboard",
+                                                ),
+                                              ]
+                                            : <Widget>[
+                                                Tab(
+                                                  text: "Details",
+                                                ),
+                                                Tab(
+                                                  text: "Coordinators",
+                                                ),
+                                                Tab(
+                                                  text: "Leaderboard",
+                                                ),
+                                              ]),
+                            //Aurum work todo
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height / 1.6,
@@ -392,18 +388,20 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                                 : leaderboardView(),
                                             matchesboardView()
                                           ]
-                                        : widget.event.parentId == Aurum2024ID ? [
-                                          detailsView(),
-                                          participantsView(),
-                                          aurumLeaderboardView(),
-                                        ]:[
-                                            detailsView(),
-                                            coordinatorsView(),
-                                            widget.event.parentId ==
-                                                    Olympus2024ID
-                                                ? olympusLeaderView()
-                                                : leaderboardView(),
-                                          ],
+                                        : widget.event.parentId == Aurum2024ID
+                                            ? [
+                                                detailsView(),
+                                                participantsView(),
+                                                aurumLeaderboardView(),
+                                              ]
+                                            : [
+                                                detailsView(),
+                                                coordinatorsView(),
+                                                widget.event.parentId ==
+                                                        Olympus2024ID
+                                                    ? olympusLeaderView()
+                                                    : leaderboardView(),
+                                              ],
                               ),
                             ),
                           ],
@@ -425,15 +423,15 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
 
   olympusLeaderView() {
     return SingleChildScrollView(
-      child: FutureBuilder(
-        future: FirebaseFirestore.instance
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance
             .collection('events')
             .doc(this.widget.event.id)
             .collection('teams')
             .where('score')
             .orderBy('score', descending: true)
             // .limit(3)
-            .get(),
+            .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshots) {
           if (snapshots.hasError) {
@@ -627,15 +625,14 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
     );
   }
 
-Future<List<Map<String, dynamic>>> fetchApprovedUsers(eventId) async {
+  Future<List<Map<String, dynamic>>> fetchApprovedUsers(eventId) async {
     List<Map<String, dynamic>> approvedUsers = [];
 
     DocumentSnapshot eventDoc =
         await databaseServices.eventCollection.doc(eventId).get();
 
     if (eventDoc.exists) {
-      List<dynamic> approvedUsersList =
-          eventDoc.get('approved_users') ?? [];
+      List<dynamic> approvedUsersList = eventDoc.get('approved_users') ?? [];
 
       for (var userMap in approvedUsersList) {
         String userId = userMap.keys.first; // Extract userId
@@ -661,122 +658,122 @@ Future<List<Map<String, dynamic>>> fetchApprovedUsers(eventId) async {
     return approvedUsers;
   }
 
-aurumLeaderboardView() {
-  return FutureBuilder<List<Map<String, dynamic>>>(
-    future: fetchApprovedUsers(this.widget.event.id),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        return Center(child: Text('No Users registered yet'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Center(child: Text("No approved users found."));
-      }
-
-      // Get the approved users and sort them by points (descending).
-      List<Map<String, dynamic>> approvedUsers = snapshot.data!;
-      approvedUsers.sort((a, b) => b['points'].compareTo(a['points']));
-
-      // Build the list of leaderboard items.
-      List<Widget> leaderboardItems = [];
-      for (int i = 0; i < approvedUsers.length; i++) {
-        final user = approvedUsers[i];
-
-        // Determine medal color based on rank.
-        Color medalColor;
-        if (i == 0) {
-          medalColor = goldColor;
-        } else if (i == 1) {
-          medalColor = Colors.grey.shade700;
-        } else if (i == 2) {
-          medalColor = const Color.fromARGB(255, 156, 83, 57);
-        } else {
-          medalColor = dullGreyColor;
+  aurumLeaderboardView() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchApprovedUsers(this.widget.event.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('No Users registered yet'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text("No approved users found."));
         }
 
-        leaderboardItems.add(
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade300,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                )
-              ],
-            ),
-            child: Row(
-              children: [
-                // Medal Icon based on rank.
-                Icon(
-                  FontAwesomeIcons.medal,
-                  size: 40,
-                  color: medalColor,
-                ),
-                SizedBox(width: 10),
-                // User information.
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user['username'],
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+        // Get the approved users and sort them by points (descending).
+        List<Map<String, dynamic>> approvedUsers = snapshot.data!;
+        approvedUsers.sort((a, b) => b['points'].compareTo(a['points']));
+
+        // Build the list of leaderboard items.
+        List<Widget> leaderboardItems = [];
+        for (int i = 0; i < approvedUsers.length; i++) {
+          final user = approvedUsers[i];
+
+          // Determine medal color based on rank.
+          Color medalColor;
+          if (i == 0) {
+            medalColor = goldColor;
+          } else if (i == 1) {
+            medalColor = Colors.grey.shade700;
+          } else if (i == 2) {
+            medalColor = const Color.fromARGB(255, 156, 83, 57);
+          } else {
+            medalColor = dullGreyColor;
+          }
+
+          leaderboardItems.add(
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade300,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  // Medal Icon based on rank.
+                  Icon(
+                    FontAwesomeIcons.medal,
+                    size: 40,
+                    color: medalColor,
+                  ),
+                  SizedBox(width: 10),
+                  // User information.
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user['username'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '${user['points']} points',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
+                        Text(
+                          '${user['points']} points',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Ranking number.
+                  Text(
+                    '#${i + 1}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(10.0, 25.0, 10.0, 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'Leaderboard',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                // Ranking number.
-                Text(
-                  '#${i + 1}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                SizedBox(height: 10),
+                Column(
+                  children: leaderboardItems,
                 ),
               ],
             ),
           ),
         );
-      }
-
-      return SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(10.0, 25.0, 10.0, 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  'Leaderboard',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Column(
-                children: leaderboardItems,
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+      },
+    );
+  }
 
   leaderboardView() {
     return SingleChildScrollView(
@@ -858,104 +855,114 @@ aurumLeaderboardView() {
       ),
     );
   }
- participantsView() {
-  return SingleChildScrollView(
-    child: Container(
-      padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-             enableAddPoints()
-                          ? ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          secondaryColor)),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddPointsAurum(eventId: this.widget.event.id!),
-                                      
-                                  ),
-                                );
-                              },
-                              label: Text("Add Points"),
-                              icon: Icon(FontAwesomeIcons.plus),
-                            ): Container(),
-          this.widget.event.approved_users!.isEmpty
-              ? Center(
-                  child: noContentWidget(
-                    message: "No participants registered yet",
-                  ),
-                )
-              : Column(
-                  children: [
-                    Text(
-                      'Participants',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                      ),
+
+  participantsView() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            enableAddPoints()
+                ? ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(secondaryColor)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddPointsAurum(eventId: this.widget.event.id!),
+                        ),
+                      );
+                    },
+                    label: Text("Add Points"),
+                    icon: Icon(FontAwesomeIcons.plus),
+                  )
+                : Container(),
+            this.widget.event.approved_users!.isEmpty
+                ? Center(
+                    child: noContentWidget(
+                      message: "No participants registered yet",
                     ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Container(
-                        child: FutureBuilder<List<User>>(
-                          future: databaseServices.getApprovedUser(this.widget.event.id),
-                          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return Center(child: loadingWidget());
-                            } else if (snapshot.hasError) {
-                              return Center(child: CustomErrorWidget());
-                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(child: noContentWidget(message: "No participants registered yet"));
-                            } else {
-                              // Here, snapshot.data contains the detailed user info (including username)
-                              // Create user cards based on the detailed user information.
-                              List<UserCard> userCards = getListOfUserCards(snapshot.data!);
-                              List<Widget> displayUserCards = userCards.map((userCard) {
-                                return Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(child: userCard),
-                                      SizedBox(width: 5),
-                                      IconButton(
-                                        onPressed: () {
-                                          // Implement phone call or any other action here
-                                        },
-                                        icon: Icon(
-                                          FontAwesomeIcons.phone,
-                                          size: 40,
-                                          color: dullGreyColor,
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                    ],
-                                  ),
-                                );
-                              }).toList();
-                              return Column(
-                                children: displayUserCards,
-                              );
-                            }
-                          },
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Participants',
+                        style: TextStyle(
+                          fontSize: 20.0,
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                  ],
-                ),
-        ],
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Container(
+                          child: FutureBuilder<List<User>>(
+                            future: databaseServices
+                                .getApprovedUser(this.widget.event.id),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<User>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(child: loadingWidget());
+                              } else if (snapshot.hasError) {
+                                return Center(child: CustomErrorWidget());
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Center(
+                                    child: noContentWidget(
+                                        message:
+                                            "No participants registered yet"));
+                              } else {
+                                // Here, snapshot.data contains the detailed user info (including username)
+                                // Create user cards based on the detailed user information.
+                                List<UserCard> userCards =
+                                    getListOfUserCards(snapshot.data!);
+                                List<Widget> displayUserCards =
+                                    userCards.map((userCard) {
+                                  return Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: userCard),
+                                        SizedBox(width: 5),
+                                        IconButton(
+                                          onPressed: () {
+                                            // Implement phone call or any other action here
+                                          },
+                                          icon: Icon(
+                                            FontAwesomeIcons.phone,
+                                            size: 40,
+                                            color: dullGreyColor,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                      ],
+                                    ),
+                                  );
+                                }).toList();
+                                return Column(
+                                  children: displayUserCards,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30.0,
+                      ),
+                    ],
+                  ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   coordinatorsView() {
     return SingleChildScrollView(
@@ -1105,7 +1112,10 @@ aurumLeaderboardView() {
                       this.widget.event.name!.isEmpty
                           ? "Coming Soon"
                           : this.widget.event.name!,
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      style: AppFonts.poppins(
+                        size: 25,
+                        weight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   [5, 3].contains(currentUser.role)
@@ -1125,7 +1135,8 @@ aurumLeaderboardView() {
                                       builder: (context, setState) {
                                     return Container(
                                       height:
-                                          MediaQuery.of(context).size.height / 3,
+                                          MediaQuery.of(context).size.height /
+                                              3,
                                       padding: EdgeInsets.all(20),
                                       child: Column(
                                         mainAxisAlignment:
@@ -1154,8 +1165,8 @@ aurumLeaderboardView() {
                                                   children: [
                                                     Text(
                                                       "Close Event",
-                                                      style:
-                                                          TextStyle(fontSize: 16),
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                     Spacer(),
                                                     Switch(
@@ -1198,13 +1209,14 @@ aurumLeaderboardView() {
                                                             .event
                                                             .closeEvent !=
                                                         closeEvent) {
-                                                  if (softDelete || closeEvent) {
+                                                  if (softDelete ||
+                                                      closeEvent) {
                                                     showDialog<bool>(
                                                       context: context,
                                                       barrierDismissible:
                                                           false, // user must tap button!
-                                                      builder:
-                                                          (BuildContext context) {
+                                                      builder: (BuildContext
+                                                          context) {
                                                         return AlertDialog(
                                                           title: const Text(
                                                               'Warning'),
@@ -1235,7 +1247,7 @@ aurumLeaderboardView() {
                                                                     event: this
                                                                         .widget
                                                                         .event);
-        
+
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop(true);
@@ -1320,7 +1332,8 @@ aurumLeaderboardView() {
                                 ? Container()
                                 : TextButton(
                                     onPressed: () {
-                                      inAppBrowser(widget.event.registrationUrl);
+                                      inAppBrowser(
+                                          widget.event.registrationUrl);
                                     },
                                     child: RichText(
                                       textAlign: TextAlign.center,
@@ -1332,7 +1345,8 @@ aurumLeaderboardView() {
                                                 text: "Registration ",
                                                 style: TextStyle(
                                                     color: primaryColor,
-                                                    fontWeight: FontWeight.bold)),
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             TextSpan(
                                                 text:
                                                     "to participate in this event, if you haven't already done so.")
@@ -1352,7 +1366,8 @@ aurumLeaderboardView() {
                                   "You have completed this event!",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontSize: 15, fontWeight: FontWeight.bold),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   height: 5.0,
@@ -1362,13 +1377,15 @@ aurumLeaderboardView() {
                                     : TextButton(
                                         onPressed: () {
                                           // call feedback url
-                                          inAppBrowser(widget.event.feedbackUrl);
+                                          inAppBrowser(
+                                              widget.event.feedbackUrl);
                                         },
                                         child: RichText(
                                           textAlign: TextAlign.center,
                                           text: TextSpan(
                                               text: "Please give us your ",
-                                              style: TextStyle(color: blackColor),
+                                              style:
+                                                  TextStyle(color: blackColor),
                                               children: [
                                                 TextSpan(
                                                     text: "Feedback",
@@ -1376,7 +1393,8 @@ aurumLeaderboardView() {
                                                         color: primaryColor,
                                                         fontWeight:
                                                             FontWeight.bold)),
-                                                TextSpan(text: " for this event!")
+                                                TextSpan(
+                                                    text: " for this event!")
                                               ]),
                                         )),
                                 this.widget.event.feedbackUrl.isEmpty
@@ -1404,7 +1422,7 @@ aurumLeaderboardView() {
                           //           ],
                           //         ),
                           //       )
-                              : Container(),
+                          : Container(),
               SizedBox(
                 height: 5,
               ),
@@ -1415,9 +1433,13 @@ aurumLeaderboardView() {
                     if (this.widget.event.description.isEmpty) {
                       return "Coming Soon";
                     }
-                    return this.widget.event.description.replaceAll("\\n", "\n");
+                    return this
+                        .widget
+                        .event
+                        .description
+                        .replaceAll("\\n", "\n");
                   })()),
-                  style: TextStyle(color: dullGreyColor, fontSize: 16),
+                  style: AppFonts.poppins(size: 14, color: dullGreyColor),
                 ),
               ),
               SizedBox(
@@ -1426,11 +1448,11 @@ aurumLeaderboardView() {
               this.widget.event.type == 2 && this.widget.event.price == 0
                   ? Container()
                   : displayPrice(),
-              this.widget.event.type == 2 && this.widget.event.price == 0
-                  ? Container()
-                  : SizedBox(
-                      height: 10,
-                    ),
+              // this.widget.event.type == 2 && this.widget.event.price == 0
+              //     ? Container()
+              //     : SizedBox(
+              //         height: 10,
+              //       ),
               displayDate(),
               SizedBox(
                 height: 15.0,
@@ -1454,11 +1476,11 @@ aurumLeaderboardView() {
                     )
                   : Container(),
               // this.widget.event.type == 2 ? Container() : displayPoints(),
-              this.widget.event.type == 2
-                  ? Container()
-                  : SizedBox(
-                      height: 30.0,
-                    ),
+              // this.widget.event.type == 2
+              //     ? Container()
+              //     : SizedBox(
+              //         height: 20,
+              //       ),
               this.widget.event.type == 2 && this.widget.event.rules!.isEmpty
                   ? Container()
                   : displayRules(),
@@ -1549,66 +1571,79 @@ aurumLeaderboardView() {
   }
 
   displayPrice() {
-    return Row(
-      children: [
-        Icon(
-          FontAwesomeIcons.rupeeSign,
-          size: 16,
-        ),
-        SizedBox(
-          width: 5.0,
-        ),
-        Text(
-          'Price: ${this.widget.event.price}',
-          style: TextStyle(
-              //fontSize: 16.0,
-              ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            'Price:  ',
+            style: AppFonts.poppins(size: 20, weight: FontWeight.w600),
+          ),
+          Image.asset(
+            'assets/images/rupees.png',
+            height: 18,
+          ),
+          Text(
+            ' ${this.widget.event.price}',
+            style: AppFonts.poppins(size: 20, weight: FontWeight.w600),
+          ),
+        ],
+      ),
     );
   }
 
   displayDate() {
-    return Row(
-      children: [
-        Icon(
-          FontAwesomeIcons.calendar,
-          size: 16,
-        ),
-        SizedBox(
-          width: 5.0,
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 3.5,
-          child: Text(((() {
-            if (this.widget.event.dateFrom!.toLocal().toString().isEmpty) {
-              return "Coming Soon";
-            } else if (daysBetween(this.widget.event.dateFrom as DateTime,
-                    this.widget.event.dateTo as DateTime) ==
-                0) {
-              return getFormattedDate(this.widget.event.dateFrom as DateTime);
-            }
-            return getFormattedDateRange(
-                dateFrom: this.widget.event.dateFrom,
-                dateTo: this.widget.event.dateTo);
-          })())),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: MediaQuery.sizeOf(context).width * 0.45,
+      height: 40,
+      decoration: BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            FontAwesomeIcons.calendar,
+            size: 20,
+            color: Colors.white,
+          ),
+          SizedBox(width: 10),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 3.5,
+            child: Text(
+              ((() {
+                if (this.widget.event.dateFrom!.toLocal().toString().isEmpty) {
+                  return "Coming Soon";
+                } else if (daysBetween(this.widget.event.dateFrom as DateTime,
+                        this.widget.event.dateTo as DateTime) ==
+                    0) {
+                  return getFormattedDate(
+                      this.widget.event.dateFrom as DateTime);
+                }
+                return getFormattedDateRange(
+                    dateFrom: this.widget.event.dateFrom,
+                    dateTo: this.widget.event.dateTo);
+              })()),
+              style: AppFonts.poppins(color: Colors.white, size: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   displayTimeLocation() {
     return Row(
       children: [
-        SizedBox(
-          width: 5,
-        ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 7),
-          height: 40,
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          height: 50,
           decoration: BoxDecoration(
               color: primaryColor,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(8),
               boxShadow: kElevationToShadow[1]),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -1633,28 +1668,28 @@ aurumLeaderboardView() {
                       dateTo: this.widget.event.dateTo);
                 })()),
                 overflow: TextOverflow.clip,
-                style: TextStyle(fontSize: 14, color: whiteColor),
+                style: AppFonts.poppins(color: Colors.white),
               ),
             ],
           ),
         ),
         SizedBox(
-          width: 20,
+          width: 10,
         ),
         Flexible(
           child: Container(
-            height: 40,
+            height: 50,
             padding: EdgeInsets.all(2),
             decoration: BoxDecoration(
                 color: primaryColor,
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: kElevationToShadow[1]),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
-                  FontAwesomeIcons.mapMarkerAlt,
+                  FontAwesomeIcons.locationDot,
                   size: 20,
                   color: whiteColor,
                 ),
@@ -1664,14 +1699,14 @@ aurumLeaderboardView() {
                 this.widget.event.location.isEmpty
                     ? Text(
                         "Coming Soon",
-                        style: TextStyle(color: whiteColor),
+                        style: AppFonts.poppins(color: Colors.white),
                       )
                     : this.widget.event.locationType.isEmpty
                         ? Flexible(
                             child: Text(
                               this.widget.event.location,
                               maxLines: 4,
-                              style: TextStyle(color: whiteColor),
+                              style: AppFonts.poppins(color: Colors.white),
                             ),
                           )
                         : this.widget.event.locationType == "Online"
@@ -1705,8 +1740,9 @@ aurumLeaderboardView() {
                                       child: Text(
                                         this.widget.event.location,
                                         maxLines: 4,
-                                        style: TextStyle(
-                                            color: whiteColor, fontSize: 16),
+                                        style: AppFonts.poppins(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -1722,12 +1758,13 @@ aurumLeaderboardView() {
                                             : "Offline - ${this.widget.event.location}\nOnline - Meet Link",
                                         maxLines: 4,
                                         style: TextStyle(
-                                            fontWeight:
-                                                this.widget.event.meetLink == ""
-                                                    ? FontWeight.normal
-                                                    : FontWeight.bold,
-                                            color: whiteColor,
-                                            fontSize: 12),
+                                          fontWeight:
+                                              this.widget.event.meetLink == ""
+                                                  ? FontWeight.normal
+                                                  : FontWeight.bold,
+                                          color: whiteColor,
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1744,47 +1781,60 @@ aurumLeaderboardView() {
 
   displayRules() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Rules',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
+          style: AppFonts.poppins(size: 25),
         ),
+        const Divider(color: Colors.black),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           child: this.widget.event.rules!.isEmpty
-              ? Text(
-                  "Coming Soon",
-                  overflow: TextOverflow.clip,
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: Text(
+                    "Coming Soon",
+                    textAlign: TextAlign.center,
+                    style: AppFonts.poppins(color: primaryColor),
+                  ),
                 )
-              : Container(
-                  // height:
-                  //     this.widget.event.rules.length * 50 / 1,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: this.widget.event.rules!.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.only(left: 5, bottom: 5, right: 5),
-                          padding: EdgeInsets.all(5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${index + 1}.'),
-                              SizedBox(width: 5),
-                              Flexible(
-                                child: Text(
-                                  this.widget.event.rules![index],
-                                ),
-                              )
-                            ],
+              : ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: this.widget.event.rules!.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: EdgeInsets.only(
+                        left: 5,
+                        bottom: 5,
+                        right: 5,
+                        top: 5,
+                      ),
+                      padding: EdgeInsets.all(5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${index + 1}.',
+                            style: AppFonts.poppins(
+                              size: 14,
+                              weight: FontWeight.bold,
+                            ),
                           ),
-                        );
-                      }),
-                ),
+                          SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              this.widget.event.rules![index],
+                              style: AppFonts.poppins(size: 14),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
         ),
       ],
     );
@@ -1846,11 +1896,11 @@ aurumLeaderboardView() {
   }
 
   matchesboardView() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
           .collection("events")
           .doc(this.widget.event.id)
-          .get(),
+          .snapshots(),
       builder: (context, snapshots) {
         if (snapshots.hasError) {
           return const Center(
@@ -1943,7 +1993,7 @@ aurumLeaderboardView() {
                                         ],
                                       ),
                                       Text(
-                                        '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
+                                        '${matchesList[index]['score01']} : ${matchesList[index]['score02']}',
                                         style: TextStyle(
                                           fontSize: 33,
                                         ),
@@ -1987,7 +2037,7 @@ aurumLeaderboardView() {
                                         children: [
                                           ElevatedButton.icon(
                                             onPressed: () {
-                                              Navigator.push(
+                                              Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>

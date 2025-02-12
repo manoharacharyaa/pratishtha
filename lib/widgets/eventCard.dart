@@ -7,6 +7,7 @@ import 'package:pratishtha/screens/home/eventPage.dart';
 import 'package:pratishtha/screens/home/festPage.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/styles/mainTheme.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 // import 'package:flutter_page_transition/flutter_page_transition.dart';
 import 'package:page_transition/page_transition.dart';
@@ -115,8 +116,8 @@ Widget EventCard(
                             placeholder: (context, url) => Image.asset(
                               "assets/images/PratishthaLogo.png",
                               fit: BoxFit.fitHeight,
-                              height: MediaQuery.of(context).size.height / 8,
-                              width: MediaQuery.of(context).size.width / 2.5,
+                              height: MediaQuery.sizeOf(context).height / 8,
+                              width: MediaQuery.sizeOf(context).width / 2.5,
                             ),
                             errorWidget: (context, url, error) => Center(
                               child: Padding(
@@ -130,11 +131,11 @@ Widget EventCard(
                                         color: primaryColor)),
                               ),
                             ),
-                            height: MediaQuery.of(context).size.height / 8,
-                            width: MediaQuery.of(context).size.width / 2.5,
+                            height: MediaQuery.sizeOf(context).height / 8,
+                            width: MediaQuery.sizeOf(context).width / 2.5,
                           )),
                 )),
-            width: MediaQuery.of(context).size.width / 2.5,
+            width: MediaQuery.sizeOf(context).width / 2.5,
             // color: Colors.yellow,
           ),
           SizedBox(
@@ -147,7 +148,7 @@ Widget EventCard(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 3,
+                  width: MediaQuery.sizeOf(context).width / 3,
                   child: AutoSizeText(
                     event.name!,
                     style: Theme.of(context).textTheme.titleLarge,
@@ -309,7 +310,7 @@ Widget ChildEventCard(
                           ),
                         ),
                 )),
-            width: MediaQuery.of(context).size.width / 2.5,
+            width: MediaQuery.sizeOf(context).width / 2.5,
             // color: Colors.yellow,
           ),
           Spacer(),
@@ -320,10 +321,10 @@ Widget ChildEventCard(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 3,
-                  child: AutoSizeText(
-                    event.name!,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  // width: MediaQuery.sizeOf(context).width / 3,
+                  child: Text(
+                    event.name ?? '',
+                    style: AppFonts.poppins(),
                     overflow: TextOverflow.clip,
                     textAlign: TextAlign.start,
                     maxLines: 1,

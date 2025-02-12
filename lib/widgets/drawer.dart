@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pratishtha/add_live_Id_page.dart';
 import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/is_live_provider.dart';
 import 'package:pratishtha/models/userModel.dart' as app;
 import 'package:pratishtha/screens/aboutUsPage.dart';
 import 'package:pratishtha/screens/addCollege.dart';
@@ -15,6 +17,7 @@ import 'package:pratishtha/screens/admin/attendanceSystem/viewAttendance.dart';
 import 'package:pratishtha/screens/admin/manageSponsorship.dart';
 import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/screens/home/interCollegeSystem/interCollegeHome.dart';
+import 'package:provider/provider.dart';
 import '../leaderBoard.dart';
 import '../services/sharedPreferencesServices.dart' as sh;
 
@@ -314,7 +317,10 @@ class _MyDrawerState extends State<MyDrawer> {
                             )
                           : Container(),
                       ListTile(
-                        title: Text('InterCollege'),
+                        title: Text(
+                          'InterCollege',
+                          style: AppFonts.poppins(size: 14),
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -436,6 +442,40 @@ class _MyDrawerState extends State<MyDrawer> {
                                   ),
                                 );
                               },
+                            )
+                          : const SizedBox(),
+                      _isAnApprovedUser
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddLiveIdPage(),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Livestreem',
+                                      style: AppFonts.poppins(size: 14),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Consumer<IsLiveProvider>(
+                                    builder: (context, live, child) {
+                                      return CupertinoSwitch(
+                                        value: live.isLive,
+                                        onChanged: (value) {
+                                          live.toogleIsLive(value);
+                                          print(live.isLive);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                             )
                           : const SizedBox(),
                     ],

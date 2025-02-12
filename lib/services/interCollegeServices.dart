@@ -5,15 +5,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:pratishtha/models/cricketInterCollege.dart';
 import 'package:pratishtha/models/footballInterCollege.dart';
-import 'package:pratishtha/models/interCollege.dart';
-import 'package:pratishtha/models/interCollegeBoysVolleyballMatch.dart';
-import 'package:pratishtha/models/interCollegeGirlsVolleyballMatch.dart';
-import 'package:pratishtha/models/interCollegeTugOfWarMatch.dart';
-import 'package:pratishtha/models/kabaddiInterCollege.dart';
+import 'package:pratishtha/models/inter_college_models/interCollege.dart';
+import 'package:pratishtha/models/inter_college_models/interCollegeGirlsVolleyballMatch.dart';
 import 'package:uuid/uuid.dart';
 
-class InterCollegeServices {
+import '../models/inter_college_models/interCollegeBoysVolleyballMatch.dart';
+import '../models/inter_college_models/interCollegeTugOfWarMatch.dart';
+import '../models/inter_college_models/kabaddiInterCollege.dart';
 
+class InterCollegeServices {
   Future<String> addCollegeForInter(
     String collegeName,
     String collegeShortName,
@@ -71,8 +71,8 @@ class InterCollegeServices {
           'imageUrl': imageUrl,
           'academicYear': academicYear,
           'matchesWon': {},
-           'matchesLost': {},
-            'matchesPlayed': {}, // Initialize empty matchesWon map
+          'matchesLost': {},
+          'matchesPlayed': {}, // Initialize empty matchesWon map
           'createdAt': FieldValue.serverTimestamp(),
         });
 
@@ -174,13 +174,15 @@ class InterCollegeServices {
     required String teamBattingFirst, // Team batting first
     required String teamBattingSecond,
     required String teamBattingFirstLocation, // Team batting first
-    required String teamBattingSecondLocation,// Team batting second
+    required String teamBattingSecondLocation, // Team batting second
     required String teamBattingFirstScore, // Format: "127/8 (20)"
     required String teamBattingSecondScore, // Format: "120/7 (20)"
     required String teamBattingFirstTopBatter, // e.g., "PlayerName: 45(30)"
-    required String teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
+    required String
+        teamBattingFirstTopBowlerPerformance, // e.g., "PlayerName: 3-20"
     required String teamBattingSecondTopBatter, // e.g., "PlayerName: 50(40)"
-    required String teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
+    required String
+        teamBattingSecondTopBowlerPerformance, // e.g., "PlayerName: 4-25"
     required String teamBattingFirstLogoUrl, // Firebase storage URL
     required String teamBattingSecondLogoUrl, // Firebase storage URL
     required String teamBattingFirstId,
@@ -192,8 +194,10 @@ class InterCollegeServices {
 
       // Parse scores and overs
       RegExp scorePattern = RegExp(r"(\d+)/(\d+)\s*\((\d+)\)");
-      var teamBattingFirstMatch = scorePattern.firstMatch(teamBattingFirstScore);
-      var teamBattingSecondMatch = scorePattern.firstMatch(teamBattingSecondScore);
+      var teamBattingFirstMatch =
+          scorePattern.firstMatch(teamBattingFirstScore);
+      var teamBattingSecondMatch =
+          scorePattern.firstMatch(teamBattingSecondScore);
 
       if (teamBattingFirstMatch == null || teamBattingSecondMatch == null) {
         throw Exception("Invalid score format");
@@ -204,7 +208,8 @@ class InterCollegeServices {
       int teamBattingFirstOvers = int.parse(teamBattingFirstMatch.group(3)!);
 
       int teamBattingSecondRuns = int.parse(teamBattingSecondMatch.group(1)!);
-      int teamBattingSecondWickets = int.parse(teamBattingSecondMatch.group(2)!);
+      int teamBattingSecondWickets =
+          int.parse(teamBattingSecondMatch.group(2)!);
       int teamBattingSecondOvers = int.parse(teamBattingSecondMatch.group(3)!);
 
       // Determine the result
@@ -223,36 +228,45 @@ class InterCollegeServices {
         result = "$teamBattingSecond won by $wicketMargin wickets";
       }
 
-     // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+      // Update teams' match data
+      DocumentReference winningTeamDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningTeamDcId);
+      DocumentReference losingTeamDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
 
       // Get the data for both teams
       DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
       DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningTeamSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+              : {};
       matchesWon['cricket'] = (matchesWon['cricket'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingTeamSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+              : {};
       matchesLost['cricket'] = (matchesLost['cricket'] ?? 0) + 1;
 
       // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['cricket'] = (winningMatchesPlayed['cricket'] ?? 0) + 1;
-      losingMatchesPlayed['cricket'] = (losingMatchesPlayed['cricket'] ?? 0) + 1;
+      winningMatchesPlayed['cricket'] =
+          (winningMatchesPlayed['cricket'] ?? 0) + 1;
+      losingMatchesPlayed['cricket'] =
+          (losingMatchesPlayed['cricket'] ?? 0) + 1;
 
       // Commit updates
       await winningTeamDoc.update({
@@ -277,13 +291,16 @@ class InterCollegeServices {
         'teamBattingFirst': teamBattingFirst,
         'teamBattingSecond': teamBattingSecond,
         'teamBattingFirstScore': teamBattingFirstScore, // Full score with overs
-        'teamBattingSecondScore': teamBattingSecondScore, // Full score with overs
+        'teamBattingSecondScore':
+            teamBattingSecondScore, // Full score with overs
         'teamBattingFirstLocation': teamBattingFirstLocation,
         'teamBattingSecondLocation': teamBattingSecondLocation,
         'teamBattingFirstTopBatter': teamBattingFirstTopBatter,
-        'teamBattingFirstTopBowlerPerformance': teamBattingFirstTopBowlerPerformance,
+        'teamBattingFirstTopBowlerPerformance':
+            teamBattingFirstTopBowlerPerformance,
         'teamBattingSecondTopBatter': teamBattingSecondTopBatter,
-        'teamBattingSecondTopBowlerPerformance': teamBattingSecondTopBowlerPerformance,
+        'teamBattingSecondTopBowlerPerformance':
+            teamBattingSecondTopBowlerPerformance,
         'teamBattingFirstLogoUrl': teamBattingFirstLogoUrl,
         'teamBattingSecondLogoUrl': teamBattingSecondLogoUrl,
         'result': result, // Store the calculated result
@@ -291,7 +308,8 @@ class InterCollegeServices {
         'matchTime': matchTime,
         'matchDayDate': matchDayDate,
         'matchType': matchType,
-        'timestamp': FieldValue.serverTimestamp(), // Record the match date and time
+        'timestamp':
+            FieldValue.serverTimestamp(), // Record the match date and time
         'soft_delete': false,
       });
 
@@ -307,8 +325,7 @@ class InterCollegeServices {
     }
   }
 
-
-Future<String> recordFootballMatch({
+  Future<String> recordFootballMatch({
     required String academicYear,
     required String matchLocation,
     required String matchType,
@@ -345,9 +362,9 @@ Future<String> recordFootballMatch({
       int teamBMainScore = int.parse(teamBScore.split("(")[0]);
 
       int teamAPenaltyScore =
-      teamAScore.contains("(") ? extractScore(teamAScore) : 0;
+          teamAScore.contains("(") ? extractScore(teamAScore) : 0;
       int teamBPenaltyScore =
-      teamBScore.contains("(") ? extractScore(teamBScore) : 0;
+          teamBScore.contains("(") ? extractScore(teamBScore) : 0;
 
       // Determine the result
       if (teamAMainScore > teamBMainScore) {
@@ -360,12 +377,12 @@ Future<String> recordFootballMatch({
         losingTeamDcId = teamAId;
       } else if (teamAPenaltyScore > teamBPenaltyScore) {
         result =
-        "$teamAName won ${teamAPenaltyScore}-${teamBPenaltyScore} on penalties";
+            "$teamAName won ${teamAPenaltyScore}-${teamBPenaltyScore} on penalties";
         winningTeamDcId = teamAId;
         losingTeamDcId = teamBId;
       } else if (teamBPenaltyScore > teamAPenaltyScore) {
         result =
-        "$teamBName won ${teamBPenaltyScore}-${teamAPenaltyScore} on penalties";
+            "$teamBName won ${teamBPenaltyScore}-${teamAPenaltyScore} on penalties";
         winningTeamDcId = teamBId;
         losingTeamDcId = teamAId;
       } else {
@@ -373,9 +390,10 @@ Future<String> recordFootballMatch({
       }
 
       // Update matchesWon, matchesLost, and matchesPlayed for both teams
-      Future<void> updateTeamStats(String teamId, bool isWinner, bool isLoser) async {
+      Future<void> updateTeamStats(
+          String teamId, bool isWinner, bool isLoser) async {
         DocumentReference teamDocRef =
-        FirebaseFirestore.instance.collection('colleges').doc(teamId);
+            FirebaseFirestore.instance.collection('colleges').doc(teamId);
 
         DocumentSnapshot docSnapshot = await teamDocRef.get();
 
@@ -385,9 +403,10 @@ Future<String> recordFootballMatch({
         Map<String, dynamic> matchesLost = docSnapshot['matchesLost'] != null
             ? Map<String, dynamic>.from(docSnapshot['matchesLost'])
             : {};
-        Map<String, dynamic> matchesPlayed = docSnapshot['matchesPlayed'] != null
-            ? Map<String, dynamic>.from(docSnapshot['matchesPlayed'])
-            : {};
+        Map<String, dynamic> matchesPlayed =
+            docSnapshot['matchesPlayed'] != null
+                ? Map<String, dynamic>.from(docSnapshot['matchesPlayed'])
+                : {};
 
         if (isWinner) {
           matchesWon['football'] = (matchesWon['football'] ?? 0) + 1;
@@ -446,6 +465,7 @@ Future<String> recordFootballMatch({
       return "Failed to record football match";
     }
   }
+
   // Record Kabaddi Match
   Future<String> recordKabaddiMatch({
     required String academicYear, // e.g., "2024-2025"
@@ -490,48 +510,60 @@ Future<String> recordFootballMatch({
 
       if (winningTeamDcId.isNotEmpty) {
 // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+        DocumentReference winningTeamDoc = FirebaseFirestore.instance
+            .collection('colleges')
+            .doc(winningTeamDcId);
+        DocumentReference losingTeamDoc = FirebaseFirestore.instance
+            .collection('colleges')
+            .doc(losingTeamDcId);
 
-      // Get the data for both teams
-      DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
-      DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
+        // Get the data for both teams
+        DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
+        DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
-      // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
-      matchesWon['kabaddi'] = (matchesWon['kabaddi'] ?? 0) + 1;
+        // Update matchesWon
+        Map<String, dynamic> matchesWon =
+            winningTeamSnapshot['matchesWon'] != null
+                ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+                : {};
+        matchesWon['kabaddi'] = (matchesWon['kabaddi'] ?? 0) + 1;
 
-      // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
-      matchesLost['kabaddi'] = (matchesLost['kabaddi'] ?? 0) + 1;
+        // Update matchesLost
+        Map<String, dynamic> matchesLost =
+            losingTeamSnapshot['matchesLost'] != null
+                ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+                : {};
+        matchesLost['kabaddi'] = (matchesLost['kabaddi'] ?? 0) + 1;
 
-      // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+        // Update matchesPlayed for both teams
+        Map<String, dynamic> winningMatchesPlayed =
+            winningTeamSnapshot['matchesPlayed'] != null
+                ? Map<String, dynamic>.from(
+                    winningTeamSnapshot['matchesPlayed'])
+                : {};
+        Map<String, dynamic> losingMatchesPlayed =
+            losingTeamSnapshot['matchesPlayed'] != null
+                ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+                : {};
 
-      winningMatchesPlayed['kabaddi'] = (winningMatchesPlayed['kabaddi'] ?? 0) + 1;
-      losingMatchesPlayed['kabaddi'] = (losingMatchesPlayed['kabaddi'] ?? 0) + 1;
+        winningMatchesPlayed['kabaddi'] =
+            (winningMatchesPlayed['kabaddi'] ?? 0) + 1;
+        losingMatchesPlayed['kabaddi'] =
+            (losingMatchesPlayed['kabaddi'] ?? 0) + 1;
 
-      // Commit updates
-      await winningTeamDoc.update({
-        'matchesWon': matchesWon,
-        'matchesPlayed': winningMatchesPlayed,
-      });
+        // Commit updates
+        await winningTeamDoc.update({
+          'matchesWon': matchesWon,
+          'matchesPlayed': winningMatchesPlayed,
+        });
 
-      await losingTeamDoc.update({
-        'matchesLost': matchesLost,
-        'matchesPlayed': losingMatchesPlayed,
-      });
+        await losingTeamDoc.update({
+          'matchesLost': matchesLost,
+          'matchesPlayed': losingMatchesPlayed,
+        });
 
-      print("Updated team data successfully!");      }
+        print("Updated team data successfully!");
+      }
 
       CollectionReference kabaddiColl = FirebaseFirestore.instance
           .collection('intercollege_sports')
@@ -597,7 +629,7 @@ Future<String> recordFootballMatch({
     }
   }
 
-  Future<List<InterCollegeFootballMatch>>   getAllInterCollegeFootballMatches(
+  Future<List<InterCollegeFootballMatch>> getAllInterCollegeFootballMatches(
       String currentAcademicYear) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -606,12 +638,10 @@ Future<String> recordFootballMatch({
           .collection('football')
           .where('soft_delete', isEqualTo: false)
           .get();
-          
+
       return querySnapshot.docs
           .map((doc) => InterCollegeFootballMatch.fromFirestore(doc))
           .toList();
-          
-          
     } catch (e) {
       print("Error in getting football matches: $e");
       return [];
@@ -660,11 +690,13 @@ Future<String> recordFootballMatch({
 
       // Determine the result
       if (int.parse(teamAScore) > int.parse(teamBScore)) {
-        result = "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
         winningTeamDcId = teamAId;
         losingTeamDcId = teamBId;
       } else if (int.parse(teamBScore) > int.parse(teamAScore)) {
-        result =  "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
         winningTeamDcId = teamBId;
         losingTeamDcId = teamAId;
       } else {
@@ -679,35 +711,45 @@ Future<String> recordFootballMatch({
       //       "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
       // }
       // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+      DocumentReference winningTeamDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningTeamDcId);
+      DocumentReference losingTeamDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
 
       // Get the data for both teams
       DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
       DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningTeamSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+              : {};
       matchesWon['volleyball_boys'] = (matchesWon['volleyball_boys'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
-      matchesLost['volleyball_boys'] = (matchesLost['volleyball_boys'] ?? 0) + 1;
+      Map<String, dynamic> matchesLost =
+          losingTeamSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+              : {};
+      matchesLost['volleyball_boys'] =
+          (matchesLost['volleyball_boys'] ?? 0) + 1;
 
       // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['volleyball_boys'] = (winningMatchesPlayed['volleyball_boys'] ?? 0) + 1;
-      losingMatchesPlayed['volleyball_boys'] = (losingMatchesPlayed['volleyball_boys'] ?? 0) + 1;
+      winningMatchesPlayed['volleyball_boys'] =
+          (winningMatchesPlayed['volleyball_boys'] ?? 0) + 1;
+      losingMatchesPlayed['volleyball_boys'] =
+          (losingMatchesPlayed['volleyball_boys'] ?? 0) + 1;
 
       // Commit updates
       await winningTeamDoc.update({
@@ -774,17 +816,19 @@ Future<String> recordFootballMatch({
     required String teamBId,
   }) async {
     try {
- String result;
+      String result;
       String winningTeamDcId = "";
       String losingTeamDcId = "";
 
       // Determine the result
       if (int.parse(teamAScore) > int.parse(teamBScore)) {
-        result = "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
         winningTeamDcId = teamAId;
         losingTeamDcId = teamBId;
       } else if (int.parse(teamBScore) > int.parse(teamAScore)) {
-        result =  "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
         winningTeamDcId = teamBId;
         losingTeamDcId = teamAId;
       } else {
@@ -799,35 +843,46 @@ Future<String> recordFootballMatch({
       //       "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
       // }
       // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+      DocumentReference winningTeamDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningTeamDcId);
+      DocumentReference losingTeamDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
 
       // Get the data for both teams
       DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
       DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
-      matchesWon['volleyball_girls'] = (matchesWon['volleyball_girls'] ?? 0) + 1;
+      Map<String, dynamic> matchesWon =
+          winningTeamSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+              : {};
+      matchesWon['volleyball_girls'] =
+          (matchesWon['volleyball_girls'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
-      matchesLost['volleyball_girls'] = (matchesLost['volleyball_girls'] ?? 0) + 1;
+      Map<String, dynamic> matchesLost =
+          losingTeamSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+              : {};
+      matchesLost['volleyball_girls'] =
+          (matchesLost['volleyball_girls'] ?? 0) + 1;
 
       // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['volleyball_girls'] = (winningMatchesPlayed['volleyball_girls'] ?? 0) + 1;
-      losingMatchesPlayed['volleyball_girls'] = (losingMatchesPlayed['volleyball_girls'] ?? 0) + 1;
+      winningMatchesPlayed['volleyball_girls'] =
+          (winningMatchesPlayed['volleyball_girls'] ?? 0) + 1;
+      losingMatchesPlayed['volleyball_girls'] =
+          (losingMatchesPlayed['volleyball_girls'] ?? 0) + 1;
 
       CollectionReference volleyballColl = FirebaseFirestore.instance
           .collection('intercollege_sports')
@@ -862,7 +917,6 @@ Future<String> recordFootballMatch({
       return "Failed to record volleyball girls match";
     }
   }
- 
 
   Future<String> recordBasketBsallMatch({
     required String academicYear,
@@ -882,17 +936,19 @@ Future<String> recordFootballMatch({
     required String teamBId,
   }) async {
     try {
- String result;
+      String result;
       String winningTeamDcId = "";
       String losingTeamDcId = "";
 
       // Determine the result
       if (int.parse(teamAScore) > int.parse(teamBScore)) {
-        result = "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
         winningTeamDcId = teamAId;
         losingTeamDcId = teamBId;
       } else if (int.parse(teamBScore) > int.parse(teamAScore)) {
-        result =  "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
         winningTeamDcId = teamBId;
         losingTeamDcId = teamAId;
       } else {
@@ -907,35 +963,44 @@ Future<String> recordFootballMatch({
       //       "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
       // }
       // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+      DocumentReference winningTeamDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningTeamDcId);
+      DocumentReference losingTeamDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
 
       // Get the data for both teams
       DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
       DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningTeamSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+              : {};
       matchesWon['basketball'] = (matchesWon['basketball'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingTeamSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+              : {};
       matchesLost['basketball'] = (matchesLost['basketball'] ?? 0) + 1;
 
       // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['basketball'] = (winningMatchesPlayed['basketball'] ?? 0) + 1;
-      losingMatchesPlayed['basketball'] = (losingMatchesPlayed['basketball'] ?? 0) + 1;
+      winningMatchesPlayed['basketball'] =
+          (winningMatchesPlayed['basketball'] ?? 0) + 1;
+      losingMatchesPlayed['basketball'] =
+          (losingMatchesPlayed['basketball'] ?? 0) + 1;
 
       CollectionReference BasketBallfbcall = FirebaseFirestore.instance
           .collection('intercollege_sports')
@@ -971,7 +1036,6 @@ Future<String> recordFootballMatch({
     }
   }
 
-
   Future<String> recordTugOfWarMatch({
     required String academicYear,
     required String matchLocation,
@@ -990,16 +1054,18 @@ Future<String> recordFootballMatch({
     required String teamBId,
   }) async {
     try {
- String result;
+      String result;
       String winningTeamDcId = "";
       String losingTeamDcId = "";
 
       // Determine the result
       if (int.parse(teamAScore) > int.parse(teamBScore)) {
-        result = "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
+        result =
+            "$teamAName won by ${int.parse(teamAScore) - int.parse(teamBScore)} points";
         winningTeamDcId = teamAId;
       } else if (int.parse(teamBScore) > int.parse(teamAScore)) {
-        result =  "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
+        result =
+            "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
         winningTeamDcId = teamBId;
       } else {
         result = "Match drawn";
@@ -1013,35 +1079,44 @@ Future<String> recordFootballMatch({
       //       "$teamBName won by ${int.parse(teamBScore) - int.parse(teamAScore)} points";
       // }
       // Update teams' match data
-      DocumentReference winningTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(winningTeamDcId);
-      DocumentReference losingTeamDoc = FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
+      DocumentReference winningTeamDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningTeamDcId);
+      DocumentReference losingTeamDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(losingTeamDcId);
 
       // Get the data for both teams
       DocumentSnapshot winningTeamSnapshot = await winningTeamDoc.get();
       DocumentSnapshot losingTeamSnapshot = await losingTeamDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningTeamSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningTeamSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesWon'])
+              : {};
       matchesWon['tug_of_war'] = (matchesWon['tug_of_war'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingTeamSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingTeamSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesLost'])
+              : {};
       matchesLost['tug_of_war'] = (matchesLost['tug_of_war'] ?? 0) + 1;
 
       // Update matchesPlayed for both teams
-      Map<String, dynamic> winningMatchesPlayed = winningTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingTeamSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(winningTeamSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingTeamSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(losingTeamSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['tug_of_war'] = (winningMatchesPlayed['tug_of_war'] ?? 0) + 1;
-      losingMatchesPlayed['tug_of_war'] = (losingMatchesPlayed['tug_of_war'] ?? 0) + 1;
+      winningMatchesPlayed['tug_of_war'] =
+          (winningMatchesPlayed['tug_of_war'] ?? 0) + 1;
+      losingMatchesPlayed['tug_of_war'] =
+          (losingMatchesPlayed['tug_of_war'] ?? 0) + 1;
 
       CollectionReference tugOfWarColl = FirebaseFirestore.instance
           .collection('intercollege_sports')
@@ -1134,25 +1209,25 @@ Future<String> recordFootballMatch({
       return [];
     }
   }
+
   Future<List<InterCollege>> fetchCollegesBySport(String sportName) async {
     try {
-
       final collectionRef = FirebaseFirestore.instance.collection('colleges');
 
       final querySnapshot = await collectionRef.get();
 
       List<InterCollege> colleges = querySnapshot.docs
           .map((doc) {
-        // Convert Firestore document to InterCollege model
-        final data = doc.data() as Map<String, dynamic>;
-        final interCollege = InterCollege.fromMap(data, doc.id);
+            // Convert Firestore document to InterCollege model
+            final data = doc.data() as Map<String, dynamic>;
+            final interCollege = InterCollege.fromMap(data, doc.id);
 
-        // Check if the sport is in matchesPlayed
-        if (interCollege.matchesPlayed!.containsKey(sportName)) {
-          return interCollege;
-        }
-        return null;
-      })
+            // Check if the sport is in matchesPlayed
+            if (interCollege.matchesPlayed!.containsKey(sportName)) {
+              return interCollege;
+            }
+            return null;
+          })
           .where((college) => college != null) // Remove null entries
           .cast<InterCollege>() // Cast to List<InterCollege>
           .toList();
@@ -1164,7 +1239,7 @@ Future<String> recordFootballMatch({
     }
   }
 
-    // Indoor Games
+  // Indoor Games
 
   Future<String> recordCarromSingleMatch({
     required String academicYear, // e.g., "2024-2025"
@@ -1185,47 +1260,49 @@ Future<String> recordFootballMatch({
     try {
       // Determine the losing college ID
       String losingCollegeId =
-      (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
+          (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
 
       String result = (winningCollegeId == collegeAId)
           ? "$collegeA defeated $collegeB"
           : "$collegeB defeated $collegeA";
 
       // Update colleges' match data
-      DocumentReference winningCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(winningCollegeId);
-      DocumentReference losingCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(losingCollegeId);
+      DocumentReference winningCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningCollegeId);
+      DocumentReference losingCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(losingCollegeId);
 
       // Get the data for both colleges
       DocumentSnapshot winningCollegeSnapshot = await winningCollegeDoc.get();
       DocumentSnapshot losingCollegeSnapshot = await losingCollegeDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningCollegeSnapshot['matchesWon'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningCollegeSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
+              : {};
       matchesWon['carrom'] = (matchesWon['carrom'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingCollegeSnapshot['matchesLost'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingCollegeSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
+              : {};
       matchesLost['carrom'] = (matchesLost['carrom'] ?? 0) + 1;
 
       // Update matchesPlayed for both colleges
-      Map<String,
-          dynamic> winningMatchesPlayed = winningCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesPlayed'])
-          : {};
-      Map<String,
-          dynamic> losingMatchesPlayed = losingCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  winningCollegeSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  losingCollegeSnapshot['matchesPlayed'])
+              : {};
 
       winningMatchesPlayed['carrom'] =
           (winningMatchesPlayed['carrom'] ?? 0) + 1;
@@ -1274,7 +1351,6 @@ Future<String> recordFootballMatch({
     }
   }
 
-
   Future<String> recordCarromDoublesMatch({
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Indoor Sports Arena
@@ -1296,47 +1372,49 @@ Future<String> recordFootballMatch({
     try {
       // Determine the losing college ID
       String losingCollegeId =
-      (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
+          (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
 
       String result = (winningCollegeId == collegeAId)
           ? "$collegeA defeated $collegeB"
           : "$collegeB defeated $collegeA";
 
       // Update colleges' match data
-      DocumentReference winningCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(winningCollegeId);
-      DocumentReference losingCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(losingCollegeId);
+      DocumentReference winningCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningCollegeId);
+      DocumentReference losingCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(losingCollegeId);
 
       // Get the data for both colleges
       DocumentSnapshot winningCollegeSnapshot = await winningCollegeDoc.get();
       DocumentSnapshot losingCollegeSnapshot = await losingCollegeDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningCollegeSnapshot['matchesWon'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningCollegeSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
+              : {};
       matchesWon['carromDoubles'] = (matchesWon['carromDoubles'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingCollegeSnapshot['matchesLost'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingCollegeSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
+              : {};
       matchesLost['carromDoubles'] = (matchesLost['carromDoubles'] ?? 0) + 1;
 
       // Update matchesPlayed for both colleges
-      Map<String,
-          dynamic> winningMatchesPlayed = winningCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesPlayed'])
-          : {};
-      Map<String,
-          dynamic> losingMatchesPlayed = losingCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  winningCollegeSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  losingCollegeSnapshot['matchesPlayed'])
+              : {};
 
       winningMatchesPlayed['carromDoubles'] =
           (winningMatchesPlayed['carromDoubles'] ?? 0) + 1;
@@ -1389,7 +1467,6 @@ Future<String> recordFootballMatch({
     }
   }
 
-
   Future<String> recordChessMatch({
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Indoor Sports Arena
@@ -1410,45 +1487,47 @@ Future<String> recordFootballMatch({
     try {
       // Determine the losing college ID
       String losingCollegeId =
-      (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
+          (winningCollegeId == collegeAId) ? collegeBId : collegeAId;
 
       String result = "$winningCollegeName won the match";
 
       // Update colleges' match data
-      DocumentReference winningCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(winningCollegeId);
-      DocumentReference losingCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(losingCollegeId);
+      DocumentReference winningCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningCollegeId);
+      DocumentReference losingCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(losingCollegeId);
 
       // Get the data for both colleges
       DocumentSnapshot winningCollegeSnapshot = await winningCollegeDoc.get();
       DocumentSnapshot losingCollegeSnapshot = await losingCollegeDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningCollegeSnapshot['matchesWon'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
-          : {};
+      Map<String, dynamic> matchesWon =
+          winningCollegeSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
+              : {};
       matchesWon['chess'] = (matchesWon['chess'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingCollegeSnapshot['matchesLost'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
-          : {};
+      Map<String, dynamic> matchesLost =
+          losingCollegeSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
+              : {};
       matchesLost['chess'] = (matchesLost['chess'] ?? 0) + 1;
 
       // Update matchesPlayed for both colleges
-      Map<String,
-          dynamic> winningMatchesPlayed = winningCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesPlayed'])
-          : {};
-      Map<String,
-          dynamic> losingMatchesPlayed = losingCollegeSnapshot['matchesPlayed'] !=
-          null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  winningCollegeSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  losingCollegeSnapshot['matchesPlayed'])
+              : {};
 
       winningMatchesPlayed['chess'] = (winningMatchesPlayed['chess'] ?? 0) + 1;
       losingMatchesPlayed['chess'] = (losingMatchesPlayed['chess'] ?? 0) + 1;
@@ -1497,7 +1576,6 @@ Future<String> recordFootballMatch({
     }
   }
 
-
   Future<String> recordTableTennisDoublesMatch({
     required String academicYear, // e.g., "2024-2025"
     required String matchLocation, // Like Indoor Sports Arena
@@ -1516,48 +1594,61 @@ Future<String> recordFootballMatch({
     required String collegeBId, // Firebase document ID for College B
     required String winningCollegeName, // Name of the winning college
     required String winningCollegeId, // Name of the winning college
-    required String winningPoints, // Points won by winning college in format "X-Y,Z-W,..."
+    required String
+        winningPoints, // Points won by winning college in format "X-Y,Z-W,..."
   }) async {
     try {
       // Determine the losing college ID
       String losingCollegeId =
-      (winningCollegeName == collegeA) ? collegeBId : collegeAId;
+          (winningCollegeName == collegeA) ? collegeBId : collegeAId;
 
       // Generate result string
       String result = "$winningCollegeName wins by points $winningPoints";
 
       // Update colleges' match data
-      DocumentReference winningCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(winningCollegeId);
-      DocumentReference losingCollegeDoc =
-      FirebaseFirestore.instance.collection('colleges').doc(losingCollegeId);
+      DocumentReference winningCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(winningCollegeId);
+      DocumentReference losingCollegeDoc = FirebaseFirestore.instance
+          .collection('colleges')
+          .doc(losingCollegeId);
 
       // Get the data for both colleges
       DocumentSnapshot winningCollegeSnapshot = await winningCollegeDoc.get();
       DocumentSnapshot losingCollegeSnapshot = await losingCollegeDoc.get();
 
       // Update matchesWon
-      Map<String, dynamic> matchesWon = winningCollegeSnapshot['matchesWon'] != null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
-          : {};
-      matchesWon['tableTennisDoubles'] = (matchesWon['tableTennisDoubles'] ?? 0) + 1;
+      Map<String, dynamic> matchesWon =
+          winningCollegeSnapshot['matchesWon'] != null
+              ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesWon'])
+              : {};
+      matchesWon['tableTennisDoubles'] =
+          (matchesWon['tableTennisDoubles'] ?? 0) + 1;
 
       // Update matchesLost
-      Map<String, dynamic> matchesLost = losingCollegeSnapshot['matchesLost'] != null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
-          : {};
-      matchesLost['tableTennisDoubles'] = (matchesLost['tableTennisDoubles'] ?? 0) + 1;
+      Map<String, dynamic> matchesLost =
+          losingCollegeSnapshot['matchesLost'] != null
+              ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesLost'])
+              : {};
+      matchesLost['tableTennisDoubles'] =
+          (matchesLost['tableTennisDoubles'] ?? 0) + 1;
 
       // Update matchesPlayed for both colleges
-      Map<String, dynamic> winningMatchesPlayed = winningCollegeSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(winningCollegeSnapshot['matchesPlayed'])
-          : {};
-      Map<String, dynamic> losingMatchesPlayed = losingCollegeSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(losingCollegeSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> winningMatchesPlayed =
+          winningCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  winningCollegeSnapshot['matchesPlayed'])
+              : {};
+      Map<String, dynamic> losingMatchesPlayed =
+          losingCollegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(
+                  losingCollegeSnapshot['matchesPlayed'])
+              : {};
 
-      winningMatchesPlayed['tableTennisDoubles'] = (winningMatchesPlayed['tableTennisDoubles'] ?? 0) + 1;
-      losingMatchesPlayed['tableTennisDoubles'] = (losingMatchesPlayed['tableTennisDoubles'] ?? 0) + 1;
+      winningMatchesPlayed['tableTennisDoubles'] =
+          (winningMatchesPlayed['tableTennisDoubles'] ?? 0) + 1;
+      losingMatchesPlayed['tableTennisDoubles'] =
+          (losingMatchesPlayed['tableTennisDoubles'] ?? 0) + 1;
 
       // Commit updates
       await winningCollegeDoc.update({
@@ -1620,23 +1711,29 @@ Future<String> recordFootballMatch({
   }) async {
     try {
       // Add match result
-      String result = "$playerName from $collegeName secured position $positionSecured";
+      String result =
+          "$playerName from $collegeName secured position $positionSecured";
 
       // Update college match data
-      DocumentReference collegeDoc = FirebaseFirestore.instance.collection('colleges').doc(collegeId);
+      DocumentReference collegeDoc =
+          FirebaseFirestore.instance.collection('colleges').doc(collegeId);
 
       // Get the data for the college
       DocumentSnapshot collegeSnapshot = await collegeDoc.get();
 
       // Update matchesPlayed and powerlifting results
-      Map<String, dynamic> powerliftingResults = collegeSnapshot['powerliftingResults'] != null
-          ? Map<String, dynamic>.from(collegeSnapshot['powerliftingResults'])
-          : {};
-      powerliftingResults[positionSecured] = (powerliftingResults[positionSecured] ?? 0) + 1;
+      Map<String, dynamic> powerliftingResults =
+          collegeSnapshot['powerliftingResults'] != null
+              ? Map<String, dynamic>.from(
+                  collegeSnapshot['powerliftingResults'])
+              : {};
+      powerliftingResults[positionSecured] =
+          (powerliftingResults[positionSecured] ?? 0) + 1;
 
-      Map<String, dynamic> matchesPlayed = collegeSnapshot['matchesPlayed'] != null
-          ? Map<String, dynamic>.from(collegeSnapshot['matchesPlayed'])
-          : {};
+      Map<String, dynamic> matchesPlayed =
+          collegeSnapshot['matchesPlayed'] != null
+              ? Map<String, dynamic>.from(collegeSnapshot['matchesPlayed'])
+              : {};
 
       matchesPlayed['powerlifting'] = (matchesPlayed['powerlifting'] ?? 0) + 1;
 
