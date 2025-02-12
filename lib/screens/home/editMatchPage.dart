@@ -2,7 +2,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:pratishtha/constants/colors.dart';
 import 'package:pratishtha/screens/home/declareResultPage.dart';
 import '../../models/eventModel.dart';
 import '../../services/databaseServices.dart';
@@ -58,6 +60,15 @@ class _editMatchPageState extends State<editMatchPage> {
       "resultsdeclare": widget.matchList['resultsdeclare'],
     };
     updateArrayElement(widget.index, teams);
+    Fluttertoast.showToast(
+      msg: "Score Updated",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: greenColor,
+      textColor: whiteColor,
+      fontSize: 16.0,
+    );
   }
 
   late Event eventData;
@@ -71,6 +82,10 @@ class _editMatchPageState extends State<editMatchPage> {
         appBar: AppBar(
           title: Text("Edit Match"),
           centerTitle: true,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back),
+          ),
         ),
         body: widget.matchList['resultsdeclare'] == true
             ? Center(
@@ -119,7 +134,7 @@ class _editMatchPageState extends State<editMatchPage> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => declareResultPage(

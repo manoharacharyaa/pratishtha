@@ -8,7 +8,7 @@ class AttendaceServices {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<String> addHeadorCohead(String currentAcademicYear, String deptName,
-      String deptHeadorCoheadName, String departmentPersonUUid) async {
+      String deptHeadorCoheadName, dynamic departmentPersonUUid) async {
     try {
       // Log parameters for debugging
       log("Parameters: currentAcademicYear=$currentAcademicYear, deptName=$deptName, "
@@ -192,82 +192,80 @@ class AttendaceServices {
     }
   }
 
-  Future<String> addVolunteerAttendance(
-    String currentAcademicYear,
-    String teamId,
-    List<String> volunteerIds,
-    List<bool> volunteerAttendanceStatus,
-  ) async {
-    if (volunteerIds.length != volunteerAttendanceStatus.length) {
-      return "Failed";
-    }
+ Future<String> addVolunteerAttendance(
+  String currentAcademicYear,
+  String teamId,
+  List<String> volunteerIds,
+  List<bool> volunteerAttendanceStatus,
+  String date, // Accept the date as a parameter in "DD-MM-YYYY" format
+) async {
+  if (volunteerIds.length != volunteerAttendanceStatus.length) {
+    return "Failed";
+  }
 
-    try {
-      final collectionPath = FirebaseFirestore.instance
-          .collection('attendance')
-          .doc(currentAcademicYear)
-          .collection('departments')
-          .doc(teamId)
-          .collection('volunteers');
+  try {
+    final collectionPath = FirebaseFirestore.instance
+        .collection('attendance')
+        .doc(currentAcademicYear)
+        .collection('departments')
+        .doc(teamId)
+        .collection('volunteers');
 
-      final collectionPath2 = FirebaseFirestore.instance
-          .collection('attendance')
-          .doc(currentAcademicYear)
-          .collection('departments')
-          .doc(teamId);
+    final collectionPath2 = FirebaseFirestore.instance
+        .collection('attendance')
+        .doc(currentAcademicYear)
+        .collection('departments')
+        .doc(teamId);
 
-      // Get today's date formatted as DD-MM-YYYY
-      String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    for (int i = 0; i < volunteerIds.length; i++) {
+      String docId = volunteerIds[i];
+      bool status = volunteerAttendanceStatus[i];
 
-      for (int i = 0; i < volunteerIds.length; i++) {
-        String docId = volunteerIds[i];
-        bool status = volunteerAttendanceStatus[i];
+      // Reference to volunteer document
+      DocumentReference docRef = collectionPath.doc(docId);
+      DocumentSnapshot snapshot = await docRef.get();
 
-        // Reference to volunteer document
-        DocumentReference docRef = collectionPath.doc(docId);
-        DocumentSnapshot snapshot = await docRef.get();
+      // Retrieve the attendanceStatus field, or initialize it if it doesn't exist
+      List<dynamic> attendanceStatus =
+          (snapshot.data() as Map<String, dynamic>?)?['attendanceStatus']
+                  as List<dynamic>? ??
+              [];
 
-        // Retrieve the attendanceStatus field, or initialize it if it doesn't exist
-        List<dynamic> attendanceStatus =
-            (snapshot.data() as Map<String, dynamic>?)?['attendanceStatus']
-                    as List<dynamic>? ??
-                [];
+      bool dateFound = false;
 
-        bool dateFound = false;
-
-        // Check for existing entry and update it
-        for (var entry in attendanceStatus) {
-          if (entry is Map<String, dynamic> && entry.containsKey(todayDate)) {
-            entry[todayDate] = status; // Update the status for today's date
-            dateFound = true;
-            break;
-          }
+      // Check for existing entry and update it
+      for (var entry in attendanceStatus) {
+        if (entry is Map<String, dynamic> && entry.containsKey(date)) {
+          entry[date] = status; // Update the status for the specified date
+          dateFound = true;
+          break;
         }
-
-        // If today's date is not found, add a new map entry
-        if (!dateFound) {
-          attendanceStatus.add({todayDate: status});
-        }
-
-        // Update the attendanceStatus field in Firestore
-        await docRef.set({
-          'attendanceStatus': attendanceStatus,
-        }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
       }
 
-      // Update attendanceMarkedDate array in collectionPath2
-      await collectionPath2.set({
-        'attendanceMarkedDate': FieldValue.arrayUnion([
-          {todayDate: true}
-        ]),
-      }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
+      // If the specified date is not found, add a new map entry
+      if (!dateFound) {
+        attendanceStatus.add({date: status});
+      }
 
-      return "Success";
-    } catch (e) {
-      print("Error in add volunteer attendance record: $e");
-      return "Failed";
+      // Update the attendanceStatus field in Firestore
+      await docRef.set({
+        'attendanceStatus': attendanceStatus,
+      }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
     }
+
+    // Update attendanceMarkedDate array in collectionPath2
+    await collectionPath2.set({
+      'attendanceMarkedDate': FieldValue.arrayUnion([
+        {date: true}
+      ]),
+    }, SetOptions(merge: true)); // Merge to avoid overwriting other fields
+
+    return "Success";
+  } catch (e) {
+    print("Error in add volunteer attendance record: $e");
+    return "Failed";
   }
+}
 
   Future<String> checkTodayAttendanceEntry(
       String currentAcademicYear, String teamId) async {

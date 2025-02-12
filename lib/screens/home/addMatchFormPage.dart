@@ -5,6 +5,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/widgets/connectivityChecker.dart';
 import 'package:pratishtha/services/databaseServices.dart';
+import 'package:uuid/uuid.dart';
 
 class addMatchFormPage extends StatefulWidget {
   const addMatchFormPage({
@@ -34,6 +35,7 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
       [];
   late List _documentsTeam1 = [];
   late List _documentsTeam2 = [];
+  final Uuid uuid = Uuid();
 
   @override
   void initState() {
@@ -102,12 +104,14 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
   }
 
   void uploadMatch() async {
+    String matchId = uuid.v4();
     if (addkey.currentState!.validate()) {
       addkey.currentState!.save();
       setState(() {
         isLoading = true;
       });
       Map<String, dynamic> teams = {
+        "matchId": matchId,
         "team01": team1,
         "team02": team2,
         "team01ID": team1ID,
@@ -127,6 +131,7 @@ class _addMatchFormPageState extends State<addMatchFormPage> {
         setState(() {
           isLoading = false;
         });
+        Navigator.pop(context);
         Fluttertoast.showToast(
             msg: "Match Added Successfully",
             toastLength: Toast.LENGTH_SHORT,

@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:pratishtha/is_live_provider.dart';
 import 'package:pratishtha/styles/mainTheme.dart';
 import 'package:pratishtha/widgets/splashScreen.dart';
+import 'package:pratishtha/youtube.dart';
 import 'services/authenticationServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,22 +25,25 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MultiProvider(
-        providers: [
-          Provider<AuthenticationService>(
-            create: (context) => AuthenticationService(FirebaseAuth.instance),
-          ),
-          StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationService>().authStateChanged,
-            initialData: null,
-          ),
-        ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Prathistha',
-          supportedLocales: [Locale('en', 'US')],
-          theme: mainTheme,
-          home: splashScreen(),
-        ));
+      providers: [
+        Provider<AuthenticationService>(
+          create: (context) => AuthenticationService(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanged,
+          initialData: null,
+        ),
+        ChangeNotifierProvider(create: (context) => IsLiveProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Prathistha',
+        supportedLocales: [Locale('en', 'US')],
+        theme: mainTheme,
+        home: splashScreen(),
+        // home: Youtube(),
+      ),
+    );
   }
 }

@@ -33,24 +33,24 @@ class _HomeState extends State<Home> {
     switch (_selectedIndex) {
       case 0:
         return [rulesIconButton(context: context, popUpPage: HomeRulesPage())];
-        break;
 
       case 1:
         return [
           rulesIconButton(context: context, popUpPage: SearchRulesPage())
         ];
-        break;
 
       case 2:
+        return [];
+
+      case 3:
         return [
           IconButton(
-            icon: Icon(FontAwesomeIcons.signOutAlt),
+            icon: Icon(FontAwesomeIcons.rightFromBracket),
             onPressed: () {
               context.read<AuthenticationService>().signOut();
             },
           )
         ];
-        break;
 
       default:
         return [];
@@ -60,6 +60,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
     _selectedIndex = widget.selectedIndex;
     _pageController = PageController();
     //_pageController.jumpToPage(_selectedIndex);

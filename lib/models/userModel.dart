@@ -67,8 +67,7 @@ class User {
   bool isVerified;
   bool? isFaculty;
 
-  factory User.fromMap(Map<String, dynamic> map) =>
-      User(
+  factory User.fromMap(Map<String, dynamic> map) => User(
         uid: map['uid'],
         firstName: map['first_name'],
         lastName: map['last_name'],
@@ -100,8 +99,7 @@ class User {
         isFaculty: map['is_faculty'] ?? false,
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'uid': uid,
         'first_name': firstName,
         'last_name': lastName,

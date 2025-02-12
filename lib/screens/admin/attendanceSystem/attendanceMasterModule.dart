@@ -30,6 +30,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
 
   TextEditingController departmentPersonUUidController =
       TextEditingController();
+      
 
   final addkey = GlobalKey<FormState>();
 
@@ -194,23 +195,97 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
       ),
       body: Column(
         children: [
+          Form(
+            key: addkey,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: departmentNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Dept Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 3,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: deptHeadorCoheadNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Select Member',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: Colors.blue,
+                              width: 3,
+                              strokeAlign: BorderSide.strokeAlignOutside),
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: () => openUserSelectionModal(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           InkWell(
             child: Container(
               margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: widget.user!.role == 8
-                    ? primaryColor
-                    : primaryColor.withOpacity(0.4),
+                border: Border.all(
+                    style: BorderStyle.solid, color: primaryColor, width: 2),
+                color: Colors.transparent,
               ),
               alignment: Alignment.center,
               child: Text(
-                "Add Dept Head / Co-head",
+                "Add Dept Details",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Colors.black),
               ),
             ),
             onTap: widget.user!.role == 8
@@ -324,6 +399,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
                       departmentNameController.text,
                       deptHeadorCoheadNameController.text,
                       departmentPersonUUidController.text,
+                     
                     );
 
                     if (result == "Member Added" ||
@@ -366,6 +442,7 @@ class _AttendanceMasterModule extends State<AttendanceMasterModule> {
             ),
           ],
         ],
+        
       ),
     );
   }

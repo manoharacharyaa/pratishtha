@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pratishtha/constants/colors.dart';
+import 'package:pratishtha/utils/fonts.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
@@ -133,11 +134,18 @@ class CustomTextField1 extends StatelessWidget {
           keyboardType: keyboardType,
           obscureText: obscureText,
           onChanged: onChanged,
+          cursorColor: Colors.black,
+          cursorHeight: 20,
+          style: AppFonts.poppins(size: 14),
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             suffix: suffix,
             labelText: labelText,
             hintText: hintText,
+            hintStyle: AppFonts.poppins(
+              size: 14,
+              color: dullGreyColor,
+            ),
             enabled: isEnabled ?? true,
             labelStyle: labelStyle ??
                 TextStyle(

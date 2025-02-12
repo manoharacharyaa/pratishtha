@@ -2,6 +2,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pratishtha/services/databaseServices.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pratishtha/constants/avatars.dart';
@@ -10,13 +12,15 @@ import 'package:pratishtha/constants/keys.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/screens/admin/editEvent.dart';
 import 'package:pratishtha/screens/home/addMatchFormPage.dart';
+import 'package:pratishtha/screens/home/addPointsAurum.dart';
 import 'package:pratishtha/screens/home/addTeams.dart';
 import 'package:pratishtha/screens/home/eventPointsCard.dart';
 import 'package:pratishtha/screens/home/matches_details_page.dart';
-import 'package:pratishtha/services/databaseServices.dart';
+import 'package:pratishtha/screens/home/registration_page.dart';
 import 'package:pratishtha/services/dateTimeServices.dart';
 import 'package:pratishtha/services/eventServices.dart';
 import 'package:pratishtha/models/userModel.dart';
+import 'package:pratishtha/utils/fonts.dart';
 import 'package:pratishtha/widgets/comingSoonWidget.dart';
 import 'package:pratishtha/services/sharedPreferencesServices.dart' as sh;
 import 'package:pratishtha/widgets/connectivityChecker.dart';
@@ -88,8 +92,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   bool enableEditEvent() {
-    if ([5, 3].contains(currentUser.role) ||
-        this.widget.event.eventHeads!.contains(currentUser.uid)) {
+    if (currentUser.role == 3 || currentUser.role == 5) {
       return true;
     } else {
       return false;
@@ -97,7 +100,18 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   bool enableMatchManage() {
-    if ([5, 3, 7].contains(currentUser.role)) {
+    if (currentUser.role == 2 ||
+        currentUser.role == 3 ||
+        currentUser.role == 5 ||
+        currentUser.role == 7) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool enableAddPoints() {
+    if ([5, 3].contains(currentUser.role)) {
       return true;
     } else {
       return false;
@@ -182,60 +196,64 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                             event: this.widget.event)));
                               },
                               label: Text("Edit Event"),
-                              icon: Icon(FontAwesomeIcons.edit),
+                              icon: Icon(FontAwesomeIcons.penToSquare),
                             )
                           : Container(),
-                      enableMatchManage()
-                          ? ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          secondaryColor)),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => addMatchFormPage(
-                                              eventID: this
-                                                  .widget
-                                                  .event
-                                                  .id
-                                                  .toString(),
-                                            )));
-                              },
-                              label: Text("Matches"),
-                              icon: Icon(FontAwesomeIcons.plus),
-                            )
-                          : Container(),
-                      enableMatchManage()
-                          ? ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all<Color>(
-                                          secondaryColor)),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => addTeamPage(
-                                      eventID: this.widget.event.id.toString(),
-                                    ),
-                                  ),
-                                );
-                              },
-                              label: Text("Teams"),
-                              icon: Icon(FontAwesomeIcons.plus),
-                            )
-                          : Container(),
+                      if (widget.event.parentId == Olympus2024ID &&
+                          enableMatchManage())
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  secondaryColor)),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => addMatchFormPage(
+                                          eventID:
+                                              this.widget.event.id.toString(),
+                                        )));
+                          },
+                          label: Text("Matches"),
+                          icon: Icon(FontAwesomeIcons.plus),
+                        ),
+                      if (widget.event.parentId == Olympus2024ID &&
+                          enableMatchManage())
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  secondaryColor)),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => addTeamPage(
+                                  eventID: this.widget.event.id.toString(),
+                                ),
+                              ),
+                            );
+                          },
+                          label: Text("Teams"),
+                          icon: Icon(FontAwesomeIcons.plus),
+                        ),
                       ElevatedButton(
                         onPressed: () async {
-                          final url = widget.event.registrationUrl;
+                          //URL Redirecting to browser
+                          // final url = widget.event.registrationUrl;
+                          // if (await canLaunch(url)) {
+                          //   await launch(url);
+                          // } else {
+                          //   throw 'Could not launch $url';
+                          // }
 
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (contexr) => RegistrationPage(
+                                event: widget.event,
+                              ),
+                            ),
+                          );
                         },
                         style: ButtonStyle(
                           fixedSize: WidgetStateProperty.all(Size.infinite),
@@ -326,17 +344,30 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                               text: "Matches",
                                             )
                                           ]
-                                        : <Widget>[
-                                            Tab(
-                                              text: "Details",
-                                            ),
-                                            Tab(
-                                              text: "Coordinators",
-                                            ),
-                                            Tab(
-                                              text: "Leaderboard",
-                                            ),
-                                          ]),
+                                        : widget.event.parentId == Aurum2024ID
+                                            ? [
+                                                Tab(
+                                                  text: "Details",
+                                                ),
+                                                Tab(
+                                                  text: "Participants",
+                                                ),
+                                                Tab(
+                                                  text: "Leaderboard",
+                                                ),
+                                              ]
+                                            : <Widget>[
+                                                Tab(
+                                                  text: "Details",
+                                                ),
+                                                Tab(
+                                                  text: "Coordinators",
+                                                ),
+                                                Tab(
+                                                  text: "Leaderboard",
+                                                ),
+                                              ]),
+                            //Aurum work todo
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height / 1.6,
@@ -357,14 +388,20 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                                 : leaderboardView(),
                                             matchesboardView()
                                           ]
-                                        : [
-                                            detailsView(),
-                                            coordinatorsView(),
-                                            widget.event.parentId ==
-                                                    Olympus2024ID
-                                                ? olympusLeaderView()
-                                                : leaderboardView(),
-                                          ],
+                                        : widget.event.parentId == Aurum2024ID
+                                            ? [
+                                                detailsView(),
+                                                participantsView(),
+                                                aurumLeaderboardView(),
+                                              ]
+                                            : [
+                                                detailsView(),
+                                                coordinatorsView(),
+                                                widget.event.parentId ==
+                                                        Olympus2024ID
+                                                    ? olympusLeaderView()
+                                                    : leaderboardView(),
+                                              ],
                               ),
                             ),
                           ],
@@ -386,15 +423,15 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
 
   olympusLeaderView() {
     return SingleChildScrollView(
-      child: FutureBuilder(
-        future: FirebaseFirestore.instance
+      child: StreamBuilder(
+        stream: FirebaseFirestore.instance
             .collection('events')
             .doc(this.widget.event.id)
             .collection('teams')
             .where('score')
             .orderBy('score', descending: true)
             // .limit(3)
-            .get(),
+            .snapshots(),
         builder:
             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshots) {
           if (snapshots.hasError) {
@@ -588,6 +625,156 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
     );
   }
 
+  Future<List<Map<String, dynamic>>> fetchApprovedUsers(eventId) async {
+    List<Map<String, dynamic>> approvedUsers = [];
+
+    DocumentSnapshot eventDoc =
+        await databaseServices.eventCollection.doc(eventId).get();
+
+    if (eventDoc.exists) {
+      List<dynamic> approvedUsersList = eventDoc.get('approved_users') ?? [];
+
+      for (var userMap in approvedUsersList) {
+        String userId = userMap.keys.first; // Extract userId
+        int points = userMap[userId]['points'] ?? 0; // Extract points
+
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        if (userDoc.exists) {
+          String username = userDoc.get('first_name'); // Fetch username
+
+          // Add username & points to list
+          approvedUsers.add({
+            'userId': userId,
+            'username': username,
+            'points': points,
+          });
+        }
+      }
+    }
+
+    return approvedUsers;
+  }
+
+  aurumLeaderboardView() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchApprovedUsers(this.widget.event.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('No Users registered yet'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text("No approved users found."));
+        }
+
+        // Get the approved users and sort them by points (descending).
+        List<Map<String, dynamic>> approvedUsers = snapshot.data!;
+        approvedUsers.sort((a, b) => b['points'].compareTo(a['points']));
+
+        // Build the list of leaderboard items.
+        List<Widget> leaderboardItems = [];
+        for (int i = 0; i < approvedUsers.length; i++) {
+          final user = approvedUsers[i];
+
+          // Determine medal color based on rank.
+          Color medalColor;
+          if (i == 0) {
+            medalColor = goldColor;
+          } else if (i == 1) {
+            medalColor = Colors.grey.shade700;
+          } else if (i == 2) {
+            medalColor = const Color.fromARGB(255, 156, 83, 57);
+          } else {
+            medalColor = dullGreyColor;
+          }
+
+          leaderboardItems.add(
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade300,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  // Medal Icon based on rank.
+                  Icon(
+                    FontAwesomeIcons.medal,
+                    size: 40,
+                    color: medalColor,
+                  ),
+                  SizedBox(width: 10),
+                  // User information.
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user['username'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${user['points']} points',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Ranking number.
+                  Text(
+                    '#${i + 1}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(10.0, 25.0, 10.0, 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    'Leaderboard',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Column(
+                  children: leaderboardItems,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   leaderboardView() {
     return SingleChildScrollView(
       child: Container(
@@ -660,6 +847,114 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                 });
                           })()),
                         ),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  participantsView() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            enableAddPoints()
+                ? ElevatedButton.icon(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(secondaryColor)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddPointsAurum(eventId: this.widget.event.id!),
+                        ),
+                      );
+                    },
+                    label: Text("Add Points"),
+                    icon: Icon(FontAwesomeIcons.plus),
+                  )
+                : Container(),
+            this.widget.event.approved_users!.isEmpty
+                ? Center(
+                    child: noContentWidget(
+                      message: "No participants registered yet",
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Participants',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Container(
+                          child: FutureBuilder<List<User>>(
+                            future: databaseServices
+                                .getApprovedUser(this.widget.event.id),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<User>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(child: loadingWidget());
+                              } else if (snapshot.hasError) {
+                                return Center(child: CustomErrorWidget());
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Center(
+                                    child: noContentWidget(
+                                        message:
+                                            "No participants registered yet"));
+                              } else {
+                                // Here, snapshot.data contains the detailed user info (including username)
+                                // Create user cards based on the detailed user information.
+                                List<UserCard> userCards =
+                                    getListOfUserCards(snapshot.data!);
+                                List<Widget> displayUserCards =
+                                    userCards.map((userCard) {
+                                  return Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: Row(
+                                      children: [
+                                        Expanded(child: userCard),
+                                        SizedBox(width: 5),
+                                        IconButton(
+                                          onPressed: () {
+                                            // Implement phone call or any other action here
+                                          },
+                                          icon: Icon(
+                                            FontAwesomeIcons.phone,
+                                            size: 40,
+                                            color: dullGreyColor,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                      ],
+                                    ),
+                                  );
+                                }).toList();
+                                return Column(
+                                  children: displayUserCards,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30.0,
                       ),
                     ],
                   ),
@@ -802,395 +1097,413 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
 
   detailsView() {
     return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
-        // margin: MediaQuery.of(context).padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    this.widget.event.name!.isEmpty
-                        ? "Coming Soon"
-                        : this.widget.event.name!,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                [5, 3].contains(currentUser.role)
-                    ? IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              elevation: 10,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(10),
-                                ),
-                              ),
-                              builder: (context) {
-                                return StatefulBuilder(
-                                    builder: (context, setState) {
-                                  return Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 3,
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Go Live",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            Spacer(),
-                                            Switch(
-                                                value: goLive,
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    goLive = val;
-                                                  });
-                                                }),
-                                          ],
-                                        ),
-                                        !this.widget.event.closeEvent
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    "Close Event",
-                                                    style:
-                                                        TextStyle(fontSize: 16),
-                                                  ),
-                                                  Spacer(),
-                                                  Switch(
-                                                      value: closeEvent,
-                                                      onChanged: (val) {
-                                                        setState(() {
-                                                          closeEvent = val;
-                                                        });
-                                                      }),
-                                                ],
-                                              )
-                                            : Container(),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            Spacer(),
-                                            Switch(
-                                                value: softDelete,
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    softDelete = val;
-                                                  });
-                                                }),
-                                          ],
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () async {
-                                              if (this.widget.event.goLive !=
-                                                      goLive ||
-                                                  this
-                                                          .widget
-                                                          .event
-                                                          .softDelete !=
-                                                      softDelete ||
-                                                  this
-                                                          .widget
-                                                          .event
-                                                          .closeEvent !=
-                                                      closeEvent) {
-                                                if (softDelete || closeEvent) {
-                                                  showDialog<bool>(
-                                                    context: context,
-                                                    barrierDismissible:
-                                                        false, // user must tap button!
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Warning'),
-                                                        content:
-                                                            SingleChildScrollView(
-                                                          child: ListBody(
-                                                            children: const <Widget>[
-                                                              Text(
-                                                                  'Are you sure you want to delete this event?'),
-                                                              Text(
-                                                                  'You will not be able to reverse this change'),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            child: const Text(
-                                                                'Yes'),
-                                                            onPressed:
-                                                                () async {
-                                                              await databaseServices.updateSoftDeleteAndGoLiveStatusForEvents(
-                                                                  goLive:
-                                                                      goLive,
-                                                                  softDelete:
-                                                                      softDelete,
-                                                                  closeEvent:
-                                                                      closeEvent,
-                                                                  event: this
-                                                                      .widget
-                                                                      .event);
-
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(true);
-                                                              Navigator.pop(
-                                                                  context);
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                          ),
-                                                          TextButton(
-                                                            child: const Text(
-                                                                'No'),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(false);
-                                                            },
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                } else {
-                                                  await databaseServices
-                                                      .updateSoftDeleteAndGoLiveStatusForEvents(
-                                                          goLive: goLive,
-                                                          softDelete:
-                                                              softDelete,
-                                                          closeEvent:
-                                                              closeEvent,
-                                                          event: this
-                                                              .widget
-                                                              .event);
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                }
-                                              }
-                                            },
-                                            child: Text("Save"))
-                                      ],
-                                    ),
-                                  );
-                                });
-                              });
-                        },
-                        icon: Icon(Icons.menu, color: primaryColor))
-                    : Container()
-              ],
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            this.widget.event.closeEvent
-                ? Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "This event is now closed",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(10.0, 25.0, 5.0, 10.0),
+          // margin: MediaQuery.of(context).padding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      this.widget.event.name!.isEmpty
+                          ? "Coming Soon"
+                          : this.widget.event.name!,
+                      style: AppFonts.poppins(
+                        size: 25,
+                        weight: FontWeight.w600,
+                      ),
                     ),
-                  )
-                : this.widget.event.registration!.contains(currentUser.uid)
-                    ? Column(
+                  ),
+                  [5, 3].contains(currentUser.role)
+                      ? IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                elevation: 10,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(10),
+                                  ),
+                                ),
+                                builder: (context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      padding: EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Go Live",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Spacer(),
+                                              Switch(
+                                                  value: goLive,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      goLive = val;
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                          !this.widget.event.closeEvent
+                                              ? Row(
+                                                  children: [
+                                                    Text(
+                                                      "Close Event",
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                    Spacer(),
+                                                    Switch(
+                                                        value: closeEvent,
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            closeEvent = val;
+                                                          });
+                                                        }),
+                                                  ],
+                                                )
+                                              : Container(),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "Delete",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              Spacer(),
+                                              Switch(
+                                                  value: softDelete,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      softDelete = val;
+                                                    });
+                                                  }),
+                                            ],
+                                          ),
+                                          ElevatedButton(
+                                              onPressed: () async {
+                                                if (this.widget.event.goLive !=
+                                                        goLive ||
+                                                    this
+                                                            .widget
+                                                            .event
+                                                            .softDelete !=
+                                                        softDelete ||
+                                                    this
+                                                            .widget
+                                                            .event
+                                                            .closeEvent !=
+                                                        closeEvent) {
+                                                  if (softDelete ||
+                                                      closeEvent) {
+                                                    showDialog<bool>(
+                                                      context: context,
+                                                      barrierDismissible:
+                                                          false, // user must tap button!
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Warning'),
+                                                          content:
+                                                              SingleChildScrollView(
+                                                            child: ListBody(
+                                                              children: const <Widget>[
+                                                                Text(
+                                                                    'Are you sure you want to delete this event?'),
+                                                                Text(
+                                                                    'You will not be able to reverse this change'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  'Yes'),
+                                                              onPressed:
+                                                                  () async {
+                                                                await databaseServices.updateSoftDeleteAndGoLiveStatusForEvents(
+                                                                    goLive:
+                                                                        goLive,
+                                                                    softDelete:
+                                                                        softDelete,
+                                                                    closeEvent:
+                                                                        closeEvent,
+                                                                    event: this
+                                                                        .widget
+                                                                        .event);
+
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                                Navigator.pop(
+                                                                    context);
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  'No'),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    await databaseServices
+                                                        .updateSoftDeleteAndGoLiveStatusForEvents(
+                                                            goLive: goLive,
+                                                            softDelete:
+                                                                softDelete,
+                                                            closeEvent:
+                                                                closeEvent,
+                                                            event: this
+                                                                .widget
+                                                                .event);
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  }
+                                                }
+                                              },
+                                              child: Text("Save"))
+                                        ],
+                                      ),
+                                    );
+                                  });
+                                });
+                          },
+                          icon: Icon(Icons.menu, color: primaryColor))
+                      : Container()
+                ],
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              this.widget.event.closeEvent
+                  ? Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "You have registered for this event!",
+                            "You have not registered yet",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
-                            height: 10.0,
-                          ),
-                          this.widget.event.registrationUrl.isEmpty
-                              ? Container()
-                              : TextButton(
-                                  onPressed: () {
-                                    inAppBrowser(widget.event.registrationUrl);
-                                  },
-                                  child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        text: "Please finish your ",
-                                        style: TextStyle(color: blackColor),
-                                        children: [
-                                          TextSpan(
-                                              text: "Registration ",
-                                              style: TextStyle(
-                                                  color: primaryColor,
-                                                  fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text:
-                                                  "to participate in this event, if you haven't already done so.")
-                                        ]),
-                                  )),
-                          this.widget.event.registrationUrl.isEmpty
-                              ? Container()
-                              : SizedBox(
-                                  height: 15.0,
-                                ),
-                        ],
-                      )
-                    : this.widget.event.completed!.contains(currentUser.uid)
-                        ? Column(
-                            children: [
-                              Text(
-                                "You have completed this event!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 5.0,
-                              ),
-                              this.widget.event.feedbackUrl.isEmpty
-                                  ? Container()
-                                  : TextButton(
-                                      onPressed: () {
-                                        // call feedback url
-                                        inAppBrowser(widget.event.feedbackUrl);
-                                      },
-                                      child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                            text: "Please give us your ",
-                                            style: TextStyle(color: blackColor),
-                                            children: [
-                                              TextSpan(
-                                                  text: "Feedback",
-                                                  style: TextStyle(
-                                                      color: primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              TextSpan(text: " for this event!")
-                                            ]),
-                                      )),
-                              this.widget.event.feedbackUrl.isEmpty
-                                  ? Container()
-                                  : SizedBox(
-                                      height: 15.0,
-                                    ),
-                            ],
+                            height: 10,
                           )
-                        : this.widget.event.dateTo!.isBefore(DateTime.now())
-                            ? Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "This event is now closed",
+                        ],
+                      ),
+                    )
+                  : this.widget.event.registration!.contains(currentUser.uid)
+                      ? Column(
+                          children: [
+                            Text(
+                              "You have registered for this event!",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            this.widget.event.registrationUrl.isEmpty
+                                ? Container()
+                                : TextButton(
+                                    onPressed: () {
+                                      inAppBrowser(
+                                          widget.event.registrationUrl);
+                                    },
+                                    child: RichText(
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    )
-                                  ],
+                                      text: TextSpan(
+                                          text: "Please finish your ",
+                                          style: TextStyle(color: blackColor),
+                                          children: [
+                                            TextSpan(
+                                                text: "Registration ",
+                                                style: TextStyle(
+                                                    color: primaryColor,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            TextSpan(
+                                                text:
+                                                    "to participate in this event, if you haven't already done so.")
+                                          ]),
+                                    )),
+                            this.widget.event.registrationUrl.isEmpty
+                                ? Container()
+                                : SizedBox(
+                                    height: 15.0,
+                                  ),
+                          ],
+                        )
+                      : this.widget.event.completed!.contains(currentUser.uid)
+                          ? Column(
+                              children: [
+                                Text(
+                                  "You have completed this event!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              )
-                            : Container(),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                ((() {
-                  if (this.widget.event.description.isEmpty) {
-                    return "Coming Soon";
-                  }
-                  return this.widget.event.description.replaceAll("\\n", "\n");
-                })()),
-                style: TextStyle(color: dullGreyColor, fontSize: 16),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                this.widget.event.feedbackUrl.isEmpty
+                                    ? Container()
+                                    : TextButton(
+                                        onPressed: () {
+                                          // call feedback url
+                                          inAppBrowser(
+                                              widget.event.feedbackUrl);
+                                        },
+                                        child: RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                              text: "Please give us your ",
+                                              style:
+                                                  TextStyle(color: blackColor),
+                                              children: [
+                                                TextSpan(
+                                                    text: "Feedback",
+                                                    style: TextStyle(
+                                                        color: primaryColor,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                TextSpan(
+                                                    text: " for this event!")
+                                              ]),
+                                        )),
+                                this.widget.event.feedbackUrl.isEmpty
+                                    ? Container()
+                                    : SizedBox(
+                                        height: 15.0,
+                                      ),
+                              ],
+                            )
+                          // : this.widget.event.dateTo!.isBefore(DateTime.now())
+                          //     ? Center(
+                          //         child: Column(
+                          //           crossAxisAlignment: CrossAxisAlignment.center,
+                          //           children: [
+                          //             Text(
+                          //               "This event is now closed",
+                          //               textAlign: TextAlign.center,
+                          //               style: TextStyle(
+                          //                   fontSize: 15,
+                          //                   fontWeight: FontWeight.bold),
+                          //             ),
+                          //             SizedBox(
+                          //               height: 15,
+                          //             )
+                          //           ],
+                          //         ),
+                          //       )
+                          : Container(),
+              SizedBox(
+                height: 5,
               ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            this.widget.event.type == 2 && this.widget.event.price == 0
-                ? Container()
-                : displayPrice(),
-            this.widget.event.type == 2 && this.widget.event.price == 0
-                ? Container()
-                : SizedBox(
-                    height: 10,
-                  ),
-            displayDate(),
-            SizedBox(
-              height: 15.0,
-            ),
-            displayTimeLocation(),
-            SizedBox(
-              height: 20,
-            ),
-            ((this.widget.event.registration!.length +
-                            this.widget.event.completed!.length) >
-                        4 &&
-                    this.widget.event.type != 2)
-                ? displayRegistrations()
-                : Container(),
-            ((this.widget.event.registration!.length +
-                            this.widget.event.completed!.length) >
-                        4 &&
-                    this.widget.event.type != 2)
-                ? SizedBox(
-                    height: 30.0,
-                  )
-                : Container(),
-            // this.widget.event.type == 2 ? Container() : displayPoints(),
-            this.widget.event.type == 2
-                ? Container()
-                : SizedBox(
-                    height: 30.0,
-                  ),
-            this.widget.event.type == 2 && this.widget.event.rules!.isEmpty
-                ? Container()
-                : displayRules(),
-            // [5, 3].contains(currentUser.role) ||
-            //         this.widget.event.eventHeads.contains(currentUser.uid) ||
-            //         this.widget.event.volunteers.contains(currentUser.uid)
-            //     ? TextButton(
-            //         onPressed: () async {
-            //           List<List> participantList = await databaseServices
-            //               .getParticipants(this.widget.event.id);
-            //           Navigator.push(
-            //               context,
-            //               MaterialPageRoute(
-            //                   builder: (context) => ChangeParticipantStatus(
-            //                         eventId: this.widget.event.id,
-            //                         participantsList: participantList,
-            //                         event: widget.event,
-            //                       )));
-            //         },
-            //         child: Text("View Participants"))
-            //     : Container(),
-          ],
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  ((() {
+                    if (this.widget.event.description.isEmpty) {
+                      return "Coming Soon";
+                    }
+                    return this
+                        .widget
+                        .event
+                        .description
+                        .replaceAll("\\n", "\n");
+                  })()),
+                  style: AppFonts.poppins(size: 14, color: dullGreyColor),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              this.widget.event.type == 2 && this.widget.event.price == 0
+                  ? Container()
+                  : displayPrice(),
+              // this.widget.event.type == 2 && this.widget.event.price == 0
+              //     ? Container()
+              //     : SizedBox(
+              //         height: 10,
+              //       ),
+              displayDate(),
+              SizedBox(
+                height: 15.0,
+              ),
+              displayTimeLocation(),
+              SizedBox(
+                height: 20,
+              ),
+              ((this.widget.event.registration!.length +
+                              this.widget.event.completed!.length) >
+                          4 &&
+                      this.widget.event.type != 2)
+                  ? displayRegistrations()
+                  : Container(),
+              ((this.widget.event.registration!.length +
+                              this.widget.event.completed!.length) >
+                          4 &&
+                      this.widget.event.type != 2)
+                  ? SizedBox(
+                      height: 30.0,
+                    )
+                  : Container(),
+              // this.widget.event.type == 2 ? Container() : displayPoints(),
+              // this.widget.event.type == 2
+              //     ? Container()
+              //     : SizedBox(
+              //         height: 20,
+              //       ),
+              this.widget.event.type == 2 && this.widget.event.rules!.isEmpty
+                  ? Container()
+                  : displayRules(),
+              // [5, 3].contains(currentUser.role) ||
+              //         this.widget.event.eventHeads.contains(currentUser.uid) ||
+              //         this.widget.event.volunteers.contains(currentUser.uid)
+              //     ? TextButton(
+              //         onPressed: () async {
+              //           List<List> participantList = await databaseServices
+              //               .getParticipants(this.widget.event.id);
+              //           Navigator.push(
+              //               context,
+              //               MaterialPageRoute(
+              //                   builder: (context) => ChangeParticipantStatus(
+              //                         eventId: this.widget.event.id,
+              //                         participantsList: participantList,
+              //                         event: widget.event,
+              //                       )));
+              //         },
+              //         child: Text("View Participants"))
+              //     : Container(),
+            ],
+          ),
         ),
       ),
     );
@@ -1258,66 +1571,79 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   displayPrice() {
-    return Row(
-      children: [
-        Icon(
-          FontAwesomeIcons.rupeeSign,
-          size: 16,
-        ),
-        SizedBox(
-          width: 5.0,
-        ),
-        Text(
-          'Price: ${this.widget.event.price}',
-          style: TextStyle(
-              //fontSize: 16.0,
-              ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            'Price:  ',
+            style: AppFonts.poppins(size: 20, weight: FontWeight.w600),
+          ),
+          Image.asset(
+            'assets/images/rupees.png',
+            height: 18,
+          ),
+          Text(
+            ' ${this.widget.event.price}',
+            style: AppFonts.poppins(size: 20, weight: FontWeight.w600),
+          ),
+        ],
+      ),
     );
   }
 
   displayDate() {
-    return Row(
-      children: [
-        Icon(
-          FontAwesomeIcons.calendar,
-          size: 16,
-        ),
-        SizedBox(
-          width: 5.0,
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 3.5,
-          child: Text(((() {
-            if (this.widget.event.dateFrom!.toLocal().toString().isEmpty) {
-              return "Coming Soon";
-            } else if (daysBetween(this.widget.event.dateFrom as DateTime,
-                    this.widget.event.dateTo as DateTime) ==
-                0) {
-              return getFormattedDate(this.widget.event.dateFrom as DateTime);
-            }
-            return getFormattedDateRange(
-                dateFrom: this.widget.event.dateFrom,
-                dateTo: this.widget.event.dateTo);
-          })())),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      width: MediaQuery.sizeOf(context).width * 0.45,
+      height: 40,
+      decoration: BoxDecoration(
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            FontAwesomeIcons.calendar,
+            size: 20,
+            color: Colors.white,
+          ),
+          SizedBox(width: 10),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 3.5,
+            child: Text(
+              ((() {
+                if (this.widget.event.dateFrom!.toLocal().toString().isEmpty) {
+                  return "Coming Soon";
+                } else if (daysBetween(this.widget.event.dateFrom as DateTime,
+                        this.widget.event.dateTo as DateTime) ==
+                    0) {
+                  return getFormattedDate(
+                      this.widget.event.dateFrom as DateTime);
+                }
+                return getFormattedDateRange(
+                    dateFrom: this.widget.event.dateFrom,
+                    dateTo: this.widget.event.dateTo);
+              })()),
+              style: AppFonts.poppins(color: Colors.white, size: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   displayTimeLocation() {
     return Row(
       children: [
-        SizedBox(
-          width: 5,
-        ),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 7),
-          height: 40,
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          height: 50,
           decoration: BoxDecoration(
               color: primaryColor,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(8),
               boxShadow: kElevationToShadow[1]),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -1342,28 +1668,28 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                       dateTo: this.widget.event.dateTo);
                 })()),
                 overflow: TextOverflow.clip,
-                style: TextStyle(fontSize: 14, color: whiteColor),
+                style: AppFonts.poppins(color: Colors.white),
               ),
             ],
           ),
         ),
         SizedBox(
-          width: 20,
+          width: 10,
         ),
         Flexible(
           child: Container(
-            height: 40,
+            height: 50,
             padding: EdgeInsets.all(2),
             decoration: BoxDecoration(
                 color: primaryColor,
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(8),
                 boxShadow: kElevationToShadow[1]),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
-                  FontAwesomeIcons.mapMarkerAlt,
+                  FontAwesomeIcons.locationDot,
                   size: 20,
                   color: whiteColor,
                 ),
@@ -1373,14 +1699,14 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                 this.widget.event.location.isEmpty
                     ? Text(
                         "Coming Soon",
-                        style: TextStyle(color: whiteColor),
+                        style: AppFonts.poppins(color: Colors.white),
                       )
                     : this.widget.event.locationType.isEmpty
                         ? Flexible(
                             child: Text(
                               this.widget.event.location,
                               maxLines: 4,
-                              style: TextStyle(color: whiteColor),
+                              style: AppFonts.poppins(color: Colors.white),
                             ),
                           )
                         : this.widget.event.locationType == "Online"
@@ -1414,8 +1740,9 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                       child: Text(
                                         this.widget.event.location,
                                         maxLines: 4,
-                                        style: TextStyle(
-                                            color: whiteColor, fontSize: 16),
+                                        style: AppFonts.poppins(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -1431,12 +1758,13 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                             : "Offline - ${this.widget.event.location}\nOnline - Meet Link",
                                         maxLines: 4,
                                         style: TextStyle(
-                                            fontWeight:
-                                                this.widget.event.meetLink == ""
-                                                    ? FontWeight.normal
-                                                    : FontWeight.bold,
-                                            color: whiteColor,
-                                            fontSize: 12),
+                                          fontWeight:
+                                              this.widget.event.meetLink == ""
+                                                  ? FontWeight.normal
+                                                  : FontWeight.bold,
+                                          color: whiteColor,
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1453,47 +1781,60 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
 
   displayRules() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Rules',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
+          style: AppFonts.poppins(size: 25),
         ),
+        const Divider(color: Colors.black),
         SizedBox(
           width: MediaQuery.of(context).size.width,
           child: this.widget.event.rules!.isEmpty
-              ? Text(
-                  "Coming Soon",
-                  overflow: TextOverflow.clip,
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: Text(
+                    "Coming Soon",
+                    textAlign: TextAlign.center,
+                    style: AppFonts.poppins(color: primaryColor),
+                  ),
                 )
-              : Container(
-                  // height:
-                  //     this.widget.event.rules.length * 50 / 1,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: this.widget.event.rules!.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.only(left: 5, bottom: 5, right: 5),
-                          padding: EdgeInsets.all(5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${index + 1}.'),
-                              SizedBox(width: 5),
-                              Flexible(
-                                child: Text(
-                                  this.widget.event.rules![index],
-                                ),
-                              )
-                            ],
+              : ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: this.widget.event.rules!.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: EdgeInsets.only(
+                        left: 5,
+                        bottom: 5,
+                        right: 5,
+                        top: 5,
+                      ),
+                      padding: EdgeInsets.all(5),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${index + 1}.',
+                            style: AppFonts.poppins(
+                              size: 14,
+                              weight: FontWeight.bold,
+                            ),
                           ),
-                        );
-                      }),
-                ),
+                          SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              this.widget.event.rules![index],
+                              style: AppFonts.poppins(size: 14),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }),
         ),
       ],
     );
@@ -1555,11 +1896,11 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
   }
 
   matchesboardView() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
           .collection("events")
           .doc(this.widget.event.id)
-          .get(),
+          .snapshots(),
       builder: (context, snapshots) {
         if (snapshots.hasError) {
           return const Center(
@@ -1586,6 +1927,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                     itemCount: matchesList.length,
                     addAutomaticKeepAlives: true,
                     itemBuilder: (BuildContext context, int index) {
+                      final match = matchesList[index];
                       return Padding(
                         padding: const EdgeInsets.all(16),
                         child: Material(
@@ -1601,7 +1943,9 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => MatchesDetailsPage(
-                                        matchIndex: index,
+                                        match: match,
+                                        team1Name: matchesList[index]['team01'],
+                                        team2Name: matchesList[index]['team02'],
                                         eventId: widget.event.id!,
                                       ),
                                     ),
@@ -1624,21 +1968,59 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/codesandbx_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team01']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                       Text(
-                                        '${matchesList[index]['score01']} . ${matchesList[index]['score02']}',
+                                        '${matchesList[index]['score01']} : ${matchesList[index]['score02']}',
                                         style: TextStyle(
                                           fontSize: 33,
                                         ),
                                       ),
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        color: Colors.black,
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 100,
+                                            width: 100,
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/globe_transparent.png',
+                                            ),
+                                          ),
+                                          Text(
+                                            '${matchesList[index]['team02']}',
+                                            style: AppFonts.poppins(
+                                                weight: FontWeight.w600),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -1655,7 +2037,7 @@ class _EventPageState extends State<EventPage> with TickerProviderStateMixin {
                                         children: [
                                           ElevatedButton.icon(
                                             onPressed: () {
-                                              Navigator.push(
+                                              Navigator.pushReplacement(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>

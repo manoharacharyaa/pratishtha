@@ -4,6 +4,7 @@ import 'package:pratishtha/constants/festIcons.dart';
 import 'package:pratishtha/models/eventModel.dart';
 import 'package:pratishtha/screens/home/eventPage.dart';
 import 'package:pratishtha/screens/home/festPage.dart';
+import 'package:pratishtha/utils/fonts.dart';
 
 Widget FestButton({
   Event? event,
@@ -65,10 +66,11 @@ Widget FestButton({
         ),
         Text(
           event.name!,
-          style: TextStyle(
-            fontSize: 15.0,
+          style: AppFonts.poppins(
+            size: 14,
+            weight: FontWeight.w600,
           ),
-        )
+        ),
       ],
     ),
   );

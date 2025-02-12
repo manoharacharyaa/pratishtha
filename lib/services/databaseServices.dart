@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pratishtha/models/councilModel.dart';
 import 'package:pratishtha/models/eventModel.dart';
@@ -40,7 +41,7 @@ class DatabaseServices {
       FirebaseFirestore.instance.collection('event_types');
 
   final CollectionReference councilCollection =
-      FirebaseFirestore.instance.collection('council');
+      FirebaseFirestore.instance.collection('council2425');
 
   final CollectionReference teamCollection =
       FirebaseFirestore.instance.collection('team');
@@ -200,7 +201,31 @@ class DatabaseServices {
     await userCollection.doc(id).update(
         {"event_roles": currentUser.eventRoles, "role": currentUser.role});
   }
+  Future<List<String>> getFestBanners() async {
+    List<String> bannerUrls = [];
+    final storageRef = FirebaseStorage.instance.ref().child('festbanners');
+    final ListResult result = await storageRef.listAll();
 
+    for (var item in result.items) {
+      final String url = await item.getDownloadURL();
+      bannerUrls.add(url);
+    }
+
+    // Custom order
+    List<String> orderedBannerUrls = [];
+    List<String> order = ['yuva', 'olympus', 'aurum', 'verve'];
+
+    for (var banner in order) {
+      for (var url in bannerUrls) {
+        if (url.contains(banner)) {
+          orderedBannerUrls.add(url);
+          break;
+        }
+      }
+    }
+
+    return orderedBannerUrls;
+  }
   //Register for Event
 
   Future<String> registerEvent(String eventId) async {
@@ -380,7 +405,58 @@ class DatabaseServices {
       return null;
     }
   }
+Future<List<user.User>> getApprovedUser(eventId) async {
+  List<user.User> approvedUsers = [];
 
+  DocumentSnapshot eventDoc = await eventCollection.doc(eventId).get();
+
+  if (eventDoc.exists) {
+    List<dynamic> approvedUsersList = eventDoc.get('approved_users') ?? [];
+
+    for (var userMap in approvedUsersList) {
+      String userId = userMap.keys.first; // Get the user ID from the map
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        approvedUsers.add(user.userFromMap(userData, userDoc.id));
+      }
+    }
+  }
+
+  return approvedUsers;
+}
+
+
+Future<void> updateUserPoints( eventId,  userId, int newPoints) async {
+  DocumentReference eventRef = eventCollection.doc(eventId);
+  DocumentSnapshot eventDoc = await eventRef.get();
+
+  if (eventDoc.exists) {
+    List<dynamic> approvedUsersList = eventDoc.get('approved_users') ?? [];
+
+    bool userFound = false;
+
+    for (var userMap in approvedUsersList) {
+      if (userMap.containsKey(userId)) {
+        userMap[userId]['points'] = newPoints; // Update points
+        userFound = true;
+        break;
+      }
+    }
+    if (!userFound) {
+      approvedUsersList.add({
+        userId: {'points': newPoints}
+      });
+    }
+
+    // Update Firestore
+    await eventRef.update({'approved_users': approvedUsersList});
+  }
+}
+
+
+  
   Future<List<user.User>> getSpecificUsers(List idList) async {
     List<user.User> users = [];
     int length = idList.length;
